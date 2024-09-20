@@ -7,9 +7,21 @@ namespace FrameWork.UIPopup
 {
     public class UIItemNotificationPop : UINotificationPop
     {
-        [SerializeField] private Image _image;
+        #region ¹ÙÀÎµù
+        enum Images
+        {
+            Sprite,
+        }
+        #endregion
 
         [SerializeField] private List<Sprite> sprites = new List<Sprite>();
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            BindImage(typeof(Images));
+        }
 
         public override void Initialize(string title, string desciption, ENotificationType notificationType, UnityAction<RectTransform, ENotificationType> action)
         {
@@ -20,10 +32,7 @@ namespace FrameWork.UIPopup
                 action?.Invoke(transform as RectTransform, notificationType);
             }
 
-            if (_image != null)
-            {
-                _image.sprite = sprites[index];
-            }
+            GetImage((int)Images.Sprite).sprite = sprites[index];
 
             base.Initialize(title, desciption, notificationType, action);
         }

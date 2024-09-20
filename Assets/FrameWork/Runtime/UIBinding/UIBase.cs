@@ -119,11 +119,11 @@ namespace FrameWork.UIBinding
         protected void BindObject(Type type) => Bind<GameObject>(type);
         protected void BindImage(Type type) => Bind<Image>(type);
         protected void BindText(Type type) => Bind<TextMeshProUGUI>(type);
-        protected void BindInputField(Type type) => Bind<InputField>(type);
+        protected void BindInputField(Type type) => Bind<TMP_InputField>(type);
         protected void BindButton(Type type) => Bind<Button>(type);
         protected void BindToggle(Type type) => Bind<Toggle>(type);
         protected void BindSlider(Type type) => Bind<Slider>(type);
-        protected void BindDropdown(Type type) => Bind<Dropdown>(type);
+        protected void BindDropdown(Type type) => Bind<TMP_Dropdown>(type);
         #endregion
 
         #region 객체 가져오기
@@ -137,11 +137,11 @@ namespace FrameWork.UIBinding
         protected GameObject GetObject(int idx) => Get<GameObject>(idx);
         protected Image GetImage(int idx) => Get<Image>(idx);
         protected TextMeshProUGUI GetText(int idx) => Get<TextMeshProUGUI>(idx);
-        protected InputField GetInputField(int idx) => Get<InputField>(idx);
+        protected TMP_InputField GetInputField(int idx) => Get<TMP_InputField>(idx);
         protected Button GetButton(int idx) => Get<Button>(idx);
         protected Toggle GetToggle(int idx) => Get<Toggle>(idx);
         protected Slider GetSlider(int idx) => Get<Slider>(idx);
-        protected Dropdown GetDropdown(int idx) => Get<Dropdown>(idx);
+        protected TMP_Dropdown GetDropdown(int idx) => Get<TMP_Dropdown>(idx);
         #endregion
 
         #region 이벤트 등록

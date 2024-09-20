@@ -1,5 +1,6 @@
 using DG.Tweening;
 using FrameWork.Editor;
+using FrameWork.UIBinding;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace FrameWork.UIPopup
         ItemNotificationPop,
     }
 
-    public class UINotificationPopup : UIPopup
+    public class UINotificationPopup : UIBase
     {
         [SerializeField] private List<GameObject> _notificationPops = new List<GameObject>();
 

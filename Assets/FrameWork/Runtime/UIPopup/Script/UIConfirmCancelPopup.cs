@@ -1,3 +1,4 @@
+using FrameWork.UIBinding;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -5,35 +6,34 @@ using UnityEngine.UI;
 
 namespace FrameWork.UIPopup
 {
-    public class UIConfirmCancelPopup : UIPopup
+    public class UIConfirmCancelPopup : UIBase
     {
-        [SerializeField] private TextMeshProUGUI _text;
-        [SerializeField] private Button _buttonConfirm;
-        [SerializeField] private Button _buttonCancel;
+        #region ¹ÙÀÎµù
+        enum Texts
+        {
+            Text,
+        }
+        enum Buttons
+        {
+            Button_Confirm,
+            Button_Cancel,
+        }
+        #endregion
 
         public event UnityAction OnResult;
 
-        protected override void Awake()
+        protected override void Initialize()
         {
-            base.Awake();
+            BindText(typeof(Texts));
+            BindButton(typeof(Buttons));
 
-            if (_buttonConfirm != null)
-            {
-                _buttonConfirm.onClick.AddListener(OnConfirm);
-            }
-
-            if (_buttonCancel != null)
-            {
-                _buttonCancel.onClick.AddListener(OnCancel);
-            }
+            GetButton((int)Buttons.Button_Confirm).onClick.AddListener(OnConfirm);
+            GetButton((int)Buttons.Button_Cancel).onClick.AddListener(OnCancel);
         }
 
         public void Show(string context)
         {
-            if (_text != null)
-            {
-                _text.text = context;
-            }
+            GetText((int)Texts.Text).text = context;
 
             base.Show();
         }

@@ -1,40 +1,41 @@
-using TMPro;
-using UnityEngine;
+using FrameWork.UIBinding;
 using UnityEngine.Events;
-using UnityEngine.UI;
 
 namespace FrameWork.UIPopup
 {
-    public class UIInputPopup : UIPopup
+    public class UIInputPopup : UIBase
     {
-        [SerializeField] private TextMeshProUGUI _text;
-        [SerializeField] private TMP_InputField _inputField;
-        [SerializeField] private Button _buttonConfirm;
-        [SerializeField] private Button _buttonCancel;
+        #region ¹ÙÀÎµù
+        enum Texts
+        {
+            Text,
+        }
+        enum InputFields
+        {
+            InputField,
+        }
+        enum Buttons
+        {
+            Button_Confirm,
+            Button_Cancel,
+        }
+        #endregion
 
         public event UnityAction<string> OnResult;
 
-        protected override void Awake()
+        protected override void Initialize()
         {
-            base.Awake();
+            BindText(typeof(Texts));
+            BindInputField(typeof(InputFields));
+            BindButton(typeof(Buttons));
 
-            if (_buttonConfirm != null)
-            {
-                _buttonConfirm.onClick.AddListener(OnConfirm);
-            }
-
-            if (_buttonCancel != null)
-            {
-                _buttonCancel.onClick.AddListener(OnCancel);
-            }
+            GetButton((int)Buttons.Button_Confirm).onClick.AddListener(OnConfirm);
+            GetButton((int)Buttons.Button_Cancel).onClick.AddListener(OnCancel);
         }
 
         public void Show(string context)
         {
-            if (_text != null)
-            {
-                _text.text = context;
-            }
+            GetText((int)Texts.Text).text = context;
 
             base.Show();
         }
@@ -43,7 +44,7 @@ namespace FrameWork.UIPopup
         {
             Hide();
 
-            OnResult?.Invoke(_inputField.text);
+            OnResult?.Invoke(GetInputField((int)InputFields.InputField).text);
             OnResult = null;
         }
 

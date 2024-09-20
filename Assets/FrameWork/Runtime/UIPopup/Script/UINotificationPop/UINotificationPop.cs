@@ -1,26 +1,30 @@
 using DG.Tweening;
+using FrameWork.UIBinding;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace FrameWork.UIPopup
 {
-    public class UINotificationPop : MonoBehaviour
+    public class UINotificationPop : UIBase
     {
-        [SerializeField] protected TextMeshProUGUI _title;
-        [SerializeField] protected TextMeshProUGUI _desciption;
+        #region ¹ÙÀÎµù
+        enum Texts
+        { 
+            Title,
+            Description,
+        }
+        #endregion
+
+        protected override void Initialize()
+        {
+            BindText(typeof(Texts));
+        }
 
         public virtual void Initialize(string title, string desciption, ENotificationType notificationType, UnityAction<RectTransform, ENotificationType> action)
         {
-            if (_title != null)
-            {
-                _title.text = title;
-            }
-
-            if (_desciption != null)
-            {
-                _desciption.text = desciption;
-            }
+            GetText((int)Texts.Title).text = title;
+            GetText((int)Texts.Description).text = desciption;
 
             RectTransform rect = transform.GetChild(0) as RectTransform;
             float moveX = rect.sizeDelta.x;

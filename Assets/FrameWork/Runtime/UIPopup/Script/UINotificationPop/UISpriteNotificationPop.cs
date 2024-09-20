@@ -6,14 +6,21 @@ namespace FrameWork.UIPopup
 {
     public class UISpriteNotificationPop : UINotificationPop
     {
-        [SerializeField] private Image _image;
+        enum Images
+        {
+            Sprite,
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            BindImage(typeof(Images));
+        }
 
         public void Initialize(string title, string desciption, Sprite sprite, ENotificationType notificationType, UnityAction<RectTransform, ENotificationType> action)
         {
-            if (_image != null)
-            {
-                _image.sprite = sprite;
-            }
+            GetImage((int)Images.Sprite).sprite = sprite;
 
             base.Initialize(title, desciption, notificationType, action);
         }
