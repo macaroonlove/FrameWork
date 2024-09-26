@@ -1,3 +1,4 @@
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,7 +17,27 @@ namespace FrameWork.Editor
             label.text = labelAttribute.label;
 
             // 프로퍼티 그리기
+            if (property.propertyType == SerializedPropertyType.String)
+            {
+                MultilineAttribute multiline = (MultilineAttribute)fieldInfo.GetCustomAttribute(typeof(MultilineAttribute));
+                if (multiline != null)
+                {
+                    position.height = EditorGUIUtility.singleLineHeight * multiline.lines;
+                }
+            }
+
             EditorGUI.PropertyField(position, property, label, true);
+        }
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            MultilineAttribute multiline = (MultilineAttribute)fieldInfo.GetCustomAttribute(typeof(MultilineAttribute));
+            if (multiline != null)
+            {
+                return EditorGUIUtility.singleLineHeight * multiline.lines;
+            }
+
+            return base.GetPropertyHeight(property, label);
         }
     }
 #endif

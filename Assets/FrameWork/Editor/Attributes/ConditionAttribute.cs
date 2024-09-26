@@ -7,11 +7,13 @@ namespace FrameWork.Editor
     public class ConditionAttribute : PropertyAttribute
     {
         public string ConditionBoolean = "";
+        public bool ShowIfTrue = true;
         public bool Hidden = false;
 
-        public ConditionAttribute(string conditionBoolean, bool hideInInspector = false)
+        public ConditionAttribute(string conditionBoolean, bool showIfTrue = true, bool hideInInspector = false)
         {
             this.ConditionBoolean = conditionBoolean;
+            this.ShowIfTrue = showIfTrue;
             this.Hidden = hideInInspector;
         }
     }

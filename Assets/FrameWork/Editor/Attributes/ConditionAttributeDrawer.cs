@@ -11,9 +11,13 @@ namespace FrameWork.Editor
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             ConditionAttribute conditionAttribute = (ConditionAttribute)attribute;
-            bool enabled = GetConditionAttributeResult(conditionAttribute, property);
+            bool conditionResult = GetConditionAttributeResult(conditionAttribute, property);
+
+            bool enabled = conditionAttribute.ShowIfTrue ? conditionResult : !conditionResult;
+
             bool previouslyEnabled = GUI.enabled;
             GUI.enabled = enabled;
+
             if (!conditionAttribute.Hidden || enabled)
             {
                 EditorGUI.PropertyField(position, property, label, true);
