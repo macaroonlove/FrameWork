@@ -26,14 +26,22 @@ namespace Temporary.Core
 
             foreach (var ability in alwaysAbilities)
             {
-                ability.Initialize(unit);
                 _alwaysAbilities[ability.GetType()] = ability;
             }
 
             foreach (var ability in conditionAbilities)
             {
-                ability.Initialize(unit);
                 _conditionAbilities[ability.GetType()] = ability;
+            }
+
+            foreach (var ability in alwaysAbilities)
+            {
+                ability.Initialize(unit);
+            }
+
+            foreach (var ability in conditionAbilities)
+            {
+                ability.Initialize(unit);
             }
         }
 

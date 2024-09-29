@@ -9,10 +9,14 @@ namespace Temporary.Core
     public class HealthAbility : AlwaysAbility
     {
         private PoolSystem _poolSystem;
+        
+        private BuffAbility _buffAbility;
+        private AbnormalStatusAbility _abnormalStatusAbility;
 
         private int _baseMaxHP;
         private int _currentHp;
         private int _baseHPRecoveryPerSec;
+        private float _hpRecoveryCooldown = 1;
 
         internal bool isAlive => _currentHp > 0;
 
@@ -57,21 +61,71 @@ namespace Temporary.Core
         internal event UnityAction onDeath;
 
         #region 계산 스탯
+        // 최대 HP
         private int finalMaxHP
         {
             get
             {
-                int result = _baseMaxHP;
+                float result = _baseMaxHP;
 
-                return result;
+                #region 추가·차감
+                foreach (var effect in _buffAbility.MaxHPAdditionalDataEffects)
+                {
+                    result += effect.value;
+                }
+                #endregion
+
+                #region 증가·감소
+                float increase = 1;
+
+                foreach (var effect in _buffAbility.MaxHPIncreaseDataEffects)
+                {
+                    increase += effect.value;
+                }
+
+                result *= increase;
+                #endregion
+
+                #region 상승·하락
+                foreach (var effect in _buffAbility.MaxHPMultiplierDataEffects)
+                {
+                    result *= effect.value;
+                }
+                #endregion
+
+                return (int)result;
             }
         }
 
+        // 고정될 최소 체력
+        // 고정될 체력이 여러 개 있다면 가장 큰 것을 채택
         private int finalMinHP
         {
             get
             {
-                int result = 0;
+                int maxMinHP = 0;
+
+                foreach (var effect in _buffAbility.SetMinHPEffects)
+                {
+                    maxMinHP = Mathf.Max(maxMinHP, effect.value);
+                }
+
+                return maxMinHP;
+            }
+        }
+
+        // 초당 HP 회복량
+        private int finalHPRecoveryPerSec
+        {
+            get
+            {
+                int result = _baseHPRecoveryPerSec;
+
+                // 최대 체력의 % 만큼 초당 회복력 추가
+                foreach (var effect in _abnormalStatusAbility.HPRecoveryPerSecByMaxHPIncreaseDataEffects)
+                {
+                    result += (int)(effect.value * finalMaxHP);
+                }
 
                 return result;
             }
@@ -84,6 +138,11 @@ namespace Temporary.Core
             {
                 int result = 0;
 
+                foreach (var effect in _buffAbility.HealingAdditionalDataEffects)
+                {
+                    result += effect.value;
+                }
+
                 return result;
             }
         }
@@ -92,7 +151,12 @@ namespace Temporary.Core
         {
             get
             {
-                float result = 1.0f;
+                float result = 1;
+
+                foreach (var effect in _buffAbility.HealingIncreaseDataEffects)
+                {
+                    result += effect.value;
+                }
 
                 return result;
             }
@@ -102,12 +166,34 @@ namespace Temporary.Core
         {
             get
             {
-                float result = 1.0f;
+                float result = 1;
+
+                foreach (var effect in _buffAbility.HealingMultiplierDataEffects)
+                {
+                    result *= effect.value;
+                }
 
                 return result;
             }
         }
         #endregion
+
+        internal bool finalIsHealAble
+        {
+            get
+            {
+                // 유닛이 죽었으면
+                if (isAlive == false) return false;
+
+                // 풀피라면
+                if (_currentHp == finalMaxHP) return false;
+
+                // 회복 불가 상태이상에 걸렸다면
+                if (_abnormalStatusAbility.UnableToHealEffects.Count > 0) return false;
+
+                return true;
+            }
+        }
         #endregion
 
         internal override void Initialize(Unit unit)
@@ -115,6 +201,9 @@ namespace Temporary.Core
             base.Initialize(unit);
 
             _poolSystem = BattleManager.Instance.GetSubSystem<PoolSystem>();
+
+            _buffAbility = unit.GetAbility<BuffAbility>();
+            _abnormalStatusAbility = unit.GetAbility<AbnormalStatusAbility>();
 
             if (unit is AgentUnit agentUnit)
             {
@@ -130,21 +219,27 @@ namespace Temporary.Core
             SetHP(finalMaxHP);
         }
 
-        internal override void Deinitialize()
-        {
-            _poolSystem = null;
-        }
-
         internal override void UpdateAbility()
         {
-            
+            // 회복 불가인 상태라면 무시
+            if (finalIsHealAble == false) return;
+
+            // 초당 회복 쿨타임 감소
+            if (_hpRecoveryCooldown > 0)
+            {
+                _hpRecoveryCooldown -= Time.deltaTime;
+                return;
+            }
+
+            SetHP(_currentHp + finalHPRecoveryPerSec);
+            _hpRecoveryCooldown = 1;
         }
 
         #region HP 변경
         internal bool Damaged(int damage, int id)
         {
             //죽었으면 무시
-            if (!isAlive) return false;
+            if (isAlive == false) return false;
 
             // 실드에 막히는 데미지를 제외
             var lostHealth = DamagedShield(damage);
@@ -164,8 +259,8 @@ namespace Temporary.Core
 
         internal void Healed(int value, int id)
         {
-            //죽었으면 무시
-            if (!isAlive) return;
+            // 회복 불가인 상태라면 무시
+            if (finalIsHealAble == false) return;
 
             float healingAmount = value;
 
@@ -273,10 +368,7 @@ namespace Temporary.Core
         internal void AddShield(int amount)
         {
             //죽었으면 무시
-            if (!isAlive)
-            {
-                return;
-            }
+            if (isAlive == false) return;
 
             _shields.Add(new ShieldInstance(amount, int.MaxValue));
             UpdateShield();
@@ -285,10 +377,7 @@ namespace Temporary.Core
         internal void AddShield(int amount, float duration)
         {
             //죽었으면 무시
-            if (!isAlive)
-            {
-                return;
-            }
+            if (isAlive == false) return;
 
             var coroutine = StartCoroutine(CoShield(_shieldIdCounter, duration));
             _shields.Add(new ShieldInstance(coroutine, _shieldIdCounter, amount, duration));

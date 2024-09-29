@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Temporary.Core
 {
@@ -8,6 +9,7 @@ namespace Temporary.Core
     {
         private DamageCalculateAbility _damageCalculateAbility;
         private HealthAbility _healthAbility;
+        private BuffAbility _buffAbility;
 
         #region 피해 면역 필드
         private class DamageImmunityInstance
@@ -50,15 +52,16 @@ namespace Temporary.Core
 
         #region 스탯 계산
         /// <summary>
-        /// 공격 대상인지 (은신 등을 적용)
+        /// 공격 대상인지
         /// </summary>
         internal bool finalTargetOfAttack
         {
             get
             {
-                bool result = true;
+                // 은신 상태라면 타겟이 되지 않음
+                if (_buffAbility.UnableToTargetOfAttackEffects.Count > 0) return false;
 
-                return result;
+                return true;
             }
         }
 
@@ -68,7 +71,10 @@ namespace Temporary.Core
             {
                 float avoidance = 0;
 
-
+                foreach (var effect in _buffAbility.AvoidanceAdditionalDataEffects)
+                {
+                    avoidance += effect.value;
+                }
 
                 if (avoidance > 0)
                 {
@@ -82,18 +88,15 @@ namespace Temporary.Core
         }
         #endregion
 
+        internal event UnityAction onHit;
+
         internal override void Initialize(Unit unit)
         {
             base.Initialize(unit);
 
             _damageCalculateAbility = unit.GetAbility<DamageCalculateAbility>();
             _healthAbility = unit.GetAbility<HealthAbility>();
-        }
-
-        internal override void Deinitialize()
-        {
-            _damageCalculateAbility = null;
-            _healthAbility = null;
+            _buffAbility = unit.GetAbility<BuffAbility>();
         }
 
         /// <summary>
@@ -116,6 +119,8 @@ namespace Temporary.Core
 
                 int damage = _damageCalculateAbility.GetDamage(attackedUnit, damageType);
                 _healthAbility.Damaged(damage, attackedUnit.id);
+
+                onHit?.Invoke();
             }
         }
 
@@ -128,6 +133,8 @@ namespace Temporary.Core
             if (UsedDamageImmunity(damageType)) return;
             damage = _damageCalculateAbility.GetDamage(damage, damageType);
             _healthAbility.Damaged(damage, id);
+
+            onHit?.Invoke();
         }
 
         /// <summary>
@@ -136,6 +143,8 @@ namespace Temporary.Core
         internal void Hit(int damage, int id = 0)
         {
             _healthAbility.Damaged(damage, id);
+
+            onHit?.Invoke();
         }
 
         #region 피해 면역 로직

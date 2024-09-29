@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Temporary.Core
@@ -14,6 +12,9 @@ namespace Temporary.Core
         private float _baseCriticalHitChance;
         private float _baseCriticalHitDamage;
 
+        private BuffAbility _buffAbility;
+        private AbnormalStatusAbility _abnormalStatusAbility;
+
         #region 계산 스탯
         #region 데미지 타입
         internal EDamageType finalDamageType
@@ -22,17 +23,42 @@ namespace Temporary.Core
             {
                 EDamageType result = _baseDamageType;
 
+                foreach (var effect in _buffAbility.SetDamageTypeEffects)
+                {
+                    result = effect.value;
+                }
+
                 return result;
             }
         }
         #endregion
 
-        #region 데미지 증감 & 상승·하락
+        #region 입히는 데미지 추가·차감 & 증가·감소 & 상승·하락
+        private int finalDamageAdditional
+        {
+            get
+            {
+                int result = 1;
+
+                foreach (var effect in _buffAbility.DamageAdditionalDataEffects)
+                {
+                    result += effect.value;
+                }
+
+                return result;
+            }
+        }
+
         private float finalDamageIncrease
         {
             get
             {
                 float result = 1;
+
+                foreach(var effect in _buffAbility.DamageIncreaseDataEffects)
+                {
+                    result += effect.value;
+                }
 
                 return result;
             }
@@ -44,6 +70,62 @@ namespace Temporary.Core
             {
                 float result = 1;
 
+                foreach (var effect in _buffAbility.DamageMultiplierDataEffects)
+                {
+                    result *= effect.value;
+                }
+
+                return result;
+            }
+        }
+        #endregion
+
+        #region 받는 데미지 추가·차감 & 증가·감소 & 상승·하락
+        private int finalReceiveDamageAdditional
+        {
+            get
+            {
+                int result = 1;
+
+                foreach (var effect in _buffAbility.ReceiveDamageAdditionalDataEffects)
+                {
+                    result += effect.value;
+                }
+
+                return result;
+            }
+        }
+
+        private float finalReceiveDamageIncrease
+        {
+            get
+            {
+                float result = 1;
+
+                foreach (var effect in _buffAbility.ReceiveDamageIncreaseDataEffects)
+                {
+                    result += effect.value;
+                }
+                foreach (var effect in _abnormalStatusAbility.ReceiveDamageIncreaseDataEffects)
+                {
+                    result += effect.value;
+                }
+
+                return result;
+            }
+        }
+
+        private float finalReceiveDamageMultiplier
+        {
+            get
+            {
+                float result = 1;
+
+                foreach (var effect in _buffAbility.ReceiveDamageMultiplierDataEffects)
+                {
+                    result *= effect.value;
+                }
+
                 return result;
             }
         }
@@ -54,9 +136,38 @@ namespace Temporary.Core
         {
             get
             {
-                int result = _basePhysicalResistance;
+                float result = _basePhysicalResistance;
 
-                return result;
+                #region 추가·차감
+                foreach (var effect in _buffAbility.PhysicalResistanceAdditionalDataEffects)
+                {
+                    result += effect.value;
+                }
+                #endregion
+
+                #region 증가·감소
+                float increase = 1;
+
+                foreach (var effect in _buffAbility.PhysicalResistanceIncreaseDataEffects)
+                {
+                    increase += effect.value;
+                }
+                foreach (var effect in _abnormalStatusAbility.PhysicalResistanceIncreaseDataEffects)
+                {
+                    increase += effect.value;
+                }
+
+                result *= increase;
+                #endregion
+
+                #region 상승·하락
+                foreach (var effect in _buffAbility.PhysicalResistanceMultiplierDataEffects)
+                {
+                    result *= effect.value;
+                }
+                #endregion
+
+                return (int)result;
             }
         }
 
@@ -64,9 +175,38 @@ namespace Temporary.Core
         {
             get
             {
-                int result = _baseMagicResistance;
+                float result = _baseMagicResistance;
 
-                return result;
+                #region 추가·차감
+                foreach (var effect in _buffAbility.MagicResistanceAdditionalDataEffects)
+                {
+                    result += effect.value;
+                }
+                #endregion
+
+                #region 증가·감소
+                float increase = 1;
+
+                foreach (var effect in _buffAbility.MagicResistanceIncreaseDataEffects)
+                {
+                    increase += effect.value;
+                }
+                foreach (var effect in _abnormalStatusAbility.MagicResistanceIncreaseDataEffects)
+                {
+                    increase += effect.value;
+                }
+
+                result *= increase;
+                #endregion
+
+                #region 상승·하락
+                foreach (var effect in _buffAbility.MagicResistanceMultiplierDataEffects)
+                {
+                    result *= effect.value;
+                }
+                #endregion
+
+                return (int)result;
             }
         }
         #endregion
@@ -76,9 +216,34 @@ namespace Temporary.Core
         {
             get
             {
-                int result = _basePhysicalPenetration;
+                float result = _basePhysicalPenetration;
 
-                return result;
+                #region 추가·차감
+                foreach (var effect in _buffAbility.PhysicalPenetrationAdditionalDataEffects)
+                {
+                    result += effect.value;
+                }
+                #endregion
+
+                #region 증가·감소
+                float increase = 1;
+
+                foreach (var effect in _buffAbility.PhysicalPenetrationIncreaseDataEffects)
+                {
+                    increase += effect.value;
+                }
+
+                result *= increase;
+                #endregion
+
+                #region 상승·하락
+                foreach (var effect in _buffAbility.PhysicalPenetrationMultiplierDataEffects)
+                {
+                    result *= effect.value;
+                }
+                #endregion
+
+                return (int)result;
             }
         }
 
@@ -86,9 +251,34 @@ namespace Temporary.Core
         {
             get
             {
-                int result = _baseMagicPenetration;
+                float result = _baseMagicPenetration;
 
-                return result;
+                #region 추가·차감
+                foreach (var effect in _buffAbility.MagicPenetrationAdditionalDataEffects)
+                {
+                    result += effect.value;
+                }
+                #endregion
+
+                #region 증가·감소
+                float increase = 1;
+
+                foreach (var effect in _buffAbility.MagicPenetrationIncreaseDataEffects)
+                {
+                    increase += effect.value;
+                }
+
+                result *= increase;
+                #endregion
+
+                #region 상승·하락
+                foreach (var effect in _buffAbility.MagicPenetrationMultiplierDataEffects)
+                {
+                    result *= effect.value;
+                }
+                #endregion
+
+                return (int)result;
             }
         }
         #endregion
@@ -99,6 +289,11 @@ namespace Temporary.Core
             get
             {
                 float chance = _baseCriticalHitChance;
+
+                foreach (var effect in _buffAbility.CriticalHitChanceAdditionalDataEffects)
+                {
+                    chance += effect.value;
+                }
 
                 if (chance > 0)
                 {
@@ -117,6 +312,31 @@ namespace Temporary.Core
             {
                 float result = _baseCriticalHitDamage;
 
+                #region 추가·차감
+                foreach (var effect in _buffAbility.CriticalHitDamageAdditionalDataEffects)
+                {
+                    result += effect.value;
+                }
+                #endregion
+
+                #region 증가·감소
+                float increase = 1;
+
+                foreach (var effect in _buffAbility.CriticalHitDamageIncreaseDataEffects)
+                {
+                    increase += effect.value;
+                }
+
+                result *= increase;
+                #endregion
+
+                #region 상승·하락
+                foreach (var effect in _buffAbility.CriticalHitDamageMultiplierDataEffects)
+                {
+                    result *= effect.value;
+                }
+                #endregion
+
                 return result;
             }
         }
@@ -126,6 +346,9 @@ namespace Temporary.Core
         internal override void Initialize(Unit unit)
         {
             base.Initialize(unit);
+
+            _buffAbility = unit.GetAbility<BuffAbility>();
+            _abnormalStatusAbility = unit.GetAbility<AbnormalStatusAbility>();
 
             if (unit is AgentUnit agentUnit)
             {
@@ -159,10 +382,16 @@ namespace Temporary.Core
             // 저항력 & 관통력
             float finalDamage = GetDamageByDamageType(attackedUnit, finalATK, damageType);
 
-            // 데미지 증감 & 상승·하락
+            // 공격하는 유닛의 데미지
             var attackedUnitOfDamageCalculateAbility = attackedUnit.GetAbility<DamageCalculateAbility>();
+            finalDamage += attackedUnitOfDamageCalculateAbility.finalDamageAdditional;
             finalDamage *= attackedUnitOfDamageCalculateAbility.finalDamageIncrease;
             finalDamage *= attackedUnitOfDamageCalculateAbility.finalDamageMultiplier;
+
+            // 공격받는 유닛의 데미지
+            finalDamage += finalReceiveDamageAdditional;
+            finalDamage *= finalReceiveDamageIncrease;
+            finalDamage *= finalReceiveDamageMultiplier;
 
             // 치명타가 터졌다면
             if (attackedUnitOfDamageCalculateAbility.finalIsCriticalHit)
@@ -183,10 +412,16 @@ namespace Temporary.Core
             // 저항력 & 관통력
             float finalDamage = GetDamageByDamageType(attackedUnit, damage, damageType);
 
-            // 데미지 증감 & 상승·하락
+            // 공격하는 유닛의 데미지
             var attackedUnitOfDamageCalculateAbility = attackedUnit.GetAbility<DamageCalculateAbility>();
+            finalDamage += attackedUnitOfDamageCalculateAbility.finalDamageAdditional;
             finalDamage *= attackedUnitOfDamageCalculateAbility.finalDamageIncrease;
             finalDamage *= attackedUnitOfDamageCalculateAbility.finalDamageMultiplier;
+
+            // 공격받는 유닛의 데미지
+            finalDamage += finalReceiveDamageAdditional;
+            finalDamage *= finalReceiveDamageIncrease;
+            finalDamage *= finalReceiveDamageMultiplier;
 
             // 치명타가 터졌다면
             if (attackedUnitOfDamageCalculateAbility.finalIsCriticalHit)
@@ -203,9 +438,15 @@ namespace Temporary.Core
         /// </summary>
         internal int GetDamage(int damage, EDamageType damageType)
         {
-            int finalDamage = GetDamageByResistance(damage, damageType);
+            // 저항력
+            float finalDamage = GetDamageByResistance(damage, damageType);
 
-            return finalDamage;
+            // 공격받는 유닛의 데미지
+            finalDamage += finalReceiveDamageAdditional;
+            finalDamage *= finalReceiveDamageIncrease;
+            finalDamage *= finalReceiveDamageMultiplier;
+
+            return (int)finalDamage;
         }
 
         #region 저항력·관통력

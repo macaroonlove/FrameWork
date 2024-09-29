@@ -2,6 +2,7 @@ using FrameWork.Editor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Temporary.Core
 {
@@ -20,6 +21,8 @@ namespace Temporary.Core
         private PoolSystem _poolSystem;
 
         private UnitAnimationAbility _unitAnimationAbility;
+        private BuffAbility _buffAbility;
+        private AbnormalStatusAbility _abnormalStatusAbility;
 
         private int _baseATK;
         private float _baseAttackTerm;
@@ -33,14 +36,39 @@ namespace Temporary.Core
         private EAttackType _currentAttackType;
         private List<Unit> _currentTarget = new List<Unit>();
 
-        #region 계산 스탯
+        #region 스탯 계산
         internal int finalATK
         {
             get
             {
-                int result = _baseATK;
+                float result = _baseATK;
 
-                return result;
+                #region 추가·차감
+                foreach (var effect in _buffAbility.ATKAdditionalDataEffects)
+                {
+                    result += effect.value;
+                }
+                #endregion
+
+                #region 증가·감소
+                float increase = 1;
+
+                foreach (var effect in _buffAbility.ATKIncreaseDataEffects)
+                {
+                    increase += effect.value;
+                }
+
+                result *= increase;
+                #endregion
+
+                #region 상승·하락
+                foreach (var effect in _buffAbility.ATKMultiplierDataEffects)
+                {
+                    result *= effect.value;
+                }
+                #endregion
+
+                return (int)result;
             }
         }
 
@@ -49,6 +77,24 @@ namespace Temporary.Core
             get
             {
                 float result = _baseAttackTerm;
+
+                #region 증가·감소
+                float increase = 1;
+
+                foreach (var effect in _buffAbility.AttackSpeedIncreaseDataEffects)
+                {
+                    increase += effect.value;
+                }
+
+                result *= increase;
+                #endregion
+
+                #region 상승·하락
+                foreach (var effect in _buffAbility.AttackSpeedMultiplierDataEffects)
+                {
+                    result *= effect.value;
+                }
+                #endregion
 
                 return result;
             }
@@ -71,6 +117,11 @@ namespace Temporary.Core
                 // 최대 동시 공격 수는 1명
                 int result = 1;
 
+                foreach (var effect in _buffAbility.AttackCountAdditionalDataEffects)
+                {
+                    result += effect.value;
+                }
+
                 return result;
             }
         }
@@ -81,10 +132,28 @@ namespace Temporary.Core
             {
                 EAttackType result = _baseAttackType;
 
+                foreach (var effect in _buffAbility.SetAttackTypeEffects)
+                {
+                    result = effect.value;
+                }
+
                 return result;
             }
         }
+
+        private bool finalIsAttackAble
+        {
+            get
+            {
+                // 공격 불가 상태이상에 걸렸다면
+                if (_abnormalStatusAbility.UnableToAttackEffects.Count > 0) return false;
+
+                return true;
+            }
+        }
         #endregion
+
+        internal event UnityAction onAttack;
 
         internal override void Initialize(Unit unit)
         {
@@ -94,6 +163,8 @@ namespace Temporary.Core
             _enemySystem = BattleManager.Instance.GetSubSystem<EnemySystem>();
 
             _unitAnimationAbility = unit.GetAbility<UnitAnimationAbility>();
+            _buffAbility = unit.GetAbility<BuffAbility>();
+            _abnormalStatusAbility = unit.GetAbility<AbnormalStatusAbility>();
 
             if (unit is AgentUnit agentUnit)
             {
@@ -132,7 +203,7 @@ namespace Temporary.Core
         internal override void UpdateAbility()
         {
             // 공격 불가 상태라면 메서드 끝내기
-            if (finalAttackType == EAttackType.None) return;
+            if (finalIsAttackAble == false || finalAttackType == EAttackType.None) return;
 
             _currentAttackType = finalAttackType;
 
@@ -278,6 +349,7 @@ namespace Temporary.Core
         private void ApplyAttack(Unit attackTarget)
         {
             attackTarget.GetAbility<HitAbility>().Hit(unit);
+            onAttack?.Invoke();
         }
         #endregion
 
@@ -286,9 +358,6 @@ namespace Temporary.Core
         {
             _currentTarget.Clear();
 
-            // 회복이 가능한 아군 찾기
-            // TODO: 수정 => 회복이 가능한 유닛인지, 풀피인 유닛인지, 살아있는지
-            // 체력 비율 낮은 순으로 정렬하여 회복
             if (unit is AgentUnit)
             {
                 var attackTargets = _agentSystem.GetHealableAgentsInRadius(transform.position, finalAttackRange, finalAttackCount); 
@@ -346,6 +415,7 @@ namespace Temporary.Core
         private void ApplyHeal(Unit healTarget)
         {
             healTarget.GetAbility<HealthAbility>().Healed(finalATK, unit.id);
+            onAttack?.Invoke();
         }
         #endregion
     }

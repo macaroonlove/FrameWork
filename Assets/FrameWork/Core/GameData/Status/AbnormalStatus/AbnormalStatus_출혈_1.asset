@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-3638213792774150541
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef56f10da1b48c4bb95d6a4b7dbe669, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _value: -0.01
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2676ce51c0285f242bd88fb9ab686a0b, type: 3}
+  m_Name: "AbnormalStatus_\uCD9C\uD608_1"
+  m_EditorClassIdentifier: 
+  displayName: "\uCD9C\uD608"
+  description: "\uC9C0\uC18D\uC801\uC73C\uB85C \uCD5C\uB300 \uCCB4\uB825\uC758 1%\uB97C
+    \uC783\uC2B5\uB2C8\uB2E4."
+  delay: 0
+  useHitCountLimit: 0
+  hitCount: 0
+  effects:
+  - {fileID: -3638213792774150541}

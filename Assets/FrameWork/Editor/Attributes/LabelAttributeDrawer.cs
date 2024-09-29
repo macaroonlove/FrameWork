@@ -19,10 +19,23 @@ namespace FrameWork.Editor
             // 橇肺欺萍 弊府扁
             if (property.propertyType == SerializedPropertyType.String)
             {
+                // Multiline 贸府
                 MultilineAttribute multiline = (MultilineAttribute)fieldInfo.GetCustomAttribute(typeof(MultilineAttribute));
                 if (multiline != null)
                 {
                     position.height = EditorGUIUtility.singleLineHeight * multiline.lines;
+                }
+
+                // TextArea 贸府
+                TextAreaAttribute textArea = (TextAreaAttribute)fieldInfo.GetCustomAttribute(typeof(TextAreaAttribute));
+                if (textArea != null)
+                {
+                    EditorGUI.LabelField(new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight), label);
+
+                    position.y += EditorGUIUtility.singleLineHeight + 5;
+                    position.height = EditorGUIUtility.singleLineHeight * Mathf.Max(textArea.minLines, textArea.maxLines);
+                    property.stringValue = EditorGUI.TextArea(position, property.stringValue, EditorStyles.textArea);
+                    return;
                 }
             }
 
@@ -31,10 +44,18 @@ namespace FrameWork.Editor
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
+            // Multiline 贸府
             MultilineAttribute multiline = (MultilineAttribute)fieldInfo.GetCustomAttribute(typeof(MultilineAttribute));
             if (multiline != null)
             {
                 return EditorGUIUtility.singleLineHeight * multiline.lines;
+            }
+
+            // TextArea 贸府
+            TextAreaAttribute textArea = (TextAreaAttribute)fieldInfo.GetCustomAttribute(typeof(TextAreaAttribute));
+            if (textArea != null)
+            {
+                return EditorGUIUtility.singleLineHeight * textArea.maxLines + EditorGUIUtility.singleLineHeight * 2;
             }
 
             return base.GetPropertyHeight(property, label);

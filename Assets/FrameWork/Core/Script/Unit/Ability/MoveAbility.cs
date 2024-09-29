@@ -9,6 +9,9 @@ namespace Temporary.Core
     {
         [SerializeField, ReadOnly] private float _baseMoveSpeed;
 
+        private BuffAbility _buffAbility;
+        private AbnormalStatusAbility _abnormalStatusAbility;
+
         #region 3D의 경우 (2D의 경우 삭제)
         protected NavMeshAgent _navMeshAgent;
         #endregion
@@ -20,7 +23,28 @@ namespace Temporary.Core
             {
                 float result = _baseMoveSpeed;
 
-                // 이동속도 버프/디버프 효과들 적용
+                #region 증가·감소
+                float increase = 1;
+
+                foreach (var effect in _buffAbility.MoveIncreaseDataEffects)
+                {
+                    increase += effect.value;
+                }
+
+                foreach (var effect in _abnormalStatusAbility.MoveIncreaseDataEffects)
+                {
+                    increase += effect.value;
+                }
+
+                result *= increase;
+                #endregion
+
+                #region 상승·하락
+                foreach (var effect in _buffAbility.MoveMultiplierDataEffects)
+                {
+                    result *= effect.value;
+                }
+                #endregion
 
                 return result;
             }
@@ -30,9 +54,10 @@ namespace Temporary.Core
         {
             get
             {
-                bool result = true;
+                // 이동 불가 상태이상에 걸렸다면
+                if (_abnormalStatusAbility.UnableToMoveEffects.Count > 0) return false;
 
-                return result;
+                return true;
             }
         }
         #endregion
@@ -42,6 +67,9 @@ namespace Temporary.Core
             base.Initialize(unit);
 
             TryGetComponent(out _navMeshAgent);
+
+            _buffAbility = unit.GetAbility<BuffAbility>();
+            _abnormalStatusAbility = unit.GetAbility<AbnormalStatusAbility>();
 
             if (unit is AgentUnit agentUnit)
             {

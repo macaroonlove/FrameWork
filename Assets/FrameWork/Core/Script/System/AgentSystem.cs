@@ -138,6 +138,9 @@ namespace Temporary.Core
             {
                 if (agent != null && agent.isActiveAndEnabled)
                 {
+                    // 회복 가능 유닛이 아니라면 타겟에 추가하지 않음
+                    if (agent.GetAbility<HealthAbility>().finalIsHealAble == false) continue;
+
                     var distance = (agent.transform.position - unitPos).sqrMagnitude;
 
                     if (distance <= radius)
