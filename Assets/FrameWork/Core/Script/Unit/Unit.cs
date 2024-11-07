@@ -185,7 +185,7 @@ namespace Temporary.Editor
 
             _currentAbilityIndex = EditorGUILayout.Popup("수정할 능력", _currentAbilityIndex, _abilityNames.ToArray());
 
-            if (GUILayout.Button("Script", GUILayout.Width(50)))
+            if (GUILayout.Button("Script", GUILayout.Width(40)))
             {
                 OpenScript();
             }

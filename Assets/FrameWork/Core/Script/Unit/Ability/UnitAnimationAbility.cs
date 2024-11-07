@@ -1,3 +1,4 @@
+using FrameWork;
 using UnityEngine;
 
 namespace Temporary.Core
@@ -18,6 +19,11 @@ namespace Temporary.Core
         internal void Attack()
         {
             _animator.SetTrigger(_attack);
+        }
+
+        internal bool TrySetTrigger(int hash)
+        {
+            return _animator.TrySetTrigger(hash);
         }
     }
 }

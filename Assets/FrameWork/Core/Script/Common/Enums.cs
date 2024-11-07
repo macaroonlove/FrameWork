@@ -33,4 +33,15 @@ namespace Temporary.Core
         TrueDamage,
     }
 
+    /// <summary>
+    /// 마나 회복 방식
+    /// </summary>
+    public enum EManaRecoveryType
+    {
+        None,
+        Automatic,
+        Attack,
+        Hit,
+    }
+
 }

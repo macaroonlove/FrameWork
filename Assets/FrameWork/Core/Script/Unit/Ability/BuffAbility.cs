@@ -60,6 +60,10 @@ namespace Temporary.Core
         [NonSerialized] public List<HealingIncreaseDataEffect>   HealingIncreaseDataEffects = new List<HealingIncreaseDataEffect>();
         [NonSerialized] public List<HealingMultiplierDataEffect> HealingMultiplierDataEffects = new List<HealingMultiplierDataEffect>();
 
+        [NonSerialized] public List<ManaRecoveryPerSecAdditionalDataEffect> ManaRecoveryPerSecAdditionalDataEffects = new List<ManaRecoveryPerSecAdditionalDataEffect>();
+        [NonSerialized] public List<ManaRecoveryPerSecIncreaseDataEffect> ManaRecoveryPerSecIncreaseDataEffects = new List<ManaRecoveryPerSecIncreaseDataEffect>();
+        [NonSerialized] public List<ManaRecoveryPerSecMultiplierDataEffect> ManaRecoveryPerSecMultiplierDataEffects = new List<ManaRecoveryPerSecMultiplierDataEffect>();
+
         [NonSerialized] public List<SetMinHPEffect> SetMinHPEffects = new List<SetMinHPEffect>();
         [NonSerialized] public List<SetAttackTypeEffect> SetAttackTypeEffects = new List<SetAttackTypeEffect>();
         [NonSerialized] public List<SetDamageTypeEffect> SetDamageTypeEffects = new List<SetDamageTypeEffect>();
@@ -324,6 +328,19 @@ namespace Temporary.Core
                     else if (effect is HealingMultiplierDataEffect healingMultiplierDataEffect)
                     {
                         HealingMultiplierDataEffects.Add(healingMultiplierDataEffect);
+                    }
+                    
+                    else if (effect is ManaRecoveryPerSecAdditionalDataEffect manaRecoveryPerSecAdditionalDataEffect)
+                    {
+                        ManaRecoveryPerSecAdditionalDataEffects.Add(manaRecoveryPerSecAdditionalDataEffect);
+                    }
+                    else if (effect is ManaRecoveryPerSecIncreaseDataEffect manaRecoveryPerSecIncreaseDataEffect)
+                    {
+                        ManaRecoveryPerSecIncreaseDataEffects.Add(manaRecoveryPerSecIncreaseDataEffect);
+                    }
+                    else if (effect is ManaRecoveryPerSecMultiplierDataEffect manaRecoveryPerSecMultiplierDataEffect)
+                    {
+                        ManaRecoveryPerSecMultiplierDataEffects.Add(manaRecoveryPerSecMultiplierDataEffect);
                     }
 
                     else if (effect is SetMinHPEffect setMinHPEffect)
@@ -596,6 +613,19 @@ namespace Temporary.Core
                 else if (effect is HealingMultiplierDataEffect healingMultiplierDataEffect)
                 {
                     HealingMultiplierDataEffects.Remove(healingMultiplierDataEffect);
+                }
+
+                else if (effect is ManaRecoveryPerSecAdditionalDataEffect manaRecoveryPerSecAdditionalDataEffect)
+                {
+                    ManaRecoveryPerSecAdditionalDataEffects.Remove(manaRecoveryPerSecAdditionalDataEffect);
+                }
+                else if (effect is ManaRecoveryPerSecIncreaseDataEffect manaRecoveryPerSecIncreaseDataEffect)
+                {
+                    ManaRecoveryPerSecIncreaseDataEffects.Remove(manaRecoveryPerSecIncreaseDataEffect);
+                }
+                else if (effect is ManaRecoveryPerSecMultiplierDataEffect manaRecoveryPerSecMultiplierDataEffect)
+                {
+                    ManaRecoveryPerSecMultiplierDataEffects.Remove(manaRecoveryPerSecMultiplierDataEffect);
                 }
 
                 else if (effect is SetMinHPEffect setMinHPEffect)

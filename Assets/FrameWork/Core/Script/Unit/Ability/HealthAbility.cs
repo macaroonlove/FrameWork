@@ -270,14 +270,13 @@ namespace Temporary.Core
             healingAmount *= healingMultiplier;
 
             var lastHp = Mathf.RoundToInt(_currentHp + healingAmount);
-            lastHp = Mathf.Clamp(lastHp, 0, finalMaxHP);
 
             SetHP(lastHp);
         }
 
         private void SetHP(int hp)
         {
-            _currentHp = Mathf.Max(finalMinHP, hp);
+            _currentHp = Mathf.Clamp(hp, finalMinHP, finalMaxHP);
             if (_currentHp == 0)
             {
                 onDeath?.Invoke();
