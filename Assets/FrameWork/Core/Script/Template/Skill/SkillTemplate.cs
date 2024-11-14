@@ -5,9 +5,10 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    [CreateAssetMenu(menuName = "Templates/Skill", fileName = "Skill", order = 0)]
+    [CreateAssetMenu(menuName = "Templates/Skill/Skill", fileName = "Skill", order = 0)]
     public class SkillTemplate : ScriptableObject
     {
+        [HideInInspector] public int id;
         [HideInInspector] public Sprite sprite;
         [HideInInspector] public string displayName;
         [HideInInspector] public string description;
@@ -50,21 +51,26 @@ namespace Temporary.Editor
         public override void OnInspectorGUI()
         {
             GUILayout.BeginHorizontal();
-            _target.sprite = EditorGUILayout.ObjectField(_target.sprite, typeof(Sprite), false, GUILayout.Width(64), GUILayout.Height(64)) as Sprite;
+            _target.sprite = EditorGUILayout.ObjectField(_target.sprite, typeof(Sprite), false, GUILayout.Width(96), GUILayout.Height(96)) as Sprite;
             GUILayout.BeginVertical();
-
+            
             GUILayout.BeginHorizontal();
-            GUILayout.Label("스킬 이름");
+            GUILayout.Label("ID");
             var valueRect = GUILayoutUtility.GetLastRect();
             valueRect.x += 80;
             valueRect.width -= 80;
+            _target.needMana = EditorGUI.IntField(valueRect, _target.needMana);
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("스킬 이름");
+            valueRect.y += EditorGUIUtility.singleLineHeight + 4;
             _target.displayName = GUI.TextField(valueRect, _target.displayName);
             GUILayout.EndHorizontal();
             GUILayout.Space(4);
             GUILayout.BeginHorizontal();
             GUILayout.Label("스킬 설명");
             valueRect.y += EditorGUIUtility.singleLineHeight + 4;
-            valueRect.height = 40;
+            valueRect.height = 50;
             _target.description = GUI.TextArea(valueRect, _target.description);
             GUILayout.EndHorizontal();
 
@@ -105,7 +111,9 @@ namespace Temporary.Editor
             GUILayout.BeginHorizontal();
             GUILayout.Label("파라미터 해시 값");
             valueRect.y += EditorGUIUtility.singleLineHeight + 4;
+            GUI.enabled = false;
             _target.parameterHash = EditorGUI.IntField(valueRect, _target.parameterHash);
+            GUI.enabled = true;
             GUILayout.EndHorizontal();
 
             GUILayout.Space(4);
@@ -120,7 +128,8 @@ namespace Temporary.Editor
 
             if (GUI.changed)
             {
-                EditorUtility.SetDirty(this);
+                EditorUtility.SetDirty(_target);
+                AssetDatabase.SaveAssets();
             }
         }
 

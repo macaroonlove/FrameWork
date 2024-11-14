@@ -1,0 +1,335 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5010578677380887977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af1c027665b01d149aa00c7403bc3767, type: 3}
+  m_Name: Skill
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 0, y: 0}
+  ports:
+    keys:
+    - level
+    - prevSkill
+    values:
+    - _fieldName: level
+      _node: {fileID: -5010578677380887977}
+      _typeQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: prevSkill 0
+        node: {fileID: 3145103075794808153}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: prevSkill
+      _node: {fileID: -5010578677380887977}
+      _typeQualifiedName: System.Collections.Generic.List`1[[System.Int32, mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  skillTemplate: {fileID: 11400000, guid: a27e5eb08c2dbee499af5ceac0b54b78, type: 2}
+  level: 0
+  index: 0
+  prevSkill: 
+--- !u!114 &-4725298612326841988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af1c027665b01d149aa00c7403bc3767, type: 3}
+  m_Name: Skill
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 0, y: 600}
+  ports:
+    keys:
+    - level
+    - prevSkill
+    values:
+    - _fieldName: level
+      _node: {fileID: -4725298612326841988}
+      _typeQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: prevSkill
+      _node: {fileID: -4725298612326841988}
+      _typeQualifiedName: System.Collections.Generic.List`1[[System.Int32, mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  skillTemplate: {fileID: 11400000, guid: f75bcf17bcd8a594a9a887537f681622, type: 2}
+  level: 0
+  index: 2
+  prevSkill: 
+--- !u!114 &-1039209908494205212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af1c027665b01d149aa00c7403bc3767, type: 3}
+  m_Name: Skill
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 600, y: 900}
+  ports:
+    keys:
+    - level
+    - prevSkill
+    values:
+    - _fieldName: level
+      _node: {fileID: -1039209908494205212}
+      _typeQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: prevSkill
+      _node: {fileID: -1039209908494205212}
+      _typeQualifiedName: System.Collections.Generic.List`1[[System.Int32, mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  skillTemplate: {fileID: 11400000, guid: 6154d228224b1414d820e83375aedd2c, type: 2}
+  level: 2
+  index: 3
+  prevSkill: 
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bbe472fd79391d4bb2a97d1c606dda1, type: 3}
+  m_Name: "SkillTree_\uAC80\uC0AC"
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: 6142985362759259748}
+  - {fileID: -4725298612326841988}
+  - {fileID: 4946586464266679450}
+  - {fileID: 3145103075794808153}
+  - {fileID: 6909994906314056215}
+  - {fileID: -1039209908494205212}
+  - {fileID: -5010578677380887977}
+  displayName: "SkillTree_\uAC80\uC0AC"
+  nodeLevelCount: 3
+  nodeIndexCount: 4
+--- !u!114 &3145103075794808153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af1c027665b01d149aa00c7403bc3767, type: 3}
+  m_Name: Skill
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 300, y: 0}
+  ports:
+    keys:
+    - level
+    - prevSkill
+    - prevSkill 0
+    values:
+    - _fieldName: level
+      _node: {fileID: 3145103075794808153}
+      _typeQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: prevSkill
+      _node: {fileID: 3145103075794808153}
+      _typeQualifiedName: System.Collections.Generic.List`1[[System.Int32, mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: prevSkill 0
+      _node: {fileID: 3145103075794808153}
+      _typeQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: level
+        node: {fileID: -5010578677380887977}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 1
+  skillTemplate: {fileID: 11400000, guid: 55368b90eec9301459d193b25aa8cdda, type: 2}
+  level: 1
+  index: 0
+  prevSkill: 00000000
+--- !u!114 &4946586464266679450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af1c027665b01d149aa00c7403bc3767, type: 3}
+  m_Name: Skill
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 300, y: 600}
+  ports:
+    keys:
+    - level
+    - prevSkill
+    values:
+    - _fieldName: level
+      _node: {fileID: 4946586464266679450}
+      _typeQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: prevSkill
+      _node: {fileID: 4946586464266679450}
+      _typeQualifiedName: System.Collections.Generic.List`1[[System.Int32, mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  skillTemplate: {fileID: 11400000, guid: 4698ef2163b56874db6cd83dda418c73, type: 2}
+  level: 1
+  index: 2
+  prevSkill: 
+--- !u!114 &6142985362759259748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af1c027665b01d149aa00c7403bc3767, type: 3}
+  m_Name: Skill
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 0, y: 300}
+  ports:
+    keys:
+    - level
+    - prevSkill
+    values:
+    - _fieldName: level
+      _node: {fileID: 6142985362759259748}
+      _typeQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: prevSkill
+      _node: {fileID: 6142985362759259748}
+      _typeQualifiedName: System.Collections.Generic.List`1[[System.Int32, mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  skillTemplate: {fileID: 11400000, guid: b5aae71588293aa4589610f011df717f, type: 2}
+  level: 0
+  index: 1
+  prevSkill: 
+--- !u!114 &6909994906314056215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af1c027665b01d149aa00c7403bc3767, type: 3}
+  m_Name: Skill
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 0, y: 900}
+  ports:
+    keys:
+    - level
+    - prevSkill
+    values:
+    - _fieldName: level
+      _node: {fileID: 6909994906314056215}
+      _typeQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: prevSkill
+      _node: {fileID: 6909994906314056215}
+      _typeQualifiedName: System.Collections.Generic.List`1[[System.Int32, mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  skillTemplate: {fileID: 11400000, guid: 3f038bdc987790540a9a3f47dff9d312, type: 2}
+  level: 0
+  index: 3
+  prevSkill: 

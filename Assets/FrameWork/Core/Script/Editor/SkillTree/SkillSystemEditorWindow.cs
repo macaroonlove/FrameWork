@@ -5,17 +5,26 @@ using System.IO;
 using Temporary.Core;
 using UnityEditor;
 using UnityEngine;
+using XNode;
+using XNodeEditor;
 
 namespace Temporary.Editor
 {
     public class SkillSystemEditorWindow : EditorWindow
     {
         private int selectedTab = 0;
-        private int selectedSkillIndex = 0;
-        private Vector2 scrollPosition;
-        private List<Tuple<SkillTemplate, Texture2D>> skillTemplates = new List<Tuple<SkillTemplate, Texture2D>>();
-
         private Texture2D emptyTexture2D;
+
+        #region 스킬
+        private int selectedSkillIndex = 0;
+        private Vector2 skillScrollPosition;
+        private List<Tuple<SkillTemplate, Texture2D>> skillTemplates = new List<Tuple<SkillTemplate, Texture2D>>();
+        #endregion
+        #region 스킬 트리
+        private int selectedSkillTreeIndex = 0;
+        private Vector2 skillTreeScrollPosition;
+        private List<SkillTreeGraph> skillTreeTemplates = new List<SkillTreeGraph>();
+        #endregion
 
         [MenuItem("Window/스킬 시스템")]
         public static void Open()
@@ -27,6 +36,10 @@ namespace Temporary.Editor
         private void OnGUI()
         {
             DrawTab();
+        }
+
+        private void CreateGUI()
+        {
         }
 
         private void DrawTab()
@@ -49,11 +62,7 @@ namespace Temporary.Editor
             }
         }
 
-        private void DrawSkillTreeTab()
-        {
-            GUILayout.Label("스킬트리 탭", EditorStyles.boldLabel);
-        }
-
+        #region 스킬
         private void DrawSkillTab()
         {
             GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
@@ -73,7 +82,7 @@ namespace Temporary.Editor
 
             DrawLine();
 
-            scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, true);
+            skillScrollPosition = GUILayout.BeginScrollView(skillScrollPosition, false, true);
 
             var skillCatalog = new GUIStyle(GUI.skin.button);
             skillCatalog.alignment = TextAnchor.MiddleLeft;
@@ -90,7 +99,7 @@ namespace Temporary.Editor
                 var text = "  " + skillTemplates[i].Item1.displayName;
                 text = text.Substring(0, Mathf.Min(text.Length, 13));
                 GUIContent content = new GUIContent(text, skillTemplates[i].Item2);
-                
+
                 if (GUILayout.Toggle(isSelected, content, skillCatalog))
                 {
                     selectedSkillIndex = i;
@@ -160,6 +169,108 @@ namespace Temporary.Editor
                 skillTemplates.Add(new Tuple<SkillTemplate, Texture2D>(skill, texture));
             }
         }
+        #endregion
+
+        #region 스킬트리
+        private void DrawSkillTreeTab()
+        {
+            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
+            GUILayout.BeginVertical(GUILayout.Width(200));
+            if (GUILayout.Button("스킬 트리 추가"))
+            {
+                AddSkillTreeTemplate();
+            }
+            if (GUILayout.Button("스킬 트리 삭제"))
+            {
+                DeleteSelectedSkillTreeTemplate();
+            }
+            if (GUILayout.Button("스킬 트리 탐색"))
+            {
+                LoadSkillTreeTemplates();
+            }
+
+            DrawLine();
+
+            skillTreeScrollPosition = GUILayout.BeginScrollView(skillTreeScrollPosition, false, true);
+
+            var skillCatalog = new GUIStyle(GUI.skin.button);
+            skillCatalog.alignment = TextAnchor.MiddleLeft;
+            skillCatalog.padding = new RectOffset(5, 5, 5, 5);
+            skillCatalog.margin = new RectOffset(5, 5, -2, -2);
+            skillCatalog.border = new RectOffset(0, 0, 0, 0);
+            skillCatalog.fixedWidth = GUI.skin.box.fixedWidth;
+            skillCatalog.fixedHeight = GUI.skin.box.fixedHeight;
+
+            for (int i = 0; i < skillTreeTemplates.Count; i++)
+            {
+                bool isSelected = (selectedSkillTreeIndex == i);
+
+                var text = "  " + skillTreeTemplates[i].displayName;
+                text = text.Substring(0, Mathf.Min(text.Length, 18));
+
+                if (GUILayout.Toggle(isSelected, text, skillCatalog))
+                {
+                    selectedSkillTreeIndex = i;   
+                }
+            }
+            GUILayout.EndScrollView();
+            GUILayout.EndVertical();
+            
+            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+
+            if (GUILayout.Button("에디터 열기"))
+            {
+                NodeEditorWindow.Open(skillTreeTemplates[selectedSkillTreeIndex]);
+            }
+            
+            GUILayout.EndVertical();
+
+            GUILayout.EndHorizontal();
+        }
+
+        private void AddSkillTreeTemplate()
+        {
+            // 스킬 템플릿 생성
+            SkillTreeGraph newSkill = CreateInstance<SkillTreeGraph>();
+
+            // 에셋 저장
+            string defaultPath = "Assets/FrameWork/Core/GameData/SkillTree";
+            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/SkillTree", "SkillTree_", "asset", "스킬 트리 템플릿을 저장합니다.", defaultPath);
+            if (!string.IsNullOrEmpty(path))
+            {
+                newSkill.displayName = Path.GetFileNameWithoutExtension(path);
+
+                AssetDatabase.CreateAsset(newSkill, path);
+                AssetDatabase.SaveAssets();
+                LoadSkillTemplates();
+            }
+        }
+
+        private void DeleteSelectedSkillTreeTemplate()
+        {
+            if (skillTreeTemplates.Count > 0)
+            {
+                SkillTreeGraph selectedSkill = skillTreeTemplates[selectedSkillTreeIndex];
+                string assetPath = AssetDatabase.GetAssetPath(selectedSkill);
+                skillTreeTemplates.RemoveAt(selectedSkillTreeIndex);
+                AssetDatabase.DeleteAsset(assetPath);
+                AssetDatabase.SaveAssets();
+            }
+        }
+
+        private void LoadSkillTreeTemplates()
+        {
+            skillTreeTemplates.Clear();
+            string[] guids = AssetDatabase.FindAssets("t:SkillTreeGraph");
+            foreach (var guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                SkillTreeGraph skillTree = AssetDatabase.LoadAssetAtPath<SkillTreeGraph>(path);
+
+                skillTreeTemplates.Add(skillTree);
+            }
+        }
+        #endregion
 
         #region 유틸리티
         private void DrawLine()

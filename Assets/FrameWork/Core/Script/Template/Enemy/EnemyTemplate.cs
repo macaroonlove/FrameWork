@@ -49,6 +49,9 @@ namespace Temporary.Core
         [SerializeField, Label("초당 체력 회복량")] private int _hpRecoveryPerSec;
         [SerializeField, Label("초당 마나 회복량")] private int _manaRecoveryPerSec;
 
+        [Space(10)]
+        [SerializeField, Label("스킬트리")] private SkillTreeGraph _skillTreeGraph;
+
         #region 프로퍼티
         public int id => _id;
         public string displayName => _displayName;
@@ -82,6 +85,8 @@ namespace Temporary.Core
 
         public int HPRecoveryPerSec => _hpRecoveryPerSec;
         public int ManaRecoveryPerSec => _manaRecoveryPerSec;
+
+        public SkillTreeGraph skillTreeGraph => _skillTreeGraph;
         #endregion
     }
 }
