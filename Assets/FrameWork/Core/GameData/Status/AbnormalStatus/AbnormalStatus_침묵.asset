@@ -24,7 +24,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2676ce51c0285f242bd88fb9ab686a0b, type: 3}
   m_Name: "AbnormalStatus_\uCE68\uBB35"
   m_EditorClassIdentifier: 
-  displayName: "\uCE68\uBB35"
-  description: "\uC2A4\uD0AC \uC0AC\uC6A9\uBD88\uAC00 \uC0C1\uD0DC\uAC00 \uB429\uB2C8\uB2E4."
+  _sprite: {fileID: 0}
+  _displayName: "\uCE68\uBB35"
+  _description: "\uC2A4\uD0AC \uC0AC\uC6A9 \uBD88\uAC00 \uC0C1\uD0DC\uAC00 \uB429\uB2C8\uB2E4."
+  _delay: 0
+  _useHitCountLimit: 0
+  _hitCount: 0
   effects:
   - {fileID: -1849496350536590772}

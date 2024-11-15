@@ -7,18 +7,13 @@ namespace Temporary.Core
     [CreateAssetMenu(menuName = "Templates/Buff", fileName = "Buff", order = 0)]
     public class BuffTemplate : ScriptableObject
     {
-        [Label("버프 이름")] public string displayName;
-        [Label("설명"), TextArea] public string description;
+        [HideInInspector, SerializeField] private string _displayName;
+        [HideInInspector, SerializeField] private string _description;
 
-        [Space(10)]
+        [HideInInspector, SerializeField] private float _delay;
 
-        [Label("지연 시간")] public float delay;
-
-        [Space(10)]
-
-        [Label("공격시 버프가 해제될지")] public bool useAttackCountLimit;
-        [Condition("useAttackCountLimit", true, false)]
-        [Label("공격 횟수")] public int attackCount;
+        [HideInInspector, SerializeField] private bool _useAttackCountLimit;
+        [HideInInspector, SerializeField] private int _attackCount;
 
         [HideInInspector]
         public List<Effect> effects;
@@ -30,6 +25,23 @@ namespace Temporary.Core
         //public List<FX> UpdateFX = new List<FX>();
         //[Tooltip("해제 시 적용되는 효과")]
         //public List<FX> DisableFX = new List<FX>();
+
+        #region 프로퍼티
+        public string displayName => _displayName;
+        public string description => _description;
+        
+        public float delay => _delay;
+
+        public bool useAttackCountLimit => _useAttackCountLimit;
+        public int attackCount => _attackCount;
+        #endregion
+
+        #region 값 변경 메서드
+        public void SetDisplayName(string name)
+        {
+            _displayName = name;
+        }
+        #endregion
     }
 }
 
@@ -46,6 +58,12 @@ namespace Temporary.Editor
     {
         private BuffTemplate _target;
 
+        private SerializedProperty _displayName;
+        private SerializedProperty _description;
+        private SerializedProperty _delay;
+        private SerializedProperty _useAttackCountLimit;
+        private SerializedProperty _attackCount;
+
         private ReorderableList _effectsList;
         private Effect _currentEffect;
 
@@ -53,16 +71,56 @@ namespace Temporary.Editor
         {
             _target = target as BuffTemplate;
 
+            _displayName = serializedObject.FindProperty("_displayName");
+            _description = serializedObject.FindProperty("_description");
+            _delay = serializedObject.FindProperty("_delay");
+            _useAttackCountLimit = serializedObject.FindProperty("_useAttackCountLimit");
+            _attackCount = serializedObject.FindProperty("_attackCount");
+
             CreateEffectList();
         }
 
         public override void OnInspectorGUI()
         {
-            base.OnInspectorGUI();
+            serializedObject.Update();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("버프 이름", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_displayName, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("버프 설명", GUILayout.Width(192));
+            _description.stringValue = EditorGUILayout.TextArea(_description.stringValue, GUILayout.Height(50));
+            GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("지연 시간", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_delay, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("공격 시, 버프가 해제될지", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_useAttackCountLimit, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            if (_useAttackCountLimit.boolValue == true)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("공격 횟수", GUILayout.Width(192));
+                EditorGUILayout.PropertyField(_attackCount, GUIContent.none);
+                GUILayout.EndHorizontal();
+            }
+
+            GUILayout.Space(20);
+
             _effectsList?.DoLayoutList();
+
+            serializedObject.ApplyModifiedProperties();
 
             if (GUI.changed)
             {
@@ -70,6 +128,7 @@ namespace Temporary.Editor
             }
         }
 
+        #region EffectList
         private void InitMenu_Effects()
         {
             var menu = new GenericMenu();
@@ -203,6 +262,7 @@ namespace Temporary.Editor
                 EditorUtility.SetDirty(template);
             }
         }
+        #endregion
     }
 }
 #endif

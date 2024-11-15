@@ -24,11 +24,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d5374d65afbf1140988092280a6fc8c, type: 3}
   m_Name: "Buff_\uC740\uC2E0"
   m_EditorClassIdentifier: 
-  displayName: "\uC740\uC2E0"
-  description: "\uACF5\uACA9 \uB300\uC0C1\uC774 \uB418\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.
-    \uACF5\uACA9\uC2DC \uC740\uC2E0 \uC0C1\uD0DC\uAC00 \uD480\uB9BD\uB2C8\uB2E4."
-  delay: 0
-  useAttackCountLimit: 1
-  attackCount: 1
+  _displayName: "\uC740\uC2E0"
+  _description: "\uACF5\uACA9 \uB300\uC0C1\uC774 \uB418\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.\n\uACF5\uACA9
+    \uC2DC, \uC740\uC2E0 \uC0C1\uD0DC\uAC00 \uD574\uC81C\uB429\uB2C8\uB2E4."
+  _delay: 0
+  _useAttackCountLimit: 1
+  _attackCount: 1
   effects:
   - {fileID: -3937186072873048280}

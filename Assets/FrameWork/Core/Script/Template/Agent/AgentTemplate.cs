@@ -6,54 +6,42 @@ namespace Temporary.Core
     [CreateAssetMenu(menuName = "Templates/Agent", fileName = "Agent", order = 0)]
     public class AgentTemplate : ScriptableObject
     {
-        [Header("기본 정보")]
-        [SerializeField, Label("식별번호")] private int _id;
-        [SerializeField, Label("유닛 이름")] private string _displayName;
-        [SerializeField, Label("유닛 설명"), Multiline(5)] private string _description;
+        [HideInInspector, SerializeField] private int _id;
+        [HideInInspector, SerializeField] private string _displayName;
+        [HideInInspector, SerializeField] private string _description;
 
-        [Header("리소스 정보")]
-        [SerializeField, Label("대표 이미지")] private Sprite _sprite;
-        [SerializeField, Label("프리팹")] private GameObject _prefab;
+        [HideInInspector, SerializeField] private Sprite _sprite;
+        [HideInInspector, SerializeField] private GameObject _prefab;
 
-        [Header("스탯 정보")]
-        [SerializeField, Label("이동 속도")] private float _moveSpeed;
-        [SerializeField, Label("이동 방식")] private EMoveType _moveType;
+        [HideInInspector, SerializeField] private float _moveSpeed;
+        [HideInInspector, SerializeField] private EMoveType _moveType;
 
-        [Space(10)]
-        [SerializeField, Label("공격력")] private int _atk;
-        [SerializeField, Label("공격 간격")] private float _attackTerm;
-        [SerializeField, Label("공격 사거리")] private float _attackRange;
+        [HideInInspector, SerializeField] private int _atk;
+        [HideInInspector, SerializeField] private float _attackTerm;
+        [HideInInspector, SerializeField] private float _attackRange;
 
-        [Space(10)]
-        [SerializeField, Label("공격 방식")] private EAttackType _attackType;
-        [SerializeField, Label("데미지 타입")] private EDamageType _damageType;
+        [HideInInspector, SerializeField] private EAttackType _attackType;
+        [HideInInspector, SerializeField] private EDamageType _damageType;
 
-        [Space(10)]
-        [SerializeField, Label("치명타 확률")] private float _criticalHitChance;
-        [SerializeField, Label("치명타 데미지")] private float _criticalHitDamage;
+        [HideInInspector, SerializeField] private float _criticalHitChance;
+        [HideInInspector, SerializeField] private float _criticalHitDamage;
 
-        [Space(10)]
-        [SerializeField, Label("물리 관통력")] private int _physicalPenetration;
-        [SerializeField, Label("마법 관통력")] private int _magicPenetration;
+        [HideInInspector, SerializeField] private int _physicalPenetration;
+        [HideInInspector, SerializeField] private int _magicPenetration;
 
-        [Space(10)]
-        [SerializeField, Label("최대 체력")] private int _maxHP;
-        [SerializeField, Label("방어력")] private int _physicalResistance;
-        [SerializeField, Label("마법저항력")] private int _magicResistance;
+        [HideInInspector, SerializeField] private int _maxHP;
+        [HideInInspector, SerializeField] private int _physicalResistance;
+        [HideInInspector, SerializeField] private int _magicResistance;
 
-        [Space(10)]
-        [SerializeField, Label("최대 마나")] private int _maxMana;
-        [SerializeField, Label("시작 마나")] private int _startMana;
+        [HideInInspector, SerializeField,] private int _maxMana;
+        [HideInInspector, SerializeField] private int _startMana;
 
-        [Space(10)]
-        [SerializeField, Label("초당 체력 회복량")] private int _hpRecoveryPerSec;
-        [SerializeField, Label("초당 마나 회복량")] private int _manaRecoveryPerSec;
+        [HideInInspector, SerializeField] private int _hpRecoveryPerSec;
+        [HideInInspector, SerializeField] private int _manaRecoveryPerSec;
 
-        [Space(10)]
-        [SerializeField, Label("스킬트리")] private SkillTreeGraph _skillTreeGraph;
+        [HideInInspector, SerializeField] private SkillTreeGraph _skillTreeGraph;
 
-        [Space(20)]
-        [ReadOnly, Label("소유 여부")] public bool isOwned;
+        [HideInInspector, ReadOnly] public bool isOwned;
 
         #region 프로퍼티
         public int id => _id;
@@ -91,5 +79,236 @@ namespace Temporary.Core
 
         public SkillTreeGraph skillTreeGraph => _skillTreeGraph;
         #endregion
+
+        #region 값 변경 메서드
+        public void SetDisplayName(string name)
+        {
+            _displayName = name;
+        }
+        #endregion
     }
 }
+
+#if UNITY_EDITOR
+namespace Temporary.Editor
+{
+    using Temporary.Core;
+    using UnityEditor;
+
+    [CustomEditor(typeof(AgentTemplate)), CanEditMultipleObjects]
+    public class AgentTemplateEditor : Editor
+    {
+        private SerializedProperty _id;
+        private SerializedProperty _displayName;
+        private SerializedProperty _description;
+        private SerializedProperty _sprite;
+        private SerializedProperty _prefab;
+        private SerializedProperty _moveSpeed;
+        private SerializedProperty _moveType;
+        private SerializedProperty _atk;
+        private SerializedProperty _attackTerm;
+        private SerializedProperty _attackRange;
+        private SerializedProperty _attackType;
+        private SerializedProperty _damageType;
+        private SerializedProperty _criticalHitChance;
+        private SerializedProperty _criticalHitDamage;
+        private SerializedProperty _physicalPenetration;
+        private SerializedProperty _magicPenetration;
+        private SerializedProperty _maxHP;
+        private SerializedProperty _physicalResistance;
+        private SerializedProperty _magicResistance;
+        private SerializedProperty _maxMana;
+        private SerializedProperty _startMana;
+        private SerializedProperty _hpRecoveryPerSec;
+        private SerializedProperty _manaRecoveryPerSec;
+        private SerializedProperty _skillTreeGraph;
+        private SerializedProperty _isOwned;
+
+        private void OnEnable()
+        {
+            _id = serializedObject.FindProperty("_id");
+            _displayName = serializedObject.FindProperty("_displayName");
+            _description = serializedObject.FindProperty("_description");
+            _sprite = serializedObject.FindProperty("_sprite");
+            _prefab = serializedObject.FindProperty("_prefab");
+            _moveSpeed = serializedObject.FindProperty("_moveSpeed");
+            _moveType = serializedObject.FindProperty("_moveType");
+            _atk = serializedObject.FindProperty("_atk");
+            _attackTerm = serializedObject.FindProperty("_attackTerm");
+            _attackRange = serializedObject.FindProperty("_attackRange");
+            _attackType = serializedObject.FindProperty("_attackType");
+            _damageType = serializedObject.FindProperty("_damageType");
+            _criticalHitChance = serializedObject.FindProperty("_criticalHitChance");
+            _criticalHitDamage = serializedObject.FindProperty("_criticalHitDamage");
+            _physicalPenetration = serializedObject.FindProperty("_physicalPenetration");
+            _magicPenetration = serializedObject.FindProperty("_magicPenetration");
+            _maxHP = serializedObject.FindProperty("_maxHP");
+            _physicalResistance = serializedObject.FindProperty("_physicalResistance");
+            _magicResistance = serializedObject.FindProperty("_magicResistance");
+            _maxMana = serializedObject.FindProperty("_maxMana");
+            _startMana = serializedObject.FindProperty("_startMana");
+            _hpRecoveryPerSec = serializedObject.FindProperty("_hpRecoveryPerSec");
+            _manaRecoveryPerSec = serializedObject.FindProperty("_manaRecoveryPerSec");
+            _skillTreeGraph = serializedObject.FindProperty("_skillTreeGraph");
+            _isOwned = serializedObject.FindProperty("isOwned");
+        }
+
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
+
+            GUILayout.BeginHorizontal();
+
+            _sprite.objectReferenceValue = EditorGUILayout.ObjectField(_sprite.objectReferenceValue, typeof(Sprite), false, GUILayout.Width(108), GUILayout.Height(108));
+
+            EditorGUILayout.BeginVertical();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("식별번호", GUILayout.Width(80));
+            EditorGUILayout.PropertyField(_id, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("유닛 이름", GUILayout.Width(80));
+            EditorGUILayout.PropertyField(_displayName, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("유닛 설명", GUILayout.Width(80));
+            _description.stringValue = EditorGUILayout.TextArea(_description.stringValue, GUILayout.Height(50));
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("프리팹", GUILayout.Width(80));
+            EditorGUILayout.PropertyField(_prefab, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndVertical();
+
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("이동 속도", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_moveSpeed, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("이동 방식", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_moveType, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("공격력", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_atk, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("공격 간격", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_attackTerm, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("공격 사거리", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_attackRange, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("공격 방식", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_attackType, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("데미지 타입", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_damageType, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("치명타 확률", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_criticalHitChance, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("치명타 데미지", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_criticalHitDamage, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("물리 관통력", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_physicalPenetration, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("마법 관통력", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_magicPenetration, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("최대 체력", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_maxHP, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("방어력", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_physicalResistance, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("마법저항력", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_magicResistance, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("최대 마나", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_maxMana, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("시작 마나", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_startMana, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("초당 체력 회복량", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_hpRecoveryPerSec, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("초당 마나 회복량", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_manaRecoveryPerSec, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("스킬 트리", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_skillTreeGraph, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(20);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("소유 여부", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_isOwned, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+}
+#endif

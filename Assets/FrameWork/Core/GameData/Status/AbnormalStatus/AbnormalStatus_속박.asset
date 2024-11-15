@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2676ce51c0285f242bd88fb9ab686a0b, type: 3}
   m_Name: "AbnormalStatus_\uC18D\uBC15"
   m_EditorClassIdentifier: 
-  displayName: "\uC18D\uBC15"
-  description: "\uC774\uB3D9\uBD88\uAC00 \uC0C1\uD0DC\uAC00 \uB429\uB2C8\uB2E4."
+  _sprite: {fileID: 0}
+  _displayName: "\uC18D\uBC15"
+  _description: "\uC774\uB3D9 \uBD88\uAC00 \uC0C1\uD0DC\uAC00 \uB429\uB2C8\uB2E4."
+  _delay: 0
+  _useHitCountLimit: 0
+  _hitCount: 0
   effects:
   - {fileID: 5883910846282625629}
 --- !u!114 &5883910846282625629

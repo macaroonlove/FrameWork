@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5093661109052b9438d278789d9e23d4, type: 3}
   m_Name: "Skill_\uB2E4\uD06C\uBCFC"
   m_EditorClassIdentifier: 
-  id: 0
-  sprite: {fileID: 21300000, guid: eed44235dcbd621438f7c0c4f05e2356, type: 3}
-  displayName: "Skill_\uB2E4\uD06C\uBCFC"
-  description: d
-  needMana: 0
-  cooldownTime: 0
-  skillRange: 0
-  parameterName: 
-  parameterHash: 0
+  _sprite: {fileID: 21300000, guid: eed44235dcbd621438f7c0c4f05e2356, type: 3}
+  _id: 0
+  _displayName: "\uB2E4\uD06C\uBCFC"
+  _description: 
+  _needMana: 0
+  _cooldownTime: 0
+  _skillRange: 0
+  _parameterName: 
+  _parameterHash: 0
   effects: []

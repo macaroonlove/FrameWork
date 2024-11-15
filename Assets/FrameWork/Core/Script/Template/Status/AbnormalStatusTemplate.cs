@@ -7,18 +7,15 @@ namespace Temporary.Core
     [CreateAssetMenu(menuName = "Templates/AbnormalStatus", fileName = "AbnormalStatus", order = 0)]
     public class AbnormalStatusTemplate : ScriptableObject
     {
-        [Label("상태이상 이름")] public string displayName;
-        [Label("설명"), TextArea] public string description;
+        [HideInInspector, SerializeField] private Sprite _sprite;
 
-        [Space(10)]
+        [HideInInspector, SerializeField] private string _displayName;
+        [HideInInspector, SerializeField] private string _description;
 
-        [Label("지연 시간")] public float delay;
+        [HideInInspector, SerializeField] private float _delay;
 
-        [Space(10)]
-
-        [Label("피격시 상태상이 해제될지")] public bool useHitCountLimit;
-        [Condition("useHitCountLimit", true, false)]
-        [Label("피격 횟수")] public int hitCount;
+        [HideInInspector, SerializeField] private bool _useHitCountLimit;
+        [HideInInspector, SerializeField] private int _hitCount;
 
         [HideInInspector]
         public List<Effect> effects;
@@ -30,6 +27,24 @@ namespace Temporary.Core
         //public List<FX> UpdateFX = new List<FX>();
         //[Tooltip("해제 시 적용되는 효과")]
         //public List<FX> DisableFX = new List<FX>();
+
+        #region 프로퍼티
+        public Sprite sprite => _sprite;
+        public string displayName => _displayName;
+        public string description => _description;
+
+        public float delay => _delay;
+
+        public bool useHitCountLimit => _useHitCountLimit;
+        public int hitCount => _hitCount;
+        #endregion
+
+        #region 값 변경 메서드
+        public void SetDisplayName(string name)
+        {
+            _displayName = name;
+        }
+        #endregion
     }
 }
 
@@ -46,6 +61,13 @@ namespace Temporary.Editor
     {
         private AbnormalStatusTemplate _target;
 
+        private SerializedProperty _sprite;
+        private SerializedProperty _displayName;
+        private SerializedProperty _description;
+        private SerializedProperty _delay;
+        private SerializedProperty _useHitCountLimit;
+        private SerializedProperty _hitCount;
+
         private ReorderableList _effectsList;
         private Effect _currentEffect;
 
@@ -53,16 +75,67 @@ namespace Temporary.Editor
         {
             _target = target as AbnormalStatusTemplate;
 
+            _sprite = serializedObject.FindProperty("_sprite");
+            _displayName = serializedObject.FindProperty("_displayName");
+            _description = serializedObject.FindProperty("_description");
+            _delay = serializedObject.FindProperty("_delay");
+            _useHitCountLimit = serializedObject.FindProperty("_useHitCountLimit");
+            _hitCount = serializedObject.FindProperty("_hitCount");
+
             CreateEffectList();
         }
 
         public override void OnInspectorGUI()
         {
-            base.OnInspectorGUI();
+            serializedObject.Update();
+
+            GUILayout.BeginHorizontal();
+
+            _sprite.objectReferenceValue = EditorGUILayout.ObjectField(_sprite.objectReferenceValue, typeof(Sprite), false, GUILayout.Width(96), GUILayout.Height(96));
+
+            EditorGUILayout.BeginVertical();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("상태이상 이름", GUILayout.Width(80));
+            EditorGUILayout.PropertyField(_displayName, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("상태이상 설명", GUILayout.Width(80));
+            _description.stringValue = EditorGUILayout.TextArea(_description.stringValue, GUILayout.Height(74));
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndVertical();
+
+            GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("지연 시간", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_delay, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("피격 시, 상태이상이 해제될지", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_useHitCountLimit, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            if (_useHitCountLimit.boolValue == true)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("피격 횟수", GUILayout.Width(192));
+                EditorGUILayout.PropertyField(_hitCount, GUIContent.none);
+                GUILayout.EndHorizontal();
+            }
+
+            GUILayout.Space(20);
+
             _effectsList?.DoLayoutList();
+
+            serializedObject.ApplyModifiedProperties();
 
             if (GUI.changed)
             {
@@ -70,6 +143,7 @@ namespace Temporary.Editor
             }
         }
 
+        #region EffectList
         private void InitMenu_Effects()
         {
             var menu = new GenericMenu();
@@ -154,6 +228,7 @@ namespace Temporary.Editor
                 EditorUtility.SetDirty(template);
             }
         }
+        #endregion
     }
 }
 #endif

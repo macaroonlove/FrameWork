@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 315827f885b2bdb4db10ec962e833c34, type: 3}
-  m_Name: "Agent_00_\uC774\uB984"
+  m_Script: {fileID: 11500000, guid: 210bcf92f4da822409ad4c85029e24cf, type: 3}
+  m_Name: "Enemy_00_\uC801\uC720\uB2DB"
   m_EditorClassIdentifier: 
   _id: 0
-  _displayName: "\uB2E4\uD06C"
+  _displayName: "\uC801\uC720\uB2DB"
   _description: 
   _sprite: {fileID: 0}
   _prefab: {fileID: 0}
@@ -36,4 +36,3 @@ MonoBehaviour:
   _hpRecoveryPerSec: 0
   _manaRecoveryPerSec: 0
   _skillTreeGraph: {fileID: 0}
-  isOwned: 0

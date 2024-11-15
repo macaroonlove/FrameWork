@@ -25,11 +25,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2676ce51c0285f242bd88fb9ab686a0b, type: 3}
   m_Name: "AbnormalStatus_\uCD9C\uD608_1"
   m_EditorClassIdentifier: 
-  displayName: "\uCD9C\uD608"
-  description: "\uC9C0\uC18D\uC801\uC73C\uB85C \uCD5C\uB300 \uCCB4\uB825\uC758 1%\uB97C
-    \uC783\uC2B5\uB2C8\uB2E4."
-  delay: 0
-  useHitCountLimit: 0
-  hitCount: 0
+  _sprite: {fileID: 0}
+  _displayName: "\uCD9C\uD608"
+  _description: "\uB9E4 \uCD08 \uCD5C\uB300 \uCCB4\uB825\uC758 1%\uC758 \uD53C\uD574\uB97C
+    \uC785\uC2B5\uB2C8\uB2E4."
+  _delay: 0
+  _useHitCountLimit: 0
+  _hitCount: 0
   effects:
   - {fileID: -3638213792774150541}
