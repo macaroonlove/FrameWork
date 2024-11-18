@@ -173,7 +173,16 @@ namespace Temporary.Editor
         {
             var menu = new GenericMenu();
 
-            //menu.AddItem(new GUIContent("이동 불가"), false, CreateEffectCallback, typeof(UnableToMoveEffect));
+            menu.AddItem(new GUIContent("즉시 데미지 스킬"), false, CreateEffectCallback, typeof(InstantDamageSkillEffect));
+            menu.AddItem(new GUIContent("투사체 데미지 스킬"), false, CreateEffectCallback, typeof(ProjectileDamageSkillEffect));
+            menu.AddItem(new GUIContent("즉시 회복 스킬"), false, CreateEffectCallback, typeof(InstantHealSkillEffect));
+            menu.AddItem(new GUIContent("투사체 회복 스킬"), false, CreateEffectCallback, typeof(ProjectileHealSkillEffect));
+            menu.AddItem(new GUIContent("즉시 보호막 스킬"), false, CreateEffectCallback, typeof(InstantShieldSkillEffect));
+            menu.AddItem(new GUIContent("투사체 보호막 스킬"), false, CreateEffectCallback, typeof(ProjectileShieldSkillEffect));
+            menu.AddItem(new GUIContent("즉시 버프 스킬"), false, CreateEffectCallback, typeof(InstantBuffSkillEffect));
+            menu.AddItem(new GUIContent("투사체 버프 스킬"), false, CreateEffectCallback, typeof(ProjectileBuffSkillEffect));
+            menu.AddItem(new GUIContent("즉시 상태이상 스킬"), false, CreateEffectCallback, typeof(InstantAbnormalStatusSkillEffect));
+            menu.AddItem(new GUIContent("투사체 상태이상 스킬"), false, CreateEffectCallback, typeof(ProjectileAbnormalStatusSkillEffect));
 
             menu.ShowAsContext();
         }
@@ -239,7 +248,7 @@ namespace Temporary.Editor
                 effect.hideFlags = HideFlags.HideInHierarchy;
                 _target.effects.Add(effect);
 
-                var template = target as AbnormalStatusTemplate;
+                var template = target as SkillTemplate;
                 var path = AssetDatabase.GetAssetPath(template);
                 AssetDatabase.AddObjectToAsset(effect, path);
                 EditorUtility.SetDirty(template);

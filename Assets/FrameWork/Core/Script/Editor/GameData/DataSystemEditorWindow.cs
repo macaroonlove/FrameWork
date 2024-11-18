@@ -5,7 +5,6 @@ using System.IO;
 using Temporary.Core;
 using UnityEditor;
 using UnityEngine;
-using XNode;
 using XNodeEditor;
 
 namespace Temporary.Editor
@@ -615,8 +614,10 @@ namespace Temporary.Editor
             {
                 SkillTemplate selectedSkill = skillTemplates[selectedSkillIndex].Item1;
 
+                contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
                 var editor = UnityEditor.Editor.CreateEditor(selectedSkill);
                 editor.OnInspectorGUI();
+                GUILayout.EndScrollView();
             }
 
             GUILayout.EndVertical();
@@ -635,11 +636,9 @@ namespace Temporary.Editor
             {
                 newSkill.SetDisplayName(Path.GetFileNameWithoutExtension(path));
 
-                contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
                 AssetDatabase.CreateAsset(newSkill, path);
                 AssetDatabase.SaveAssets();
                 LoadSkillTemplates();
-                GUILayout.EndScrollView();
             }
         }
 
@@ -713,19 +712,19 @@ namespace Temporary.Editor
 
                 if (GUILayout.Toggle(isSelected, text, skillCatalog))
                 {
-                    selectedSkillTreeIndex = i;   
+                    selectedSkillTreeIndex = i;
                 }
             }
             GUILayout.EndScrollView();
             GUILayout.EndVertical();
-            
+
             GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
 
             if (GUILayout.Button("에디터 열기"))
             {
                 NodeEditorWindow.Open(skillTreeTemplates[selectedSkillTreeIndex]);
             }
-            
+
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();

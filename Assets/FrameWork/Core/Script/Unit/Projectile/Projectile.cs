@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Temporary.Core
 {
@@ -11,25 +10,18 @@ namespace Temporary.Core
 
         private Unit _caster;
         private Unit _target;
-        private AttackAbility _attackAbility;
-        private HealthAbility _healthAbility;
-
-        //private ProjectileDamageSkillEffect _damageSkillEffect;
-
-        // 스킬로 생성된 투사체일 경우
-        private bool _isSkillProjectile;
+        private UnityAction<Unit, Unit> _action;
 
         // 초기화 여부
         private bool isInit;
 
-        internal void Initialize(AttackAbility attackAbility, Unit target)
+        internal void Initialize(Unit caster, Unit target, UnityAction<Unit, Unit> action)
         {
-            _caster = attackAbility.unit;
+            _caster = caster;
             _target = target;
-            _attackAbility = attackAbility;
-            _healthAbility = target.GetAbility<HealthAbility>();
+            _action = action;
 
-            if (target == null || !_healthAbility.isAlive)
+            if (target == null || target.isDie)
             {
                 DeSpawn();
                 return;
@@ -48,7 +40,7 @@ namespace Temporary.Core
             if (isInit == false) return;
 
             //날라가는 도중 타겟이 죽었다면
-            if (!_healthAbility.isAlive)
+            if (_target.isDie)
             {
                 DeSpawn();
                 return;
@@ -80,7 +72,7 @@ namespace Temporary.Core
 
         private void OnCollision()
         {
-            _attackAbility.ApplyAction(_target);
+            _action?.Invoke(_caster, _target);
 
             DeSpawn();
         }

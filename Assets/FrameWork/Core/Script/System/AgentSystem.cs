@@ -83,7 +83,7 @@ namespace Temporary.Core
         }
 
         /// <summary>
-        /// 공격 가능한 아군 유닛을 반환
+        /// 범위 내, 공격 가능한 아군 유닛을 반환
         /// </summary>
         internal List<AgentUnit> GetAttackableAgentsInRadius(Vector3 unitPos, float radius, EAttackType attackType, int maxCount = int.MaxValue)
         {
@@ -125,7 +125,30 @@ namespace Temporary.Core
         }
 
         /// <summary>
-        /// 회복 가능한 아군 유닛을 반환
+        /// 공격 가능한 모든 아군 유닛을 반환
+        /// </summary>
+        internal List<AgentUnit> GetAllAttackableAgents(EAttackType attackType)
+        {
+            List<AgentUnit> agents = new List<AgentUnit>();
+
+            foreach (AgentUnit agent in _agents)
+            {
+                if (agent != null && agent.isActiveAndEnabled)
+                {
+                    // 적이 공중 유닛일 떄, 원거리가 아니라면 공격 불가 (타워 디펜스라면 언덕 유닛일 때, 로 변경)
+                    if (agent.template.MoveType == EMoveType.Sky && attackType != EAttackType.Far) continue;
+                    // 공격 대상이 아니라면 타겟에 추가하지 않음
+                    if (agent.GetAbility<HitAbility>().finalTargetOfAttack == false) continue;
+
+                    agents.Add(agent);
+                }
+            }
+
+            return agents;
+        }
+
+        /// <summary>
+        /// 범위 내, 회복 가능한 아군 유닛을 반환
         /// </summary>
         internal List<AgentUnit> GetHealableAgentsInRadius(Vector3 unitPos, float radius, int maxCount = int.MaxValue)
         {
@@ -159,6 +182,27 @@ namespace Temporary.Core
             {
                 if (agents.Count >= maxCount) break;
                 agents.Add(agent);
+            }
+
+            return agents;
+        }
+
+        /// <summary>
+        /// 회복 가능한 모든 아군 유닛을 반환
+        /// </summary>
+        internal List<AgentUnit> GetAllHealableAgents()
+        {
+            List<AgentUnit> agents = new List<AgentUnit>();
+
+            foreach (AgentUnit agent in _agents)
+            {
+                if (agent != null && agent.isActiveAndEnabled)
+                {
+                    // 회복 가능 유닛이 아니라면 타겟에 추가하지 않음
+                    if (agent.GetAbility<HealthAbility>().finalIsHealAble == false) continue;
+
+                    agents.Add(agent);
+                }
             }
 
             return agents;

@@ -1,11 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Temporary.Core
 {
     public abstract class SkillEffect : Effect
     {
-        public abstract bool Execute(Unit casterUnit);
+        public abstract List<Unit> GetTarget(Unit casterUnit);
+
+        public abstract void Execute(Unit casterUnit, Unit targetUnit);
     }
 }

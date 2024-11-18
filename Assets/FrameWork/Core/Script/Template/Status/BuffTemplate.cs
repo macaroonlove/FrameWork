@@ -1,4 +1,3 @@
-using FrameWork.Editor;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -29,7 +28,7 @@ namespace Temporary.Core
         #region 프로퍼티
         public string displayName => _displayName;
         public string description => _description;
-        
+
         public float delay => _delay;
 
         public bool useAttackCountLimit => _useAttackCountLimit;
@@ -179,7 +178,7 @@ namespace Temporary.Editor
             menu.AddItem(new GUIContent("최대 체력 추가"), false, CreateEffectCallback, typeof(MaxHPAdditionalDataEffect));
             menu.AddItem(new GUIContent("최대 체력 증감"), false, CreateEffectCallback, typeof(MaxHPIncreaseDataEffect));
             menu.AddItem(new GUIContent("최대 체력 상승·하락"), false, CreateEffectCallback, typeof(MaxHPMultiplierDataEffect));
-            
+
             menu.AddItem(new GUIContent("회복량 추가"), false, CreateEffectCallback, typeof(HealingAdditionalDataEffect));
             menu.AddItem(new GUIContent("회복량 증감"), false, CreateEffectCallback, typeof(HealingIncreaseDataEffect));
             menu.AddItem(new GUIContent("회복량 상승·하락"), false, CreateEffectCallback, typeof(HealingMultiplierDataEffect));

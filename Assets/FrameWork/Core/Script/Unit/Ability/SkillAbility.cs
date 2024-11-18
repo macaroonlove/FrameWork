@@ -80,23 +80,33 @@ namespace Temporary.Core
             // 마나가 부족하다면
             if (_manaAbility.TryExecuteSkill(template.needMana) == false) return false;
 
-            _template = template;
+            // 스킬의 목표 타겟이 존재한다면
+            foreach (var effect in _template.effects)
+            {
+                var targets = effect.GetTarget(unit);
 
-            SkillAnimation();            
+                if (targets.Count > 0 && targets[0] != null)
+                {
+                    return SkillAnimation(template);
+                }
+            }
 
-            return true;
+            return false;
         }
 
-        private void SkillAnimation()
+        private bool SkillAnimation(SkillTemplate template)
         {
-            if (_unitAnimationAbility.TrySetTrigger(_template.parameterHash) == false) return;
-            
+            if (_unitAnimationAbility.TrySetTrigger(_template.parameterHash) == false) return false;
+
+            _template = template;
             _isSkillActive = true;
 
             if (!_isEventSkill)
             {
                 ExecuteSkill();
             }
+
+            return true;
         }
 
         private void OnSkillEvent()
@@ -108,7 +118,12 @@ namespace Temporary.Core
         {
             foreach (var effect in _template.effects)
             {
-                effect.Execute(unit);
+                var targets = effect.GetTarget(unit);
+
+                foreach (var target in targets)
+                {
+                    effect.Execute(unit, target);
+                }
             }
 
             if (!_isEventSkill)

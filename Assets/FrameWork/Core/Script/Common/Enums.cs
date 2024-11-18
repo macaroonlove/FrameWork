@@ -44,4 +44,44 @@ namespace Temporary.Core
         Hit,
     }
 
+    /// <summary>
+    /// 타겟 선정 방식
+    /// </summary>
+    public enum ETarget
+    {
+        /// <summary>
+        /// 자기 자신
+        /// </summary>
+        Myself,
+        /// <summary>
+        /// 범위 내 타겟 하나
+        /// </summary>
+        OneTargetInRange,
+        /// <summary>
+        /// 범위 내 타겟 (수)만큼
+        /// </summary>
+        NumTargetInRange,
+        /// <summary>
+        /// 범위 내 타겟 모두
+        /// </summary>
+        AllTargetInRange,
+        /// <summary>
+        /// 모든 타겟
+        /// </summary>
+        AllTarget,
+    }
+
+    /// <summary>
+    /// 적용 방식
+    /// </summary>
+    public enum EApplyType
+    {
+        None,
+        ATK,
+        FinalATK,
+        CurrentHP,
+        MAXHP,
+        Enemy_CurrentHP,
+        Enemy_MAXHP,
+    }
 }

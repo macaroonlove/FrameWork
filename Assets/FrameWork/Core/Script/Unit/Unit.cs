@@ -10,9 +10,14 @@ namespace Temporary.Core
     {
         [SerializeField] private Transform _projectileHitPoint;
         protected int _id;
+        private HealthAbility _healthAbility;
 
+        #region 프로퍼티
         internal Transform projectileHitPoint => _projectileHitPoint;
         internal int id => _id;
+        internal HealthAbility healthAbility => _healthAbility;
+        internal bool isDie => !_healthAbility.isAlive;
+        #endregion
 
         private Dictionary<Type, AlwaysAbility> _alwaysAbilities = new Dictionary<Type, AlwaysAbility>();
         private Dictionary<Type, ConditionAbility> _conditionAbilities = new Dictionary<Type, ConditionAbility>();
@@ -21,6 +26,8 @@ namespace Temporary.Core
 
         internal void Initialize(Unit unit)
         {
+            _healthAbility = GetComponent<HealthAbility>();
+
             var alwaysAbilities = GetComponents<AlwaysAbility>();
             var conditionAbilities = GetComponents<ConditionAbility>();
 

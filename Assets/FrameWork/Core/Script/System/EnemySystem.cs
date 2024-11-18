@@ -125,6 +125,29 @@ namespace Temporary.Core
         }
 
         /// <summary>
+        /// 공격 가능한 모든 적 유닛을 반환
+        /// </summary>
+        internal List<EnemyUnit> GetAttackableAllEnemies(EAttackType attackType)
+        {
+            List<EnemyUnit> enemies = new List<EnemyUnit>();
+
+            foreach (EnemyUnit enemy in _enemies)
+            {
+                if (enemy != null && enemy.isActiveAndEnabled)
+                {
+                    // 적이 공중 유닛일 떄, 원거리가 아니라면 공격 불가
+                    if (enemy.template.MoveType == EMoveType.Sky && attackType != EAttackType.Far) continue;
+                    // 공격 대상이 아니라면 타겟에 추가하지 않음
+                    if (enemy.GetAbility<HitAbility>().finalTargetOfAttack == false) continue;
+
+                    enemies.Add(enemy);
+                }
+            }
+
+            return enemies;
+        }
+
+        /// <summary>
         /// 회복 가능한 적 유닛을 반환
         /// </summary>
         internal List<EnemyUnit> GetHealableEnemiesInRadius(Vector3 unitPos, float radius, int maxCount = int.MaxValue)
@@ -159,6 +182,27 @@ namespace Temporary.Core
             {
                 if (enemies.Count >= maxCount) break;
                 enemies.Add(enemy);
+            }
+
+            return enemies;
+        }
+
+        /// <summary>
+        /// 회복 가능한 모든 적 유닛을 반환
+        /// </summary>
+        internal List<EnemyUnit> GetHealableAllEnemies()
+        {
+            List<EnemyUnit> enemies = new List<EnemyUnit>();
+
+            foreach (EnemyUnit enemy in _enemies)
+            {
+                if (enemy != null && enemy.isActiveAndEnabled)
+                {
+                    // 회복 가능 유닛이 아니라면 타겟에 추가하지 않음
+                    if (enemy.GetAbility<HealthAbility>().finalIsHealAble == false) continue;
+
+                    enemies.Add(enemy);
+                }
             }
 
             return enemies;

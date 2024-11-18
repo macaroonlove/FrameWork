@@ -14,11 +14,16 @@ namespace Temporary.Core
         private AbnormalStatusAbility _abnormalStatusAbility;
 
         private int _baseMaxHP;
-        private int _currentHp;
+        private int _currentHP;
         private int _baseHPRecoveryPerSec;
         private float _hpRecoveryCooldown = 1;
 
-        internal bool isAlive => _currentHp > 0;
+        #region
+        internal int currentHP => _currentHP;
+
+        internal bool isAlive => _currentHP > 0;
+        #endregion
+
 
         #region 보호막 필드
         private class ShieldInstance
@@ -62,7 +67,7 @@ namespace Temporary.Core
 
         #region 계산 스탯
         // 최대 HP
-        private int finalMaxHP
+        internal int finalMaxHP
         {
             get
             {
@@ -186,7 +191,7 @@ namespace Temporary.Core
                 if (isAlive == false) return false;
 
                 // 풀피라면
-                if (_currentHp == finalMaxHP) return false;
+                if (_currentHP == finalMaxHP) return false;
 
                 // 회복 불가 상태이상에 걸렸다면
                 if (_abnormalStatusAbility.UnableToHealEffects.Count > 0) return false;
@@ -231,7 +236,7 @@ namespace Temporary.Core
                 return;
             }
 
-            SetHP(_currentHp + finalHPRecoveryPerSec);
+            SetHP(_currentHP + finalHPRecoveryPerSec);
             _hpRecoveryCooldown = 1;
         }
 
@@ -248,7 +253,7 @@ namespace Temporary.Core
             //잃을 HP 가 있을 때
             if (lostHealth > 0)
             {
-                SetHP(_currentHp - lostHealth);
+                SetHP(_currentHP - lostHealth);
                 onDamage?.Invoke(id, lostHealth);
 
                 return true;
@@ -269,20 +274,20 @@ namespace Temporary.Core
             healingAmount *= healingIncrease;
             healingAmount *= healingMultiplier;
 
-            var lastHp = Mathf.RoundToInt(_currentHp + healingAmount);
+            var lastHp = Mathf.RoundToInt(_currentHP + healingAmount);
 
             SetHP(lastHp);
         }
 
         private void SetHP(int hp)
         {
-            _currentHp = Mathf.Clamp(hp, finalMinHP, finalMaxHP);
-            if (_currentHp == 0)
+            _currentHP = Mathf.Clamp(hp, finalMinHP, finalMaxHP);
+            if (_currentHP == 0)
             {
                 onDeath?.Invoke();
                 return;
             }
-            onChangedHealth?.Invoke(_currentHp);
+            onChangedHealth?.Invoke(_currentHP);
         }
         #endregion
 

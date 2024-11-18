@@ -14,15 +14,13 @@ namespace Temporary.Core
     {
         [SerializeField] private bool isProjectileAttack;
         [SerializeField, Condition("isProjectileAttack", true, true)] private GameObject projectilePrefab;
-        [SerializeField, Condition("isProjectileAttack", true, true)] private Transform projectileSpawnPoint;
-
-        private AgentSystem _agentSystem;
-        private EnemySystem _enemySystem;
-        private PoolSystem _poolSystem;
+        
 
         private UnitAnimationAbility _unitAnimationAbility;
         private BuffAbility _buffAbility;
         private AbnormalStatusAbility _abnormalStatusAbility;
+        private FindTargetAbility _findTargetAbility;
+        private ProjectileAbility _projectileAbility;
 
         private int _baseATK;
         private float _baseAttackTerm;
@@ -35,6 +33,10 @@ namespace Temporary.Core
 
         private EAttackType _currentAttackType;
         private List<Unit> _currentTarget = new List<Unit>();
+
+        #region 프로퍼티
+        internal int baseATK => _baseATK;
+        #endregion
 
         #region 스탯 계산
         internal int finalATK
@@ -159,12 +161,11 @@ namespace Temporary.Core
         {
             base.Initialize(unit);
 
-            _agentSystem = BattleManager.Instance.GetSubSystem<AgentSystem>();
-            _enemySystem = BattleManager.Instance.GetSubSystem<EnemySystem>();
-
             _unitAnimationAbility = unit.GetAbility<UnitAnimationAbility>();
             _buffAbility = unit.GetAbility<BuffAbility>();
             _abnormalStatusAbility = unit.GetAbility<AbnormalStatusAbility>();
+            _findTargetAbility = unit.GetAbility<FindTargetAbility>();
+            _projectileAbility = unit.GetAbility<ProjectileAbility>();
 
             if (unit is AgentUnit agentUnit)
             {
@@ -291,24 +292,11 @@ namespace Temporary.Core
         {
             _currentTarget.Clear();
 
-            // 공격 가능한 적 찾기
-            if (unit is AgentUnit)
-            {
-                var attackTargets = _enemySystem.GetAttackableEnemiesInRadius(transform.position, finalAttackRange, _currentAttackType, finalAttackCount);
+            var attackTargets = _findTargetAbility.FindAttackableTarget(ETarget.NumTargetInRange, finalAttackRange, _currentAttackType, finalAttackCount);
 
-                if (attackTargets.Count > 0)
-                {
-                    _currentTarget.AddRange(attackTargets);
-                }
-            }
-            else if (unit is EnemyUnit)
+            if (attackTargets.Count > 0)
             {
-                var attackTargets = _agentSystem.GetAttackableAgentsInRadius(transform.position, finalAttackRange, _currentAttackType, finalAttackCount);
-
-                if (attackTargets.Count > 0)
-                {
-                    _currentTarget.AddRange(attackTargets);
-                }
+                _currentTarget.AddRange(attackTargets);
             }
 
             // 공격 모션 실행
@@ -331,9 +319,7 @@ namespace Temporary.Core
                 // 투사체 생성
                 foreach (var attackTarget in _currentTarget)
                 {
-                    var projectile = _poolSystem.Spawn(projectilePrefab).GetComponent<Projectile>();
-                    projectile.transform.SetPositionAndRotation(projectileSpawnPoint.position, Quaternion.identity);
-                    projectile.Initialize(this, attackTarget);
+                    _projectileAbility.SpawnProjectile(projectilePrefab, attackTarget, (caster, target) => { ApplyAction(target); });
                 }
             }
             // 즉시 공격일 경우
@@ -358,23 +344,11 @@ namespace Temporary.Core
         {
             _currentTarget.Clear();
 
-            if (unit is AgentUnit)
-            {
-                var attackTargets = _agentSystem.GetHealableAgentsInRadius(transform.position, finalAttackRange, finalAttackCount); 
+            var attackTargets = _findTargetAbility.FindHealableTarget(ETarget.NumTargetInRange, finalAttackRange, finalAttackCount);
 
-                if (attackTargets.Count > 0)
-                {
-                    _currentTarget.AddRange(attackTargets);
-                }
-            }
-            else if (unit is EnemyUnit)
+            if (attackTargets.Count > 0)
             {
-                var attackTargets = _enemySystem.GetHealableEnemiesInRadius(transform.position, finalAttackRange, finalAttackCount);
-
-                if (attackTargets.Count > 0)
-                {
-                    _currentTarget.AddRange(attackTargets);
-                }
+                _currentTarget.AddRange(attackTargets);
             }
 
             // 회복 모션 실행
@@ -397,9 +371,7 @@ namespace Temporary.Core
                 // 투사체 생성
                 foreach (var healTarget in _currentTarget)
                 {
-                    var projectile = _poolSystem.Spawn(projectilePrefab).GetComponent<Projectile>();
-                    projectile.transform.SetPositionAndRotation(projectileSpawnPoint.position, Quaternion.identity);
-                    projectile.Initialize(this, healTarget);
+                    _projectileAbility.SpawnProjectile(projectilePrefab, healTarget, (caster, target) => { ApplyAction(target); });
                 }
             }
             // 즉시 회복일 경우
