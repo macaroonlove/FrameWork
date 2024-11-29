@@ -14,8 +14,8 @@ namespace Temporary.Core
         [SerializeField] private bool _isTick;
         [SerializeField] private int _tickCycle;
         [SerializeField] private int _tickCount;
-        [SerializeField] private EApplyType _applyType;
-        [SerializeField] private float _amount;
+
+        [SerializeField] private List<ApplyTypeByAmountData> _applyTypeByAmountDatas = new List<ApplyTypeByAmountData>();
 
         public override string GetDescription()
         {
@@ -29,35 +29,40 @@ namespace Temporary.Core
 
         public int GetAmount(Unit casterUnit, Unit targetUnit)
         {
-            int amount;
-            float typeValue = 0f;
-            switch (_applyType)
+            float totalAmount = 0;
+
+            foreach (var applyTypeByAmountData in _applyTypeByAmountDatas)
             {
-                case EApplyType.None:
-                    return (int)_amount;
-                case EApplyType.ATK:
-                    typeValue = casterUnit.GetAbility<AttackAbility>().baseATK;
-                    break;
-                case EApplyType.FinalATK:
-                    typeValue = casterUnit.GetAbility<AttackAbility>().finalATK;
-                    break;
-                case EApplyType.CurrentHP:
-                    typeValue = casterUnit.healthAbility.currentHP;
-                    break;
-                case EApplyType.MAXHP:
-                    typeValue = casterUnit.healthAbility.finalMaxHP;
-                    break;
-                case EApplyType.Enemy_CurrentHP:
-                    typeValue = targetUnit.healthAbility.currentHP;
-                    break;
-                case EApplyType.Enemy_MAXHP:
-                    typeValue = targetUnit.healthAbility.finalMaxHP;
-                    break;
+                float typeValue = 0f;
+                switch (applyTypeByAmountData.applyType)
+                {
+                    case EApplyType.Basic:
+                        typeValue = 1;
+                        break;
+                    case EApplyType.ATK:
+                        typeValue = casterUnit.GetAbility<AttackAbility>().baseATK;
+                        break;
+                    case EApplyType.FinalATK:
+                        typeValue = casterUnit.GetAbility<AttackAbility>().finalATK;
+                        break;
+                    case EApplyType.CurrentHP:
+                        typeValue = casterUnit.GetAbility<HealthAbility>().currentHP;
+                        break;
+                    case EApplyType.MAXHP:
+                        typeValue = casterUnit.GetAbility<HealthAbility>().finalMaxHP;
+                        break;
+                    case EApplyType.Enemy_CurrentHP:
+                        typeValue = targetUnit.GetAbility<HealthAbility>().currentHP;
+                        break;
+                    case EApplyType.Enemy_MAXHP:
+                        typeValue = targetUnit.GetAbility<HealthAbility>().finalMaxHP;
+                        break;
+                }
+
+                totalAmount += typeValue * applyTypeByAmountData.amount;
             }
 
-            amount = (int)(typeValue * _amount);
-
-            return amount;
+            return (int)totalAmount;
         }
 
         public override void Execute(Unit casterUnit, Unit targetUnit)
@@ -160,21 +165,41 @@ namespace Temporary.Core
                 _tickCount = EditorGUI.IntField(valueRect, _tickCount);
             }
 
-            labelRect.y += 40;
-            valueRect.y += 40;
-            GUI.Label(labelRect, "적용 방식");
-            _applyType = (EApplyType)EditorGUI.EnumPopup(valueRect, _applyType);
-
             labelRect.y += 20;
             valueRect.y += 20;
-            if (_applyType == EApplyType.None) GUI.Label(labelRect, "회복량");
-            else GUI.Label(labelRect, "회복량(비례)");
-            _amount = EditorGUI.FloatField(valueRect, _amount);
+            GUI.Label(labelRect, "적용 방식");
+            if (GUI.Button(valueRect, "추가"))
+            {
+                _applyTypeByAmountDatas.Add(new ApplyTypeByAmountData());
+            }
+
+            var half = (rect.width - 24) * 0.5f;
+            var applyTypeRect = new Rect(labelRect.x, labelRect.y, half, 20);
+            var amountRect = new Rect(half + 24, labelRect.y, half, 20);
+            var deleteRect = new Rect(rect.width, valueRect.y, 20, 20);
+
+            for (int i = 0; i < _applyTypeByAmountDatas.Count; i++)
+            {
+                var data = _applyTypeByAmountDatas[i];
+
+                applyTypeRect.y += 20;
+                amountRect.y += 20;
+                deleteRect.y += 20;
+
+                data.applyType = (EApplyType)EditorGUI.EnumPopup(applyTypeRect, data.applyType);
+                data.amount = EditorGUI.FloatField(amountRect, data.amount);
+
+                if (GUI.Button(deleteRect, "X"))
+                {
+                    _applyTypeByAmountDatas.RemoveAt(i);
+                    break;
+                }
+            }
         }
 
         public override int GetNumRows()
         {
-            int rowNum = 8;
+            int rowNum = 7;
 
             if (_target != ETarget.Myself && _target != ETarget.AllTarget)
             {
@@ -190,6 +215,8 @@ namespace Temporary.Core
             {
                 rowNum += 2;
             }
+
+            rowNum += (int)(_applyTypeByAmountDatas.Count * 1.2f);
 
             return rowNum;
         }

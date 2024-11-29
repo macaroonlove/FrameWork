@@ -76,7 +76,7 @@ namespace Temporary.Core
     /// </summary>
     public enum EApplyType
     {
-        None,
+        Basic,
         ATK,
         FinalATK,
         CurrentHP,
