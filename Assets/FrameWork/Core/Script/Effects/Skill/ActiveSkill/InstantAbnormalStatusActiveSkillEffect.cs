@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class InstantAbnormalStatusSkillEffect : SkillEffect
+    public class InstantAbnormalStatusActiveSkillEffect : ActiveSkillEffect
     {
         [SerializeField] private ETarget _target;
         [SerializeField] private EAttackType _attackType;

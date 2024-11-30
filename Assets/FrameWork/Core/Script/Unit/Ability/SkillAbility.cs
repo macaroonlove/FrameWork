@@ -6,16 +6,16 @@ using UnityEngine.Events;
 namespace Temporary.Core
 {
     /// <summary>
-    /// 유닛의 스킬 사용을 제어합니다.
+    /// 유닛의 액티브 스킬 사용을 제어합니다.
     /// </summary>
-    public class SkillAbility : ConditionAbility
+    public class ActiveSkillAbility : ConditionAbility
     {
         private UnitAnimationAbility _unitAnimationAbility;
         private ManaAbility _manaAbility;
         private BuffAbility _buffAbility;
         private AbnormalStatusAbility _abnormalStatusAbility;
 
-        private SkillTemplate _template;
+        private ActiveSkillTemplate _template;
         private bool _isSkillActive;
 
         private SkillEventHandler _skillEventHandler;
@@ -72,7 +72,7 @@ namespace Temporary.Core
         }
 
         #region 스킬 발동
-        internal bool TryExecuteSkill(SkillTemplate template)
+        internal bool TryExecuteSkill(ActiveSkillTemplate template)
         {
             // 스킬 사용이 불가능하다면
             if (finalIsSkillAble == false) return false;
@@ -94,7 +94,7 @@ namespace Temporary.Core
             return false;
         }
 
-        private bool SkillAnimation(SkillTemplate template)
+        private bool SkillAnimation(ActiveSkillTemplate template)
         {
             if (_unitAnimationAbility.TrySetTrigger(_template.parameterHash) == false) return false;
 

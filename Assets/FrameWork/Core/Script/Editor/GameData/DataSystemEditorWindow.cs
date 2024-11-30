@@ -16,6 +16,9 @@ namespace Temporary.Editor
 
         private Vector2 contentScrollPosition;
 
+        #region 유닛
+        private int selectedUnitTitle = 0;
+
         #region 아군 유닛
         private int selectedAgentIndex = 0;
         private Vector2 agentScrollPosition;
@@ -26,6 +29,10 @@ namespace Temporary.Editor
         private Vector2 enemyScrollPosition;
         private List<Tuple<EnemyTemplate, Texture2D>> enemyTemplates = new List<Tuple<EnemyTemplate, Texture2D>>();
         #endregion
+        #endregion
+
+        #region 상태
+        private int selectedStatusTitle = 0;
         #region 버프
         private int selectedBuffIndex = 0;
         private Vector2 buffScrollPosition;
@@ -36,16 +43,35 @@ namespace Temporary.Editor
         private Vector2 abnormalStatusScrollPosition;
         private List<Tuple<AbnormalStatusTemplate, Texture2D>> abnormalStatusTemplates = new List<Tuple<AbnormalStatusTemplate, Texture2D>>();
         #endregion
+        #endregion
+
         #region 스킬
-        private int selectedSkillIndex = 0;
-        private Vector2 skillScrollPosition;
-        private List<Tuple<SkillTemplate, Texture2D>> skillTemplates = new List<Tuple<SkillTemplate, Texture2D>>();
+        private int selectedSkillTitle = 0;
+        #region 액티브 스킬
+        private int selectedActiveSkillIndex = 0;
+        private Vector2 activeSkillScrollPosition;
+        private List<Tuple<ActiveSkillTemplate, Texture2D>> activeSkillTemplates = new List<Tuple<ActiveSkillTemplate, Texture2D>>();
         #endregion
         #region 스킬 트리
         private int selectedSkillTreeIndex = 0;
         private Vector2 skillTreeScrollPosition;
         private List<SkillTreeGraph> skillTreeTemplates = new List<SkillTreeGraph>();
         #endregion
+        #endregion
+
+        //#region 아이템
+        //private int selectedSkillTitle = 0;
+        //#region 스킬
+        //private int selectedSkillIndex = 0;
+        //private Vector2 skillScrollPosition;
+        //private List<Tuple<SkillTemplate, Texture2D>> skillTemplates = new List<Tuple<SkillTemplate, Texture2D>>();
+        //#endregion
+        //#region 스킬 트리
+        //private int selectedSkillTreeIndex = 0;
+        //private Vector2 skillTreeScrollPosition;
+        //private List<SkillTreeGraph> skillTreeTemplates = new List<SkillTreeGraph>();
+        //#endregion
+        //#endregion
 
         [MenuItem("Window/게임 데이터 관리 시스템")]
         public static void Open()
@@ -66,37 +92,70 @@ namespace Temporary.Editor
         private void DrawTab()
         {
             GUILayout.BeginHorizontal();
-            if (GUILayout.Toggle(selectedTab == 0, "아군 유닛", "Button")) selectedTab = 0;
-            if (GUILayout.Toggle(selectedTab == 1, "적 유닛", "Button")) selectedTab = 1;
-            if (GUILayout.Toggle(selectedTab == 2, "버프", "Button")) selectedTab = 2;
-            if (GUILayout.Toggle(selectedTab == 3, "상태이상", "Button")) selectedTab = 3;
-            if (GUILayout.Toggle(selectedTab == 4, "엑티브 스킬", "Button")) selectedTab = 4;
-            if (GUILayout.Toggle(selectedTab == 5, "스킬트리", "Button")) selectedTab = 5;
+            if (GUILayout.Toggle(selectedTab == 0, "유닛", "Button")) selectedTab = 0;
+            if (GUILayout.Toggle(selectedTab == 1, "상태", "Button")) selectedTab = 1;
+            if (GUILayout.Toggle(selectedTab == 2, "스킬", "Button")) selectedTab = 2;
+            if (GUILayout.Toggle(selectedTab == 3, "아이템", "Button")) selectedTab = 3;
             GUILayout.EndHorizontal();
 
-            GUILayout.Space(10);
+            DrawLine();
 
             switch (selectedTab)
             {
                 case 0:
-                    DrawAgentTab();
+                    DrawUnitTitle();
                     break;
                 case 1:
-                    DrawEnemyTab();
+                    DrawStatusTitle();
                     break;
                 case 2:
-                    DrawBuffTab();
+                    DrawSkillTitle();
                     break;
                 case 3:
-                    DrawAbnormalStatusTab();
-                    break;
-                case 4:
-                    DrawActiveSkillTab();
-                    break;
-                case 5:
-                    DrawSkillTreeTab();
+                    //DrawItemTitle();
                     break;
             }
+        }
+
+        private void DrawUnitTitle()
+        {
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Toggle(selectedUnitTitle == 0, "아군 유닛", "Button")) selectedUnitTitle = 0;
+            if (GUILayout.Toggle(selectedUnitTitle == 1, "적 유닛", "Button")) selectedUnitTitle = 1;
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            if (selectedUnitTitle == 0) DrawAgentTab();
+            else DrawEnemyTab();
+        }
+
+        private void DrawStatusTitle()
+        {
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Toggle(selectedStatusTitle == 0, "버프", "Button")) selectedStatusTitle = 0;
+            if (GUILayout.Toggle(selectedStatusTitle == 1, "상태이상", "Button")) selectedStatusTitle = 1;
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            if (selectedStatusTitle == 0) DrawBuffTab();
+            else DrawAbnormalStatusTab();
+        }
+
+        private void DrawSkillTitle()
+        {
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Toggle(selectedSkillTitle == 0, "액티브 스킬", "Button")) selectedSkillTitle = 0;
+            if (GUILayout.Toggle(selectedSkillTitle == 1, "패시브 스킬", "Button")) selectedSkillTitle = 1;
+            if (GUILayout.Toggle(selectedSkillTitle == 2, "스킬트리", "Button")) selectedSkillTitle = 2;
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            if (selectedSkillTitle == 0) DrawActiveSkillTab();
+            else if (selectedSkillTitle == 1) { }
+            else DrawSkillTreeTab();
         }
 
         #region 아군 유닛
@@ -557,7 +616,7 @@ namespace Temporary.Editor
         }
         #endregion
 
-        #region 스킬
+        #region 액티브 스킬
         private void DrawActiveSkillTab()
         {
             GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
@@ -577,7 +636,7 @@ namespace Temporary.Editor
 
             DrawLine();
 
-            skillScrollPosition = GUILayout.BeginScrollView(skillScrollPosition, false, true);
+            activeSkillScrollPosition = GUILayout.BeginScrollView(activeSkillScrollPosition, false, true);
 
             var skillCatalog = new GUIStyle(GUI.skin.button);
             skillCatalog.alignment = TextAnchor.MiddleLeft;
@@ -587,19 +646,19 @@ namespace Temporary.Editor
             skillCatalog.fixedWidth = GUI.skin.box.fixedWidth;
             skillCatalog.fixedHeight = GUI.skin.box.fixedHeight;
 
-            for (int i = 0; i < skillTemplates.Count; i++)
+            for (int i = 0; i < activeSkillTemplates.Count; i++)
             {
-                bool isSelected = (selectedSkillIndex == i);
+                bool isSelected = (selectedActiveSkillIndex == i);
 
-                var text = "  " + skillTemplates[i].Item1.displayName;
+                var text = "  " + activeSkillTemplates[i].Item1.displayName;
                 text = text.Substring(0, Mathf.Min(text.Length, 13));
-                GUIContent content = new GUIContent(text, skillTemplates[i].Item2);
+                GUIContent content = new GUIContent(text, activeSkillTemplates[i].Item2);
 
                 if (GUILayout.Toggle(isSelected, content, skillCatalog))
                 {
-                    if (selectedSkillIndex != i)
+                    if (selectedActiveSkillIndex != i)
                     {
-                        selectedSkillIndex = i;
+                        selectedActiveSkillIndex = i;
 
                         GUI.FocusControl(null);
                     }
@@ -610,9 +669,9 @@ namespace Temporary.Editor
 
             GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
 
-            if (skillTemplates.Count > 0 && selectedSkillIndex < skillTemplates.Count)
+            if (activeSkillTemplates.Count > 0 && selectedActiveSkillIndex < activeSkillTemplates.Count)
             {
-                SkillTemplate selectedSkill = skillTemplates[selectedSkillIndex].Item1;
+                ActiveSkillTemplate selectedSkill = activeSkillTemplates[selectedActiveSkillIndex].Item1;
 
                 contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
                 var editor = UnityEditor.Editor.CreateEditor(selectedSkill);
@@ -627,7 +686,7 @@ namespace Temporary.Editor
         private void AddSkillTemplate()
         {
             // 스킬 템플릿 생성
-            SkillTemplate newSkill = CreateInstance<SkillTemplate>();
+            ActiveSkillTemplate newSkill = CreateInstance<ActiveSkillTemplate>();
 
             // 에셋 저장
             string defaultPath = "Assets/FrameWork/Core/GameData/Skill";
@@ -644,11 +703,11 @@ namespace Temporary.Editor
 
         private void DeleteSelectedSkillTemplate()
         {
-            if (skillTemplates.Count > 0)
+            if (activeSkillTemplates.Count > 0)
             {
-                SkillTemplate selectedSkill = skillTemplates[selectedSkillIndex].Item1;
+                ActiveSkillTemplate selectedSkill = activeSkillTemplates[selectedActiveSkillIndex].Item1;
                 string assetPath = AssetDatabase.GetAssetPath(selectedSkill);
-                skillTemplates.RemoveAt(selectedSkillIndex);
+                activeSkillTemplates.RemoveAt(selectedActiveSkillIndex);
                 AssetDatabase.DeleteAsset(assetPath);
                 AssetDatabase.SaveAssets();
             }
@@ -658,17 +717,17 @@ namespace Temporary.Editor
         {
             if (emptyTexture2D == null) emptyTexture2D = CreateTexture(Color.gray);
 
-            skillTemplates.Clear();
-            string[] guids = AssetDatabase.FindAssets("t:SkillTemplate");
+            activeSkillTemplates.Clear();
+            string[] guids = AssetDatabase.FindAssets("t:ActiveSkillTemplate");
             foreach (var guid in guids)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
-                SkillTemplate skill = AssetDatabase.LoadAssetAtPath<SkillTemplate>(path);
+                ActiveSkillTemplate skill = AssetDatabase.LoadAssetAtPath<ActiveSkillTemplate>(path);
 
                 var texture = (skill.sprite == null) ? emptyTexture2D : skill.sprite.texture;
                 texture = texture.ResizeTexture(30, 30);
 
-                skillTemplates.Add(new Tuple<SkillTemplate, Texture2D>(skill, texture));
+                activeSkillTemplates.Add(new Tuple<ActiveSkillTemplate, Texture2D>(skill, texture));
             }
         }
         #endregion

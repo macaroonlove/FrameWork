@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class ProjectileAbnormalStatusSkillEffect : SkillEffect
+    public class ProjectileAbnormalStatusActiveSkillEffect : ActiveSkillEffect
     {
         [SerializeField] private GameObject _prefab;
 

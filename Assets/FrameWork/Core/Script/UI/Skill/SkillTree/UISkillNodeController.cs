@@ -24,7 +24,7 @@ namespace Temporary.Core
 
         internal List<UISkillNodeController> connections = new List<UISkillNodeController>();
 
-        public void Initialize(SkillTemplate template)
+        public void Initialize(ActiveSkillTemplate template)
         {
             BindImage(typeof(Images));
             BindObject(typeof(Objects));
@@ -35,7 +35,7 @@ namespace Temporary.Core
             Show(template);
         }
 
-        public void Show(SkillTemplate template)
+        public void Show(ActiveSkillTemplate template)
         {
             GetImage((int)Images.Icon).sprite = template.sprite;
         }

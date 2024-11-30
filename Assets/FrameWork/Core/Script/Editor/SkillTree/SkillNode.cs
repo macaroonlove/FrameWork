@@ -7,7 +7,7 @@ namespace Temporary.Core
     [System.Serializable]
     public class SkillNode : Node
     {
-        [HideInInspector] public SkillTemplate skillTemplate;
+        [HideInInspector] public ActiveSkillTemplate skillTemplate;
         [Output] public int level;
         [HideInInspector] public int index;
         [Input(dynamicPortList = true)] public List<int> prevSkill;
@@ -54,11 +54,11 @@ namespace Temporary.Editor
         public override void OnBodyGUI()
         {
             SkillNode skillNode = (SkillNode)target;
-            SkillTemplate skillTemplate = skillNode.skillTemplate;
+            ActiveSkillTemplate skillTemplate = skillNode.skillTemplate;
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("½ºÅ³", GUILayout.Width(60));
-            skillNode.skillTemplate = EditorGUILayout.ObjectField(skillNode.skillTemplate, typeof(SkillTemplate), false) as SkillTemplate;
+            skillNode.skillTemplate = EditorGUILayout.ObjectField(skillNode.skillTemplate, typeof(ActiveSkillTemplate), false) as ActiveSkillTemplate;
             GUILayout.EndHorizontal();
 
             if (skillTemplate != null)

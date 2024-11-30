@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class UISkillExecuteButton : UIBase
+    public class UIActiveSkillExecuteButton : UIBase
     {
         enum Images
         {
@@ -21,7 +21,7 @@ namespace Temporary.Core
             SkillButton,
         }
 
-        private SkillTemplate _template;
+        private ActiveSkillTemplate _template;
         private Unit _unit;
 
         protected override void Initialize()
@@ -34,7 +34,7 @@ namespace Temporary.Core
             GetButton((int)Buttons.SkillButton).onClick.AddListener(SkillExecute);
         }
 
-        internal void Show(AgentUnit unit, SkillTemplate template)
+        internal void Show(AgentUnit unit, ActiveSkillTemplate template)
         {
             _unit = unit;
             _template = template;
@@ -47,7 +47,7 @@ namespace Temporary.Core
 
         internal void SkillExecute()
         {
-            _unit.GetAbility<SkillAbility>().TryExecuteSkill(_template);
+            _unit.GetAbility<ActiveSkillAbility>().TryExecuteSkill(_template);
         }
 
         internal void Hide()

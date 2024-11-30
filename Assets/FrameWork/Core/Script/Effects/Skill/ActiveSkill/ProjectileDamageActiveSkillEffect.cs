@@ -5,28 +5,30 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class ProjectileHealSkillEffect : SkillEffect
+    public class ProjectileDamageActiveSkillEffect : ActiveSkillEffect
     {
         [SerializeField] private GameObject _prefab;
 
         [SerializeField] private ETarget _target;
+        [SerializeField] private EAttackType _attackType;
         [SerializeField] private float _radius;
         [SerializeField] private int _numberOfTarget;
         [SerializeField] private int _repeatCount;
         [SerializeField] private bool _isTick;
         [SerializeField] private int _tickCycle;
         [SerializeField] private int _tickCount;
+        [SerializeField] private EDamageType _damageType;
 
         [SerializeField] private List<ApplyTypeByAmountData> _applyTypeByAmountDatas = new List<ApplyTypeByAmountData>();
 
         public override string GetDescription()
         {
-            return "투사체 회복 스킬";
+            return "즉시 데미지 스킬";
         }
 
         public override List<Unit> GetTarget(Unit casterUnit)
         {
-            return casterUnit.GetAbility<FindTargetAbility>().FindHealableTarget(_target, _radius, _numberOfTarget);
+            return casterUnit.GetAbility<FindTargetAbility>().FindAttackableTarget(_target, _radius, _attackType, _numberOfTarget);
         }
 
         public int GetAmount(Unit casterUnit, Unit targetUnit)
@@ -77,12 +79,12 @@ namespace Temporary.Core
 
         public void SkillImpact(Unit casterUnit, Unit targetUnit)
         {
-            int heal = GetAmount(casterUnit, targetUnit);
+            int damage = GetAmount(casterUnit, targetUnit);
 
-            Execute_RepeatCount(casterUnit, targetUnit, heal);
+            Execute_RepeatCount(casterUnit, targetUnit, damage);
         }
 
-        private void Execute_RepeatCount(Unit casterUnit, Unit targetUnit, int heal)
+        private void Execute_RepeatCount(Unit casterUnit, Unit targetUnit, int damage)
         {
             if (_repeatCount > 1)
             {
@@ -90,28 +92,28 @@ namespace Temporary.Core
                 {
                     if (targetUnit.isDie) return;
 
-                    Execute_Tick(casterUnit, targetUnit, heal);
+                    Execute_Tick(casterUnit, targetUnit, damage);
                 }
             }
             else
             {
-                Execute_Tick(casterUnit, targetUnit, heal);
+                Execute_Tick(casterUnit, targetUnit, damage);
             }
         }        
 
-        private void Execute_Tick(Unit casterUnit, Unit targetUnit, int heal)
+        private void Execute_Tick(Unit casterUnit, Unit targetUnit, int damage)
         {
             if (_isTick)
             {
-                targetUnit.StartCoroutine(CoExecute_Tick(casterUnit, targetUnit, heal));
+                targetUnit.StartCoroutine(CoExecute_Tick(casterUnit, targetUnit, damage));
             }
             else
             {
-                targetUnit.healthAbility.Healed(heal, casterUnit.id);
+                Execute_DamageType(casterUnit, targetUnit, damage);
             }
         }
 
-        private IEnumerator CoExecute_Tick(Unit casterUnit, Unit targetUnit, int heal)
+        private IEnumerator CoExecute_Tick(Unit casterUnit, Unit targetUnit, int damage)
         {
             var wfs = new WaitForSeconds(_tickCycle);
 
@@ -119,8 +121,20 @@ namespace Temporary.Core
             {
                 if (targetUnit.isDie) yield break;
 
-                targetUnit.healthAbility.Healed(heal, casterUnit.id);
+                Execute_DamageType(casterUnit, targetUnit, damage);
                 yield return wfs;
+            }
+        }
+
+        private void Execute_DamageType(Unit casterUnit, Unit targetUnit, int damage)
+        {
+            if (_damageType == EDamageType.TrueDamage)
+            {
+                targetUnit.GetAbility<HitAbility>().Hit(damage, casterUnit.id);
+            }
+            else
+            {
+                targetUnit.GetAbility<HitAbility>().Hit(damage, _damageType, casterUnit.id);
             }
         }
 
@@ -135,7 +149,12 @@ namespace Temporary.Core
 
             labelRect.y += 40;
             valueRect.y += 40;
-            GUI.Label(labelRect, "회복 대상");
+            GUI.Label(labelRect, "공격 방식");
+            _attackType = (EAttackType)EditorGUI.EnumPopup(valueRect, _attackType);
+
+            labelRect.y += 20;
+            valueRect.y += 20;
+            GUI.Label(labelRect, "피해 대상");
             _target = (ETarget)EditorGUI.EnumPopup(valueRect, _target);
 
             if (_target != ETarget.Myself && _target != ETarget.AllTarget)
@@ -150,19 +169,19 @@ namespace Temporary.Core
             {
                 labelRect.y += 20;
                 valueRect.y += 20;
-                GUI.Label(labelRect, "회복시킬 아군의 수");
+                GUI.Label(labelRect, "공격할 적의 수");
                 _numberOfTarget = EditorGUI.IntField(valueRect, _numberOfTarget);
             }
 
             labelRect.y += 40;
             valueRect.y += 40;
-            GUI.Label(labelRect, "회복 횟수");
+            GUI.Label(labelRect, "피해 횟수");
             _repeatCount = EditorGUI.IntField(valueRect, _repeatCount);
             if (_repeatCount <= 0) _repeatCount = 1;
 
             labelRect.y += 40;
             valueRect.y += 40;
-            GUI.Label(labelRect, "주기마다 회복 사용 여부");
+            GUI.Label(labelRect, "주기마다 피해 사용 여부");
             _isTick = EditorGUI.Toggle(valueRect, _isTick);
             if (_isTick)
             {
@@ -173,9 +192,14 @@ namespace Temporary.Core
 
                 labelRect.y += 20;
                 valueRect.y += 20;
-                GUI.Label(labelRect, "주기마다 회복 횟수");
+                GUI.Label(labelRect, "주기마다 피해 횟수");
                 _tickCount = EditorGUI.IntField(valueRect, _tickCount);
             }
+
+            labelRect.y += 40;
+            valueRect.y += 40;
+            GUI.Label(labelRect, "데미지 타입");
+            _damageType = (EDamageType)EditorGUI.EnumPopup(valueRect, _damageType);
 
             labelRect.y += 20;
             valueRect.y += 20;
@@ -211,7 +235,7 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 9;
+            int rowNum = 12;
 
             if (_target != ETarget.Myself && _target != ETarget.AllTarget)
             {

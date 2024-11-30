@@ -4,10 +4,8 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class ProjectileBuffSkillEffect : SkillEffect
+    public class InstantBuffActiveSkillEffect : ActiveSkillEffect
     {
-        [SerializeField] private GameObject _prefab;
-
         [SerializeField] private ETarget _target;
         [SerializeField] private float _radius;
         [SerializeField] private int _numberOfTarget;
@@ -17,7 +15,7 @@ namespace Temporary.Core
 
         public override string GetDescription()
         {
-            return "투사체 버프 스킬";
+            return "즉시 버프 스킬";
         }
 
         public override List<Unit> GetTarget(Unit casterUnit)
@@ -30,12 +28,6 @@ namespace Temporary.Core
             if (casterUnit == null || targetUnit == null) return;
             if (targetUnit.isDie) return;
 
-            
-            casterUnit.GetAbility<ProjectileAbility>().SpawnProjectile(_prefab, targetUnit, (caster, target) => { SkillImpact(caster, target); });
-        }
-
-        public void SkillImpact(Unit casterUnit, Unit targetUnit)
-        {
             if (_isInfinity)
             {
                 targetUnit.GetAbility<BuffAbility>().ApplyBuff(_buff, int.MaxValue);
@@ -52,11 +44,6 @@ namespace Temporary.Core
             var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
             var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
 
-            GUI.Label(labelRect, "프리팹");
-            _prefab = (GameObject)EditorGUI.ObjectField(valueRect, _prefab, typeof(GameObject), false);
-
-            labelRect.y += 40;
-            valueRect.y += 40;
             GUI.Label(labelRect, "피해 대상");
             _target = (ETarget)EditorGUI.EnumPopup(valueRect, _target);
 
@@ -96,7 +83,7 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 6;
+            int rowNum = 4;
 
             if (_target != ETarget.Myself && _target != ETarget.AllTarget)
             {

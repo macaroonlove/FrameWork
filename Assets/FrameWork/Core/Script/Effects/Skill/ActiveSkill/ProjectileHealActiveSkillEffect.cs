@@ -5,8 +5,10 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class InstantShieldSkillEffect : SkillEffect
+    public class ProjectileHealActiveSkillEffect : ActiveSkillEffect
     {
+        [SerializeField] private GameObject _prefab;
+
         [SerializeField] private ETarget _target;
         [SerializeField] private float _radius;
         [SerializeField] private int _numberOfTarget;
@@ -14,19 +16,17 @@ namespace Temporary.Core
         [SerializeField] private bool _isTick;
         [SerializeField] private int _tickCycle;
         [SerializeField] private int _tickCount;
-        [SerializeField] private bool _isInfinity;
-        [SerializeField] private float _duration;
 
         [SerializeField] private List<ApplyTypeByAmountData> _applyTypeByAmountDatas = new List<ApplyTypeByAmountData>();
 
         public override string GetDescription()
         {
-            return "즉시 보호막 스킬";
+            return "투사체 회복 스킬";
         }
 
         public override List<Unit> GetTarget(Unit casterUnit)
         {
-            return casterUnit.GetAbility<FindTargetAbility>().FindAllyTarget(_target, _radius, _numberOfTarget);
+            return casterUnit.GetAbility<FindTargetAbility>().FindHealableTarget(_target, _radius, _numberOfTarget);
         }
 
         public int GetAmount(Unit casterUnit, Unit targetUnit)
@@ -72,12 +72,17 @@ namespace Temporary.Core
             if (casterUnit == null || targetUnit == null) return;
             if (targetUnit.isDie) return;
 
-            int amount = GetAmount(casterUnit, targetUnit);
-
-            Execute_RepeatCount(casterUnit, targetUnit, amount);
+            casterUnit.GetAbility<ProjectileAbility>().SpawnProjectile(_prefab, targetUnit, (caster, target) => { SkillImpact(caster, target); });
         }
 
-        private void Execute_RepeatCount(Unit casterUnit, Unit targetUnit, int amount)
+        public void SkillImpact(Unit casterUnit, Unit targetUnit)
+        {
+            int heal = GetAmount(casterUnit, targetUnit);
+
+            Execute_RepeatCount(casterUnit, targetUnit, heal);
+        }
+
+        private void Execute_RepeatCount(Unit casterUnit, Unit targetUnit, int heal)
         {
             if (_repeatCount > 1)
             {
@@ -85,28 +90,28 @@ namespace Temporary.Core
                 {
                     if (targetUnit.isDie) return;
 
-                    Execute_Tick(casterUnit, targetUnit, amount);
+                    Execute_Tick(casterUnit, targetUnit, heal);
                 }
             }
             else
             {
-                Execute_Tick(casterUnit, targetUnit, amount);
+                Execute_Tick(casterUnit, targetUnit, heal);
             }
         }        
 
-        private void Execute_Tick(Unit casterUnit, Unit targetUnit, int amount)
+        private void Execute_Tick(Unit casterUnit, Unit targetUnit, int heal)
         {
             if (_isTick)
             {
-                targetUnit.StartCoroutine(CoExecute_Tick(casterUnit, targetUnit, amount));
+                targetUnit.StartCoroutine(CoExecute_Tick(casterUnit, targetUnit, heal));
             }
             else
             {
-                Execute_Duration(casterUnit, targetUnit, amount);
+                targetUnit.healthAbility.Healed(heal, casterUnit.id);
             }
         }
 
-        private IEnumerator CoExecute_Tick(Unit casterUnit, Unit targetUnit, int amount)
+        private IEnumerator CoExecute_Tick(Unit casterUnit, Unit targetUnit, int heal)
         {
             var wfs = new WaitForSeconds(_tickCycle);
 
@@ -114,20 +119,8 @@ namespace Temporary.Core
             {
                 if (targetUnit.isDie) yield break;
 
-                Execute_Duration(casterUnit, targetUnit, amount);
+                targetUnit.healthAbility.Healed(heal, casterUnit.id);
                 yield return wfs;
-            }
-        }
-
-        private void Execute_Duration(Unit casterUnit, Unit targetUnit, int amount)
-        {
-            if (_isInfinity)
-            {
-                targetUnit.healthAbility.AddShield(amount);
-            }
-            else
-            {
-                targetUnit.healthAbility.AddShield(amount, _duration);
             }
         }
 
@@ -137,7 +130,12 @@ namespace Temporary.Core
             var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
             var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
 
-            GUI.Label(labelRect, "대상");
+            GUI.Label(labelRect, "프리팹");
+            _prefab = (GameObject)EditorGUI.ObjectField(valueRect, _prefab, typeof(GameObject), false);
+
+            labelRect.y += 40;
+            valueRect.y += 40;
+            GUI.Label(labelRect, "회복 대상");
             _target = (ETarget)EditorGUI.EnumPopup(valueRect, _target);
 
             if (_target != ETarget.Myself && _target != ETarget.AllTarget)
@@ -152,19 +150,19 @@ namespace Temporary.Core
             {
                 labelRect.y += 20;
                 valueRect.y += 20;
-                GUI.Label(labelRect, "보호막 적용할 아군의 수");
+                GUI.Label(labelRect, "회복시킬 아군의 수");
                 _numberOfTarget = EditorGUI.IntField(valueRect, _numberOfTarget);
             }
 
             labelRect.y += 40;
             valueRect.y += 40;
-            GUI.Label(labelRect, "보호막 횟수");
+            GUI.Label(labelRect, "회복 횟수");
             _repeatCount = EditorGUI.IntField(valueRect, _repeatCount);
             if (_repeatCount <= 0) _repeatCount = 1;
 
             labelRect.y += 40;
             valueRect.y += 40;
-            GUI.Label(labelRect, "주기마다 보호막 사용 여부");
+            GUI.Label(labelRect, "주기마다 회복 사용 여부");
             _isTick = EditorGUI.Toggle(valueRect, _isTick);
             if (_isTick)
             {
@@ -175,20 +173,8 @@ namespace Temporary.Core
 
                 labelRect.y += 20;
                 valueRect.y += 20;
-                GUI.Label(labelRect, "주기마다 보호막 횟수");
+                GUI.Label(labelRect, "주기마다 회복 횟수");
                 _tickCount = EditorGUI.IntField(valueRect, _tickCount);
-            }
-
-            labelRect.y += 40;
-            valueRect.y += 40;
-            GUI.Label(labelRect, "무한지속 사용 여부");
-            _isInfinity = EditorGUI.Toggle(valueRect, _isInfinity);
-            if (!_isInfinity)
-            {
-                labelRect.y += 20;
-                valueRect.y += 20;
-                GUI.Label(labelRect, "지속시간");
-                _duration = EditorGUI.FloatField(valueRect, _duration);
             }
 
             labelRect.y += 20;
@@ -240,11 +226,6 @@ namespace Temporary.Core
             if (_isTick)
             {
                 rowNum += 2;
-            }
-
-            if (!_isInfinity)
-            {
-                rowNum++;
             }
 
             rowNum += (int)(_applyTypeByAmountDatas.Count * 1.2f);
