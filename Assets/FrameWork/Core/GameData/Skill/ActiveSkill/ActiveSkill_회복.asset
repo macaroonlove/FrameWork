@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5093661109052b9438d278789d9e23d4, type: 3}
-  m_Name: "Skill_\uD68C\uBCF5"
+  m_Name: "ActiveSkill_\uD68C\uBCF5"
   m_EditorClassIdentifier: 
   _sprite: {fileID: 21300000, guid: bb67b03c2969d104caba950c446f8c8d, type: 3}
   _id: 0

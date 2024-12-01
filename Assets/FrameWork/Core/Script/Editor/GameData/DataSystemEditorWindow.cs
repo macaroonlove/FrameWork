@@ -20,11 +20,13 @@ namespace Temporary.Editor
         private int selectedUnitTitle = 0;
 
         #region 아군 유닛
+        private UnityEditor.Editor agentEditor;
         private int selectedAgentIndex = 0;
         private Vector2 agentScrollPosition;
         private List<Tuple<AgentTemplate, Texture2D>> agentTemplates = new List<Tuple<AgentTemplate, Texture2D>>();
         #endregion
         #region 적군 유닛
+        private UnityEditor.Editor enemyEditor;
         private int selectedEnemyIndex = 0;
         private Vector2 enemyScrollPosition;
         private List<Tuple<EnemyTemplate, Texture2D>> enemyTemplates = new List<Tuple<EnemyTemplate, Texture2D>>();
@@ -34,11 +36,13 @@ namespace Temporary.Editor
         #region 상태
         private int selectedStatusTitle = 0;
         #region 버프
+        private UnityEditor.Editor buffEditor;
         private int selectedBuffIndex = 0;
         private Vector2 buffScrollPosition;
         private List<BuffTemplate> buffTemplates = new List<BuffTemplate>();
         #endregion
         #region 상태이상
+        private UnityEditor.Editor abnormalStatusEditor;
         private int selectedAbnormalStatusIndex = 0;
         private Vector2 abnormalStatusScrollPosition;
         private List<Tuple<AbnormalStatusTemplate, Texture2D>> abnormalStatusTemplates = new List<Tuple<AbnormalStatusTemplate, Texture2D>>();
@@ -48,9 +52,16 @@ namespace Temporary.Editor
         #region 스킬
         private int selectedSkillTitle = 0;
         #region 액티브 스킬
+        private UnityEditor.Editor activeSkillEditor;
         private int selectedActiveSkillIndex = 0;
         private Vector2 activeSkillScrollPosition;
         private List<Tuple<ActiveSkillTemplate, Texture2D>> activeSkillTemplates = new List<Tuple<ActiveSkillTemplate, Texture2D>>();
+        #endregion
+        #region 패시브 스킬
+        private UnityEditor.Editor passiveSkillEditor;
+        private int selectedPassiveSkillIndex = 0;
+        private Vector2 passiveSkillScrollPosition;
+        private List<Tuple<PassiveSkillTemplate, Texture2D>> passiveSkillTemplates = new List<Tuple<PassiveSkillTemplate, Texture2D>>();
         #endregion
         #region 스킬 트리
         private int selectedSkillTreeIndex = 0;
@@ -60,16 +71,18 @@ namespace Temporary.Editor
         #endregion
 
         //#region 아이템
-        //private int selectedSkillTitle = 0;
-        //#region 스킬
-        //private int selectedSkillIndex = 0;
-        //private Vector2 skillScrollPosition;
-        //private List<Tuple<SkillTemplate, Texture2D>> skillTemplates = new List<Tuple<SkillTemplate, Texture2D>>();
+        //private int selectedItemTitle = 0;
+        //#region 액티브 아이템
+        //private UnityEditor.Editor activeItemEditor;
+        //private int selectedActiveItemIndex = 0;
+        //private Vector2 activeItemScrollPosition;
+        //private List<Tuple<ActiveItemTemplate, Texture2D>> activeItemTemplates = new List<Tuple<ActiveItemTemplate, Texture2D>>();
         //#endregion
-        //#region 스킬 트리
-        //private int selectedSkillTreeIndex = 0;
-        //private Vector2 skillTreeScrollPosition;
-        //private List<SkillTreeGraph> skillTreeTemplates = new List<SkillTreeGraph>();
+        //#region 패시브 아이템
+        //private UnityEditor.Editor passiveItemEditor;
+        //private int selectedPassiveItemIndex = 0;
+        //private Vector2 passiveItemScrollPosition;
+        //private List<Tuple<PassiveItemTemplate, Texture2D>> passiveItemTemplates = new List<Tuple<PassiveItemTemplate, Texture2D>>();
         //#endregion
         //#endregion
 
@@ -85,8 +98,38 @@ namespace Temporary.Editor
             DrawTab();
         }
 
-        private void CreateGUI()
+        private void OnDisable()
         {
+            if (agentEditor != null)
+            {
+                DestroyImmediate(agentEditor);
+                agentEditor = null;
+            }
+            if (enemyEditor != null)
+            {
+                DestroyImmediate(enemyEditor);
+                enemyEditor = null;
+            }
+            if (buffEditor != null)
+            {
+                DestroyImmediate(buffEditor);
+                buffEditor = null;
+            }
+            if (abnormalStatusEditor != null)
+            {
+                DestroyImmediate(abnormalStatusEditor);
+                abnormalStatusEditor = null;
+            }
+            if (activeSkillEditor != null)
+            {
+                DestroyImmediate(activeSkillEditor);
+                activeSkillEditor = null;
+            }
+            if (passiveSkillEditor != null)
+            {
+                DestroyImmediate(passiveSkillEditor);
+                passiveSkillEditor = null;
+            }
         }
 
         private void DrawTab()
@@ -154,7 +197,7 @@ namespace Temporary.Editor
             GUILayout.Space(10);
 
             if (selectedSkillTitle == 0) DrawActiveSkillTab();
-            else if (selectedSkillTitle == 1) { }
+            else if (selectedSkillTitle == 1) DrawPassiveSkillTab();
             else DrawSkillTreeTab();
         }
 
@@ -215,9 +258,13 @@ namespace Temporary.Editor
             {
                 AgentTemplate selectedAgent = agentTemplates[selectedAgentIndex].Item1;
 
+                if (agentEditor == null || agentEditor.target != selectedAgent)
+                {
+                    agentEditor = UnityEditor.Editor.CreateEditor(selectedAgent);
+                }
+
                 contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
-                var editor = UnityEditor.Editor.CreateEditor(selectedAgent);
-                editor.OnInspectorGUI();
+                agentEditor.OnInspectorGUI();
                 GUILayout.EndScrollView();
             }
 
@@ -235,7 +282,7 @@ namespace Temporary.Editor
             string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Agent", "Agent_", "asset", "아군 템플릿은 FrameWork/Core/GameData/Agent 위치에 저장됩니다..", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
-                newAgent.SetDisplayName(Path.GetFileNameWithoutExtension(path));
+                newAgent.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("Agent_", ""));
 
                 AssetDatabase.CreateAsset(newAgent, path);
                 AssetDatabase.SaveAssets();
@@ -331,9 +378,13 @@ namespace Temporary.Editor
             {
                 EnemyTemplate selectedEnemy = enemyTemplates[selectedEnemyIndex].Item1;
 
+                if (enemyEditor == null || enemyEditor.target != selectedEnemy)
+                {
+                    enemyEditor = UnityEditor.Editor.CreateEditor(selectedEnemy);
+                }
+
                 contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
-                var editor = UnityEditor.Editor.CreateEditor(selectedEnemy);
-                editor.OnInspectorGUI();
+                enemyEditor.OnInspectorGUI();
                 GUILayout.EndScrollView();
             }
 
@@ -351,7 +402,7 @@ namespace Temporary.Editor
             string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Enemy", "Enemy_", "asset", "적 템플릿은 FrameWork/Core/GameData/Enemy 위치에 저장됩니다..", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
-                newEnemy.SetDisplayName(Path.GetFileNameWithoutExtension(path));
+                newEnemy.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("Enemy_", ""));
 
                 AssetDatabase.CreateAsset(newEnemy, path);
                 AssetDatabase.SaveAssets();
@@ -446,9 +497,12 @@ namespace Temporary.Editor
             {
                 BuffTemplate selectedbuff = buffTemplates[selectedBuffIndex];
 
+                if (buffEditor == null || buffEditor.target != selectedbuff)
+                {
+                    buffEditor = UnityEditor.Editor.CreateEditor(selectedbuff);
+                }
                 contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
-                var editor = UnityEditor.Editor.CreateEditor(selectedbuff);
-                editor.OnInspectorGUI();
+                buffEditor.OnInspectorGUI();
                 GUILayout.EndScrollView();
             }
 
@@ -466,7 +520,7 @@ namespace Temporary.Editor
             string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Status/BuffStatus", "BuffStatus_", "asset", "상태이상 템플릿은 FrameWork/Core/GameData/Status/BuffStatus 위치에 저장됩니다..", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
-                newBuff.SetDisplayName(Path.GetFileNameWithoutExtension(path));
+                newBuff.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("BuffStatus_", ""));
 
                 AssetDatabase.CreateAsset(newBuff, path);
                 AssetDatabase.SaveAssets();
@@ -557,9 +611,13 @@ namespace Temporary.Editor
             {
                 AbnormalStatusTemplate selectedabnormalStatus = abnormalStatusTemplates[selectedAbnormalStatusIndex].Item1;
 
+                if (abnormalStatusEditor == null || abnormalStatusEditor.target != selectedabnormalStatus)
+                {
+                    abnormalStatusEditor = UnityEditor.Editor.CreateEditor(selectedabnormalStatus);
+                }
+
                 contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
-                var editor = UnityEditor.Editor.CreateEditor(selectedabnormalStatus);
-                editor.OnInspectorGUI();
+                abnormalStatusEditor.OnInspectorGUI();
                 GUILayout.EndScrollView();
             }
 
@@ -577,7 +635,7 @@ namespace Temporary.Editor
             string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Status/AbnormalStatus", "AbnormalStatus_", "asset", "상태이상 템플릿은 FrameWork/Core/GameData/Status/AbnormalStatus 위치에 저장됩니다..", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
-                newAbnormalStatus.SetDisplayName(Path.GetFileNameWithoutExtension(path));
+                newAbnormalStatus.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("AbnormalStatus_", ""));
 
                 AssetDatabase.CreateAsset(newAbnormalStatus, path);
                 AssetDatabase.SaveAssets();
@@ -623,15 +681,15 @@ namespace Temporary.Editor
             GUILayout.BeginVertical(GUILayout.Width(200));
             if (GUILayout.Button("스킬 추가"))
             {
-                AddSkillTemplate();
+                AddActiveSkillTemplate();
             }
             if (GUILayout.Button("스킬 삭제"))
             {
-                DeleteSelectedSkillTemplate();
+                DeleteSelectedActiveSkillTemplate();
             }
             if (GUILayout.Button("스킬 탐색"))
             {
-                LoadSkillTemplates();
+                LoadActiveSkillTemplates();
             }
 
             DrawLine();
@@ -673,9 +731,13 @@ namespace Temporary.Editor
             {
                 ActiveSkillTemplate selectedSkill = activeSkillTemplates[selectedActiveSkillIndex].Item1;
 
+                if (activeSkillEditor == null || activeSkillEditor.target != selectedSkill)
+                {
+                    activeSkillEditor = UnityEditor.Editor.CreateEditor(selectedSkill);
+                }
+
                 contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
-                var editor = UnityEditor.Editor.CreateEditor(selectedSkill);
-                editor.OnInspectorGUI();
+                activeSkillEditor.OnInspectorGUI();
                 GUILayout.EndScrollView();
             }
 
@@ -683,25 +745,25 @@ namespace Temporary.Editor
             GUILayout.EndHorizontal();
         }
 
-        private void AddSkillTemplate()
+        private void AddActiveSkillTemplate()
         {
             // 스킬 템플릿 생성
             ActiveSkillTemplate newSkill = CreateInstance<ActiveSkillTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Core/GameData/Skill";
-            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Skill", "Skill_", "asset", "스킬 템플릿은 FrameWork/Core/GameData/Skill 위치에 저장됩니다..", defaultPath);
+            string defaultPath = "Assets/FrameWork/Core/GameData/Skill/ActiveSkill";
+            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Skill/ActiveSkill", "ActiveSkill_", "asset", "스킬 템플릿은 FrameWork/Core/GameData/Skill/ActiveSkill 위치에 저장됩니다..", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
-                newSkill.SetDisplayName(Path.GetFileNameWithoutExtension(path));
+                newSkill.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("ActiveSkill_", ""));
 
                 AssetDatabase.CreateAsset(newSkill, path);
                 AssetDatabase.SaveAssets();
-                LoadSkillTemplates();
+                LoadActiveSkillTemplates();
             }
         }
 
-        private void DeleteSelectedSkillTemplate()
+        private void DeleteSelectedActiveSkillTemplate()
         {
             if (activeSkillTemplates.Count > 0)
             {
@@ -713,7 +775,7 @@ namespace Temporary.Editor
             }
         }
 
-        private void LoadSkillTemplates()
+        private void LoadActiveSkillTemplates()
         {
             if (emptyTexture2D == null) emptyTexture2D = CreateTexture(Color.gray);
 
@@ -728,6 +790,126 @@ namespace Temporary.Editor
                 texture = texture.ResizeTexture(30, 30);
 
                 activeSkillTemplates.Add(new Tuple<ActiveSkillTemplate, Texture2D>(skill, texture));
+            }
+        }
+        #endregion
+
+        #region 패시브 스킬
+        private void DrawPassiveSkillTab()
+        {
+            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
+            GUILayout.BeginVertical(GUILayout.Width(200));
+            if (GUILayout.Button("스킬 추가"))
+            {
+                AddPassiveSkillTemplate();
+            }
+            if (GUILayout.Button("스킬 삭제"))
+            {
+                DeleteSelectedPassiveSkillTemplate();
+            }
+            if (GUILayout.Button("스킬 탐색"))
+            {
+                LoadPassiveSkillTemplates();
+            }
+
+            DrawLine();
+
+            passiveSkillScrollPosition = GUILayout.BeginScrollView(passiveSkillScrollPosition, false, true);
+
+            var skillCatalog = new GUIStyle(GUI.skin.button);
+            skillCatalog.alignment = TextAnchor.MiddleLeft;
+            skillCatalog.padding = new RectOffset(5, 5, 5, 5);
+            skillCatalog.margin = new RectOffset(5, 5, -2, -2);
+            skillCatalog.border = new RectOffset(0, 0, 0, 0);
+            skillCatalog.fixedWidth = GUI.skin.box.fixedWidth;
+            skillCatalog.fixedHeight = GUI.skin.box.fixedHeight;
+
+            for (int i = 0; i < passiveSkillTemplates.Count; i++)
+            {
+                bool isSelected = (selectedPassiveSkillIndex == i);
+
+                var text = "  " + passiveSkillTemplates[i].Item1.displayName;
+                text = text.Substring(0, Mathf.Min(text.Length, 13));
+                GUIContent content = new GUIContent(text, passiveSkillTemplates[i].Item2);
+
+                if (GUILayout.Toggle(isSelected, content, skillCatalog))
+                {
+                    if (selectedPassiveSkillIndex != i)
+                    {
+                        selectedPassiveSkillIndex = i;
+
+                        GUI.FocusControl(null);
+                    }
+                }
+            }
+            GUILayout.EndScrollView();
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+
+            if (passiveSkillTemplates.Count > 0 && selectedPassiveSkillIndex < passiveSkillTemplates.Count)
+            {
+                PassiveSkillTemplate selectedSkill = passiveSkillTemplates[selectedPassiveSkillIndex].Item1;
+
+                if (passiveSkillEditor == null || passiveSkillEditor.target != selectedSkill)
+                {
+                    passiveSkillEditor = UnityEditor.Editor.CreateEditor(selectedSkill);
+                }
+
+                contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
+                passiveSkillEditor.OnInspectorGUI();
+                GUILayout.EndScrollView();
+            }
+
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+        }
+
+        private void AddPassiveSkillTemplate()
+        {
+            // 스킬 템플릿 생성
+            PassiveSkillTemplate newSkill = CreateInstance<PassiveSkillTemplate>();
+
+            // 에셋 저장
+            string defaultPath = "Assets/FrameWork/Core/GameData/Skill/PassiveSkill";
+            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Skill/PassiveSkill", "PassiveSkill_", "asset", "스킬 템플릿은 FrameWork/Core/GameData/Skill/PassiveSkill 위치에 저장됩니다..", defaultPath);
+            if (!string.IsNullOrEmpty(path))
+            {
+                newSkill.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("PassiveSkill_", ""));
+
+                AssetDatabase.CreateAsset(newSkill, path);
+                AssetDatabase.SaveAssets();
+                LoadPassiveSkillTemplates();
+            }
+        }
+
+        private void DeleteSelectedPassiveSkillTemplate()
+        {
+            if (passiveSkillTemplates.Count > 0)
+            {
+                PassiveSkillTemplate selectedSkill = passiveSkillTemplates[selectedPassiveSkillIndex].Item1;
+                string assetPath = AssetDatabase.GetAssetPath(selectedSkill);
+                passiveSkillTemplates.RemoveAt(selectedPassiveSkillIndex);
+                AssetDatabase.DeleteAsset(assetPath);
+                AssetDatabase.SaveAssets();
+            }
+        }
+
+        private void LoadPassiveSkillTemplates()
+        {
+            if (emptyTexture2D == null) emptyTexture2D = CreateTexture(Color.gray);
+
+            passiveSkillTemplates.Clear();
+            string[] guids = AssetDatabase.FindAssets("t:PassiveSkillTemplate");
+            foreach (var guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                PassiveSkillTemplate skill = AssetDatabase.LoadAssetAtPath<PassiveSkillTemplate>(path);
+
+                var texture = (skill.sprite == null) ? emptyTexture2D : skill.sprite.texture;
+                texture = texture.ResizeTexture(30, 30);
+
+                passiveSkillTemplates.Add(new Tuple<PassiveSkillTemplate, Texture2D>(skill, texture));
             }
         }
         #endregion
@@ -791,19 +973,19 @@ namespace Temporary.Editor
 
         private void AddSkillTreeTemplate()
         {
-            // 스킬 템플릿 생성
+            // 스킬 트리 템플릿 생성
             SkillTreeGraph newSkill = CreateInstance<SkillTreeGraph>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Core/GameData/SkillTree";
-            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/SkillTree", "SkillTree_", "asset", "스킬 트리 템플릿을 저장합니다.", defaultPath);
+            string defaultPath = "Assets/FrameWork/Core/GameData/Skill/SkillTree";
+            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Skill/SkillTree", "SkillTree_", "asset", "스킬 트리 템플릿을 저장합니다.", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
-                newSkill.displayName = Path.GetFileNameWithoutExtension(path);
+                newSkill.displayName = Path.GetFileNameWithoutExtension(path).Replace("SkillTree_", "");
 
                 AssetDatabase.CreateAsset(newSkill, path);
                 AssetDatabase.SaveAssets();
-                LoadSkillTemplates();
+                LoadSkillTreeTemplates();
             }
         }
 

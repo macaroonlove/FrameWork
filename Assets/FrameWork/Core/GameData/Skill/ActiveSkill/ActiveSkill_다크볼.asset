@@ -96,8 +96,7 @@ MonoBehaviour:
   _tickCount: 0
   _isInfinity: 0
   _duration: 0
-  _applyType: 0
-  _amount: 0
+  _applyTypeByAmountDatas: []
 --- !u!114 &-2283518123541280796
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -120,8 +119,7 @@ MonoBehaviour:
   _tickCycle: 0
   _tickCount: 0
   _damageType: 0
-  _applyType: 0
-  _amount: 0
+  _applyTypeByAmountDatas: []
 --- !u!114 &-1939811432446633304
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -141,8 +139,7 @@ MonoBehaviour:
   _isTick: 0
   _tickCycle: 0
   _tickCount: 0
-  _applyType: 0
-  _amount: 0
+  _applyTypeByAmountDatas: []
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,7 +150,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5093661109052b9438d278789d9e23d4, type: 3}
-  m_Name: "Skill_\uB2E4\uD06C\uBCFC"
+  m_Name: "ActiveSkill_\uB2E4\uD06C\uBCFC"
   m_EditorClassIdentifier: 
   _sprite: {fileID: 21300000, guid: eed44235dcbd621438f7c0c4f05e2356, type: 3}
   _id: 0
@@ -204,8 +201,7 @@ MonoBehaviour:
   _tickCount: 0
   _isInfinity: 0
   _duration: 0
-  _applyType: 0
-  _amount: 0
+  _applyTypeByAmountDatas: []
 --- !u!114 &7525320683131574061
 MonoBehaviour:
   m_ObjectHideFlags: 1
