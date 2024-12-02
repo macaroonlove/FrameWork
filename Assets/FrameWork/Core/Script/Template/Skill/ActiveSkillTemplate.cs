@@ -22,7 +22,7 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private int _parameterHash;
 
         [HideInInspector]
-        public List<ActiveSkillEffect> effects;
+        public List<EventSkillEffect> effects;
 
         #region 프로퍼티
         public Sprite sprite => _sprite;
@@ -71,7 +71,7 @@ namespace Temporary.Editor
         private SerializedProperty _parameterHash;
 
         private ReorderableList _effectsList;
-        private ActiveSkillEffect _currentEffect;
+        private EventSkillEffect _currentEffect;
 
         private void OnEnable()
         {
@@ -173,16 +173,16 @@ namespace Temporary.Editor
         {
             var menu = new GenericMenu();
 
-            menu.AddItem(new GUIContent("즉시 데미지 스킬"), false, CreateEffectCallback, typeof(InstantDamageActiveSkillEffect));
-            menu.AddItem(new GUIContent("투사체 데미지 스킬"), false, CreateEffectCallback, typeof(ProjectileDamageActiveSkillEffect));
-            menu.AddItem(new GUIContent("즉시 회복 스킬"), false, CreateEffectCallback, typeof(InstantHealActiveSkillEffect));
-            menu.AddItem(new GUIContent("투사체 회복 스킬"), false, CreateEffectCallback, typeof(ProjectileHealActiveSkillEffect));
-            menu.AddItem(new GUIContent("즉시 보호막 스킬"), false, CreateEffectCallback, typeof(InstantShieldActiveSkillEffect));
-            menu.AddItem(new GUIContent("투사체 보호막 스킬"), false, CreateEffectCallback, typeof(ProjectileShieldActiveSkillEffect));
-            menu.AddItem(new GUIContent("즉시 버프 스킬"), false, CreateEffectCallback, typeof(InstantBuffActiveSkillEffect));
-            menu.AddItem(new GUIContent("투사체 버프 스킬"), false, CreateEffectCallback, typeof(ProjectileBuffActiveSkillEffect));
-            menu.AddItem(new GUIContent("즉시 상태이상 스킬"), false, CreateEffectCallback, typeof(InstantAbnormalStatusActiveSkillEffect));
-            menu.AddItem(new GUIContent("투사체 상태이상 스킬"), false, CreateEffectCallback, typeof(ProjectileAbnormalStatusActiveSkillEffect));
+            menu.AddItem(new GUIContent("즉시 데미지 스킬"), false, CreateEffectCallback, typeof(InstantDamageEventSkillEffect));
+            menu.AddItem(new GUIContent("투사체 데미지 스킬"), false, CreateEffectCallback, typeof(ProjectileDamageEventSkillEffect));
+            menu.AddItem(new GUIContent("즉시 회복 스킬"), false, CreateEffectCallback, typeof(InstantHealEventSkillEffect));
+            menu.AddItem(new GUIContent("투사체 회복 스킬"), false, CreateEffectCallback, typeof(ProjectileHealEventSkillEffect));
+            menu.AddItem(new GUIContent("즉시 보호막 스킬"), false, CreateEffectCallback, typeof(InstantShieldEventSkillEffect));
+            menu.AddItem(new GUIContent("투사체 보호막 스킬"), false, CreateEffectCallback, typeof(ProjectileShieldEventSkillEffect));
+            menu.AddItem(new GUIContent("즉시 버프 스킬"), false, CreateEffectCallback, typeof(InstantBuffEventSkillEffect));
+            menu.AddItem(new GUIContent("투사체 버프 스킬"), false, CreateEffectCallback, typeof(ProjectileBuffEventSkillEffect));
+            menu.AddItem(new GUIContent("즉시 상태이상 스킬"), false, CreateEffectCallback, typeof(InstantAbnormalStatusEventSkillEffect));
+            menu.AddItem(new GUIContent("투사체 상태이상 스킬"), false, CreateEffectCallback, typeof(ProjectileAbnormalStatusEventSkillEffect));
 
             menu.ShowAsContext();
         }
@@ -241,7 +241,7 @@ namespace Temporary.Editor
 
         private void CreateEffectCallback(object obj)
         {
-            var effect = ScriptableObject.CreateInstance((Type)obj) as ActiveSkillEffect;
+            var effect = ScriptableObject.CreateInstance((Type)obj) as EventSkillEffect;
 
             if (effect != null)
             {

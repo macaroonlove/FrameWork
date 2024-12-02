@@ -1,6 +1,8 @@
+using System.Collections.Generic;
+
 namespace Temporary.Core
 {
-    public class AlwaysEffectTrigger : EffectTrigger
+    public class AlwaysUnitTrigger : UnitTrigger
     {
         public override string GetLabel()
         {

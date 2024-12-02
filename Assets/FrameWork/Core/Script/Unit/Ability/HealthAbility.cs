@@ -9,7 +9,8 @@ namespace Temporary.Core
     public class HealthAbility : AlwaysAbility
     {
         private PoolSystem _poolSystem;
-        
+
+        private PassiveSkillAbility _passiveSkillAbility;
         private BuffAbility _buffAbility;
         private AbnormalStatusAbility _abnormalStatusAbility;
 
@@ -207,6 +208,7 @@ namespace Temporary.Core
 
             _poolSystem = BattleManager.Instance.GetSubSystem<PoolSystem>();
 
+            _passiveSkillAbility = unit.GetAbility<PassiveSkillAbility>();
             _buffAbility = unit.GetAbility<BuffAbility>();
             _abnormalStatusAbility = unit.GetAbility<AbnormalStatusAbility>();
 
@@ -262,7 +264,7 @@ namespace Temporary.Core
             return false;
         }
 
-        internal void Healed(int value, int id)
+        internal void Healed(int value, Unit casterUnit)
         {
             // 회복 불가인 상태라면 무시
             if (finalIsHealAble == false) return;
@@ -277,6 +279,11 @@ namespace Temporary.Core
             var lastHp = Mathf.RoundToInt(_currentHP + healingAmount);
 
             SetHP(lastHp);
+
+            foreach (var effect in _passiveSkillAbility.healEventEffects)
+            {
+                effect.Execute(unit, casterUnit);
+            }
         }
 
         private void SetHP(int hp)

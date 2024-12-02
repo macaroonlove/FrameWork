@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Temporary.Core
 {
-    public abstract class ActiveSkillEffect : Effect
+    public abstract class EventSkillEffect : Effect
     {
         public abstract List<Unit> GetTarget(Unit casterUnit);
 

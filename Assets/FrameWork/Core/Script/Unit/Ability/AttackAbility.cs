@@ -17,6 +17,7 @@ namespace Temporary.Core
         
 
         private UnitAnimationAbility _unitAnimationAbility;
+        private PassiveSkillAbility _passiveSkillAbility;
         private BuffAbility _buffAbility;
         private AbnormalStatusAbility _abnormalStatusAbility;
         private FindTargetAbility _findTargetAbility;
@@ -162,6 +163,7 @@ namespace Temporary.Core
             base.Initialize(unit);
 
             _unitAnimationAbility = unit.GetAbility<UnitAnimationAbility>();
+            _passiveSkillAbility = unit.GetAbility<PassiveSkillAbility>();
             _buffAbility = unit.GetAbility<BuffAbility>();
             _abnormalStatusAbility = unit.GetAbility<AbnormalStatusAbility>();
             _findTargetAbility = unit.GetAbility<FindTargetAbility>();
@@ -335,7 +337,13 @@ namespace Temporary.Core
         private void ApplyAttack(Unit attackTarget)
         {
             attackTarget.GetAbility<HitAbility>().Hit(unit);
+            
             onAttack?.Invoke();
+            
+            foreach (var effect in _passiveSkillAbility.attackEventEffects)
+            {
+                effect.Execute(unit, attackTarget);
+            }
         }
         #endregion
 
@@ -386,8 +394,14 @@ namespace Temporary.Core
 
         private void ApplyHeal(Unit healTarget)
         {
-            healTarget.GetAbility<HealthAbility>().Healed(finalATK, unit.id);
+            healTarget.GetAbility<HealthAbility>().Healed(finalATK, unit);
+
             onAttack?.Invoke();
+
+            foreach (var effect in _passiveSkillAbility.attackEventEffects)
+            {
+                effect.Execute(unit, healTarget);
+            }
         }
         #endregion
     }

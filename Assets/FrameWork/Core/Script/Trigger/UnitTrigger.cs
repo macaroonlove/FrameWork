@@ -1,9 +1,10 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Temporary.Core
 {
-    public abstract class EffectTrigger : ScriptableObject
+    public abstract class UnitTrigger : ScriptableObject
     {
         public List<Effect> effects;
 

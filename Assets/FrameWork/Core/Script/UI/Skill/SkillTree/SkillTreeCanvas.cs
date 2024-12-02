@@ -75,17 +75,34 @@ namespace Temporary.Core
             {
                 if (node is SkillNode skill)
                 {
-                    if (skill.skillTemplate == null) continue;
+                    if (skill is ActiveSkillNode activeSkill)
+                    {
+                        if (activeSkill.skillTemplate == null) continue;
 
-                    Vector2 position = GetSkillNodePosition(skill.level, skill.index, skillTree.nodeLevelCount, skillTree.nodeIndexCount);
-                    Transform trans = _poolSystem.Spawn(_nodePrefab, _content).transform;
-                    (trans as RectTransform).anchoredPosition = position;
+                        Vector2 position = GetSkillNodePosition(skill.level, skill.index, skillTree.nodeLevelCount, skillTree.nodeIndexCount);
+                        Transform trans = _poolSystem.Spawn(_nodePrefab, _content).transform;
+                        (trans as RectTransform).anchoredPosition = position;
 
-                    var nodeController = trans.GetComponent<UISkillNodeController>();
-                    nodeController.Initialize(skill.skillTemplate);
+                        var nodeController = trans.GetComponent<UISkillNodeController>();
+                        nodeController.Initialize(activeSkill.skillTemplate);
 
-                    nodeControllerMap[skill] = nodeController;
-                    _nodes.Add(nodeController);
+                        nodeControllerMap[skill] = nodeController;
+                        _nodes.Add(nodeController);
+                    }
+                    else if (skill is PassiveSkillNode passiveSkill)
+                    {
+                        if (passiveSkill.skillTemplate == null) continue;
+
+                        Vector2 position = GetSkillNodePosition(skill.level, skill.index, skillTree.nodeLevelCount, skillTree.nodeIndexCount);
+                        Transform trans = _poolSystem.Spawn(_nodePrefab, _content).transform;
+                        (trans as RectTransform).anchoredPosition = position;
+
+                        var nodeController = trans.GetComponent<UISkillNodeController>();
+                        nodeController.Initialize(passiveSkill.skillTemplate);
+
+                        nodeControllerMap[skill] = nodeController;
+                        _nodes.Add(nodeController);
+                    }
                 }
             }
 

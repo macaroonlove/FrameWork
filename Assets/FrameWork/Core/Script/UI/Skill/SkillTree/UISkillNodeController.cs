@@ -35,7 +35,23 @@ namespace Temporary.Core
             Show(template);
         }
 
+        public void Initialize(PassiveSkillTemplate template)
+        {
+            BindImage(typeof(Images));
+            BindObject(typeof(Objects));
+
+            output = GetObject((int)Objects.Out).transform as RectTransform;
+            input = GetObject((int)Objects.In).transform as RectTransform;
+
+            Show(template);
+        }
+
         public void Show(ActiveSkillTemplate template)
+        {
+            GetImage((int)Images.Icon).sprite = template.sprite;
+        }
+
+        public void Show(PassiveSkillTemplate template)
         {
             GetImage((int)Images.Icon).sprite = template.sprite;
         }

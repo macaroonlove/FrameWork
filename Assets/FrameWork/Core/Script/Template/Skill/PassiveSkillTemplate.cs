@@ -13,7 +13,7 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private string _description;
 
         [HideInInspector]
-        public List<EffectTrigger> triggers = new List<EffectTrigger>();
+        public List<UnitTrigger> triggers = new List<UnitTrigger>();
 
         #region 프로퍼티
         public Sprite sprite => _sprite;
@@ -51,7 +51,7 @@ namespace Temporary.Editor
         private SerializedProperty _description;
 
         private ReorderableList _triggersList;
-        private EffectTrigger _currentTrigger;
+        private UnitTrigger _currentTrigger;
 
         private ReorderableList _effectsList;
         private Effect _currentEffect;
@@ -126,9 +126,11 @@ namespace Temporary.Editor
         {
             var menu = new GenericMenu();
 
-            menu.AddItem(new GUIContent("상시 적용"), false, CreateEventTriggerCallback, typeof(AlwaysEffectTrigger));
-            //menu.AddItem(new GUIContent("특정 이벤트 발생 시"), false, CreateEventTriggerCallback, typeof(GameEventEffectTrigger));
-            //menu.AddItem(new GUIContent("특정 유닛 이벤트 발생 시"), false, CreateEventTriggerCallback, typeof(UnitEventEffectTrigger));
+            menu.AddItem(new GUIContent("상시 적용"), false, CreateEventTriggerCallback, typeof(AlwaysUnitTrigger));
+            menu.AddItem(new GUIContent("기본 공격·회복 시 적용"), false, CreateEventTriggerCallback, typeof(AttackEventUnitTrigger));
+            menu.AddItem(new GUIContent("피격 시 적용"), false, CreateEventTriggerCallback, typeof(HitEventUnitTrigger));
+            menu.AddItem(new GUIContent("회복을 받을 시 적용"), false, CreateEventTriggerCallback, typeof(HealEventUnitTrigger));
+            menu.AddItem(new GUIContent("보호막이 파괴될 시 적용"), false, CreateEventTriggerCallback, typeof(DestroyShieldEventUnitTrigger));
 
             menu.ShowAsContext();
         }
@@ -158,7 +160,7 @@ namespace Temporary.Editor
 
         private void CreateEventTriggerCallback(object obj)
         {
-            var trigger = ScriptableObject.CreateInstance((Type)obj) as EffectTrigger;
+            var trigger = ScriptableObject.CreateInstance((Type)obj) as UnitTrigger;
             if (trigger != null)
             {
                 trigger.hideFlags = HideFlags.HideInHierarchy;
@@ -178,22 +180,23 @@ namespace Temporary.Editor
         {
             var menu = new GenericMenu();
 
-            if (_currentTrigger is AlwaysEffectTrigger)
+            if (_currentTrigger is AlwaysUnitTrigger)
             {
-                //menu.AddItem(new GUIContent("버프 스킬"), false, CreateEffectCallback, typeof(BuffPassiveSkillEffect));
+                menu.AddItem(new GUIContent("자기 자신에게 무한 지속 버프 적용"), false, CreateEffectCallback, typeof(BuffAlwaysSkillEffect));
             }
-
-
-            menu.AddItem(new GUIContent("즉시 데미지 스킬"), false, CreateEffectCallback, typeof(InstantDamageActiveSkillEffect));
-            menu.AddItem(new GUIContent("투사체 데미지 스킬"), false, CreateEffectCallback, typeof(ProjectileDamageActiveSkillEffect));
-            menu.AddItem(new GUIContent("즉시 회복 스킬"), false, CreateEffectCallback, typeof(InstantHealActiveSkillEffect));
-            menu.AddItem(new GUIContent("투사체 회복 스킬"), false, CreateEffectCallback, typeof(ProjectileHealActiveSkillEffect));
-            menu.AddItem(new GUIContent("즉시 보호막 스킬"), false, CreateEffectCallback, typeof(InstantShieldActiveSkillEffect));
-            menu.AddItem(new GUIContent("투사체 보호막 스킬"), false, CreateEffectCallback, typeof(ProjectileShieldActiveSkillEffect));
-            menu.AddItem(new GUIContent("즉시 버프 스킬"), false, CreateEffectCallback, typeof(InstantBuffActiveSkillEffect));
-            menu.AddItem(new GUIContent("투사체 버프 스킬"), false, CreateEffectCallback, typeof(ProjectileBuffActiveSkillEffect));
-            menu.AddItem(new GUIContent("즉시 상태이상 스킬"), false, CreateEffectCallback, typeof(InstantAbnormalStatusActiveSkillEffect));
-            menu.AddItem(new GUIContent("투사체 상태이상 스킬"), false, CreateEffectCallback, typeof(ProjectileAbnormalStatusActiveSkillEffect));
+            else
+            {
+                menu.AddItem(new GUIContent("즉시 데미지 스킬"), false, CreateEffectCallback, typeof(InstantDamageEventSkillEffect));
+                menu.AddItem(new GUIContent("투사체 데미지 스킬"), false, CreateEffectCallback, typeof(ProjectileDamageEventSkillEffect));
+                menu.AddItem(new GUIContent("즉시 회복 스킬"), false, CreateEffectCallback, typeof(InstantHealEventSkillEffect));
+                menu.AddItem(new GUIContent("투사체 회복 스킬"), false, CreateEffectCallback, typeof(ProjectileHealEventSkillEffect));
+                menu.AddItem(new GUIContent("즉시 보호막 스킬"), false, CreateEffectCallback, typeof(InstantShieldEventSkillEffect));
+                menu.AddItem(new GUIContent("투사체 보호막 스킬"), false, CreateEffectCallback, typeof(ProjectileShieldEventSkillEffect));
+                menu.AddItem(new GUIContent("즉시 버프 스킬"), false, CreateEffectCallback, typeof(InstantBuffEventSkillEffect));
+                menu.AddItem(new GUIContent("투사체 버프 스킬"), false, CreateEffectCallback, typeof(ProjectileBuffEventSkillEffect));
+                menu.AddItem(new GUIContent("즉시 상태이상 스킬"), false, CreateEffectCallback, typeof(InstantAbnormalStatusEventSkillEffect));
+                menu.AddItem(new GUIContent("투사체 상태이상 스킬"), false, CreateEffectCallback, typeof(ProjectileAbnormalStatusEventSkillEffect));
+            }
 
             menu.ShowAsContext();
         }

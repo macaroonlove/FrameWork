@@ -9,6 +9,7 @@ namespace Temporary.Core
     {
         private DamageCalculateAbility _damageCalculateAbility;
         private HealthAbility _healthAbility;
+        private PassiveSkillAbility _passiveSkillAbility;
         private BuffAbility _buffAbility;
 
         #region 피해 면역 필드
@@ -96,6 +97,7 @@ namespace Temporary.Core
 
             _damageCalculateAbility = unit.GetAbility<DamageCalculateAbility>();
             _healthAbility = unit.GetAbility<HealthAbility>();
+            _passiveSkillAbility = unit.GetAbility<PassiveSkillAbility>();
             _buffAbility = unit.GetAbility<BuffAbility>();
         }
 
@@ -121,6 +123,11 @@ namespace Temporary.Core
                 _healthAbility.Damaged(damage, attackedUnit.id);
 
                 onHit?.Invoke();
+
+                foreach (var effect in _passiveSkillAbility.hitEventEffects)
+                {
+                    effect.Execute(unit, attackedUnit);
+                }
             }
         }
 
@@ -135,6 +142,11 @@ namespace Temporary.Core
             _healthAbility.Damaged(damage, id);
 
             onHit?.Invoke();
+
+            foreach (var effect in _passiveSkillAbility.hitEventEffects)
+            {
+                effect.Execute(unit, null);
+            }
         }
 
         /// <summary>
@@ -142,9 +154,17 @@ namespace Temporary.Core
         /// </summary>
         internal void Hit(int damage, int id = 0)
         {
+            // 피해 면역 로직
+            if (UsedDamageImmunity(EDamageType.TrueDamage)) return;
+
             _healthAbility.Damaged(damage, id);
 
             onHit?.Invoke();
+
+            foreach (var effect in _passiveSkillAbility.hitEventEffects)
+            {
+                effect.Execute(unit, null);
+            }
         }
 
         #region 피해 면역 로직

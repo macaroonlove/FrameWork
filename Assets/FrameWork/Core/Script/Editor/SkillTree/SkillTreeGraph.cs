@@ -18,10 +18,15 @@ namespace Temporary.Core
             
             foreach (var node in nodes)
             {
-                if (node is SkillNode skillNode)
+                if (node is ActiveSkillNode activeSkillNode)
                 {
-                    nodeLevelCount = Mathf.Max(nodeLevelCount, skillNode.level);
-                    nodeIndexCount = Mathf.Max(nodeIndexCount, skillNode.index);
+                    nodeLevelCount = Mathf.Max(nodeLevelCount, activeSkillNode.level);
+                    nodeIndexCount = Mathf.Max(nodeIndexCount, activeSkillNode.index);
+                }
+                else if (node is PassiveSkillNode passiveSkillNode)
+                {
+                    nodeLevelCount = Mathf.Max(nodeLevelCount, passiveSkillNode.level);
+                    nodeIndexCount = Mathf.Max(nodeIndexCount, passiveSkillNode.index);
                 }
             }
 
@@ -64,10 +69,15 @@ namespace Temporary.Editor
 
             foreach (var node in graph.nodes)
             {
-                if (node is SkillNode skillNode)
+                if (node is ActiveSkillNode activeSkillNode)
                 {
-                    graph.nodeLevelCount = Mathf.Max(graph.nodeLevelCount, skillNode.level);
-                    graph.nodeIndexCount = Mathf.Max(graph.nodeIndexCount, skillNode.index);
+                    graph.nodeLevelCount = Mathf.Max(graph.nodeLevelCount, activeSkillNode.level);
+                    graph.nodeIndexCount = Mathf.Max(graph.nodeIndexCount, activeSkillNode.index);
+                }
+                else if (node is PassiveSkillNode passiveSkillNode)
+                {
+                    graph.nodeLevelCount = Mathf.Max(graph.nodeLevelCount, passiveSkillNode.level);
+                    graph.nodeIndexCount = Mathf.Max(graph.nodeIndexCount, passiveSkillNode.index);
                 }
             }
 

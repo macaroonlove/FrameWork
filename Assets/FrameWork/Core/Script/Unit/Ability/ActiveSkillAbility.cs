@@ -96,7 +96,7 @@ namespace Temporary.Core
 
         private bool SkillAnimation(ActiveSkillTemplate template)
         {
-            if (_unitAnimationAbility.TrySetTrigger(_template.parameterHash) == false) return false;
+            if (_unitAnimationAbility.TrySetTrigger(template.parameterHash) == false) return false;
 
             _template = template;
             _isSkillActive = true;
