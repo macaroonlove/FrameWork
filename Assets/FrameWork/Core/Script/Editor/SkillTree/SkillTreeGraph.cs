@@ -3,7 +3,7 @@ using XNode;
 
 namespace Temporary.Core
 {
-    [CreateAssetMenu(menuName = "Templates/Skill/Skill Tree Graph")]
+    [CreateAssetMenu(menuName = "Templates/Skill/Skill Tree Graph", fileName = "SkillTree_", order = 2)]
     public class SkillTreeGraph : NodeGraph
     {
         public string displayName;

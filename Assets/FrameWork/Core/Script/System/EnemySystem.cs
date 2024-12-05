@@ -1,6 +1,7 @@
 using FrameWork.Editor;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Temporary.Core
 {
@@ -11,6 +12,8 @@ namespace Temporary.Core
     public class EnemySystem : MonoBehaviour, ISubSystem
     {
         [SerializeField, ReadOnly] private List<EnemyUnit> _enemies = new List<EnemyUnit>();
+
+        internal event UnityAction<Unit> onRegist;
 
         public void Initialize()
         {
@@ -29,6 +32,8 @@ namespace Temporary.Core
         internal void Regist(EnemyUnit enemy)
         {
             _enemies.Add(enemy);
+
+            onRegist?.Invoke(enemy);
         }
 
         internal void Deregist(EnemyUnit enemy)

@@ -25,10 +25,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 724b4a4eade21184eb40d6199762ce2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _target: 0
-  _attackType: 0
-  _radius: 0
-  _numberOfTarget: 0
   _repeatCount: 1
   _isTick: 0
   _tickCycle: 0
@@ -51,4 +47,18 @@ MonoBehaviour:
   _id: 0
   _displayName: "\uC2DC\uC57C\uAC15\uD654"
   _description: 
-  triggers: []
+  triggers:
+  - {fileID: 5263077557543448871}
+--- !u!114 &5263077557543448871
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c113e5d57dab53743a8d7bea8e5dd371, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effects: []

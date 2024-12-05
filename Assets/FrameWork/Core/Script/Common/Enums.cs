@@ -84,4 +84,32 @@ namespace Temporary.Core
         Enemy_CurrentHP,
         Enemy_MAXHP,
     }
+
+    /// <summary>
+    /// 등급
+    /// </summary>
+    public enum ERarity
+    {
+        Legend,
+        Epic,
+        Rare,
+        Common,
+    }
+
+    /// <summary>
+    /// 유닛 타입
+    /// </summary>
+    public enum EUnitType
+    {
+        All,
+        Agent,
+        Enemy,
+    }
+
+    public enum EOperator
+    {
+        Add,
+        Multiply,
+        Set,
+    }
 }

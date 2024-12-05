@@ -1,0 +1,138 @@
+using FrameWork.Editor;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Temporary.Core
+{
+    /// <summary>
+    /// 패시브 아이템 효과를 적용시키는 시스템
+    /// </summary>
+    public class PassiveItemSystem : MonoBehaviour, ISubSystem
+    {
+        [SerializeField, ReadOnly] private List<PassiveItemTemplate> _items = new List<PassiveItemTemplate>();
+
+        private List<AlwaysEffect> _alwaysEffects = new List<AlwaysEffect>();
+        private List<GlobalEvent> _globalEvents = new List<GlobalEvent>();
+        private List<UnitEvent> _unitEvents = new List<UnitEvent>();
+
+        public void Initialize()
+        {
+            BattleManager.Instance.GetSubSystem<AgentSystem>().onRegist += ApplyAlwaysEvent;
+            BattleManager.Instance.GetSubSystem<EnemySystem>().onRegist += ApplyAlwaysEvent;
+        }
+
+        public void Deinitialize()
+        {
+            BattleManager.Instance.GetSubSystem<AgentSystem>().onRegist -= ApplyAlwaysEvent;
+            BattleManager.Instance.GetSubSystem<EnemySystem>().onRegist -= ApplyAlwaysEvent;
+        }
+
+        private void ApplyAlwaysEvent(Unit unit)
+        {
+            foreach(var effect in _alwaysEffects)
+            {
+                effect.Execute(unit);
+            }
+        }
+
+        /// <summary>
+        /// 아이템 추가
+        /// (저장되있는 아이템을 로드할 경우 isNewItem을 false로 넘겨주기)
+        /// </summary>
+        public void AddItem(PassiveItemTemplate template, bool isNewItem = true)
+        {
+            if (_items.Contains(template))
+            {
+#if UNITY_EDITOR
+                Debug.LogError($"아이템이 중복되었습니다. {template.displayName}");
+#endif
+                return;
+            }
+
+            _items.Add(template);
+
+            foreach (var trigger in template.triggers)
+            {
+                if (trigger is GetGameTrigger getTrigger && isNewItem)
+                {
+                    foreach (var effect in getTrigger.effects)
+                    {
+                        if (effect is GlobalEffect globalEffect)
+                        {
+                            globalEffect.Execute();
+                        }
+                    }
+                }
+                else if (trigger is AlwaysGameTrigger alwaysTrigger)
+                {
+                    foreach (var effect in alwaysTrigger.effects)
+                    {
+                        if (effect is AlwaysEffect alwaysEffect)
+                        {
+                            _alwaysEffects.Add(alwaysEffect);
+                        }
+                    }
+                }
+                else if (trigger is GlobalEventGameTrigger globalTrigger)
+                {
+                    Action action = () =>
+                    {
+                        foreach (var effect in globalTrigger.effects)
+                        {
+                            if (effect is GlobalEffect globalEffect)
+                            {
+                                globalEffect.Execute();
+                            }
+                        }
+                    };
+
+                    globalTrigger.globalEvent.AddListener(action);
+
+                    _globalEvents.Add(globalTrigger.globalEvent);
+                }
+                else if (trigger is UnitEventGameTrigger unitTrigger)
+                {
+                    Action<Unit, Unit> action = (casterUnit, targetUnit) =>
+                    {
+                        foreach (var effect in unitTrigger.effects)
+                        {
+                            if (effect is GlobalEffect globalEffect)
+                            {
+                                globalEffect.Execute();
+                            }
+                            else if (effect is EventEffect unitEffect)
+                            {
+                                unitEffect.Execute(casterUnit, targetUnit);
+                            }
+                        }
+                    };
+
+                    unitTrigger.unitEvent.AddListener(action);
+
+                    _unitEvents.Add(unitTrigger.unitEvent);
+                }
+
+            }
+        }
+
+        private void OnDestroy()
+        {
+            _alwaysEffects.Clear();
+
+            foreach (var item in _globalEvents)
+            {
+                item.RemoveAll();
+            }
+            _globalEvents.Clear();
+
+            foreach (var item in _unitEvents)
+            {
+                item.RemoveAll();
+            }
+            _unitEvents.Clear();
+            
+            _items.Clear();
+        }
+    }
+}

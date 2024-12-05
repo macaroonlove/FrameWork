@@ -22,8 +22,8 @@ namespace Temporary.Core
         {
             var labelRect = new Rect(rect.x, rect.y, 100, rect.height);
             var valueRect = new Rect(rect.x + 100, rect.y, rect.width - 100, rect.height);
-            GUI.Label(labelRect, "°ª");
 
+            GUI.Label(labelRect, "°ª");
             if (typeof(T) == typeof(int))
             {
                 _value = (T)(object)EditorGUI.IntField(valueRect, (int)(object)_value);

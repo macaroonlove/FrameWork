@@ -1,6 +1,7 @@
 using FrameWork.Editor;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Temporary.Core
 {
@@ -11,6 +12,8 @@ namespace Temporary.Core
     public class AgentSystem : MonoBehaviour, ISubSystem
     {
         [SerializeField, ReadOnly] private List<AgentUnit> _agents = new List<AgentUnit>();
+
+        internal event UnityAction<Unit> onRegist;
 
         public void Initialize()
         {
@@ -29,6 +32,8 @@ namespace Temporary.Core
         internal void Regist(AgentUnit agent)
         {
             _agents.Add(agent);
+
+            onRegist?.Invoke(agent);
         }
 
         internal void Deregist(AgentUnit agent)

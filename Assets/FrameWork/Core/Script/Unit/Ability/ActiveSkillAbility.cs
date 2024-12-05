@@ -83,11 +83,14 @@ namespace Temporary.Core
             // 스킬의 목표 타겟이 존재한다면
             foreach (var effect in _template.effects)
             {
-                var targets = effect.GetTarget(unit);
-
-                if (targets.Count > 0 && targets[0] != null)
+                if (effect is IGetTarget targetEffect)
                 {
-                    return SkillAnimation(template);
+                    var targets = targetEffect.GetTarget(unit);
+
+                    if (targets.Count > 0 && targets[0] != null)
+                    {
+                        return SkillAnimation(template);
+                    }
                 }
             }
 
@@ -118,11 +121,14 @@ namespace Temporary.Core
         {
             foreach (var effect in _template.effects)
             {
-                var targets = effect.GetTarget(unit);
-
-                foreach (var target in targets)
+                if (effect is IGetTarget targetEffect)
                 {
-                    effect.Execute(unit, target);
+                    var targets = targetEffect.GetTarget(unit);
+
+                    foreach (var target in targets)
+                    {
+                        effect.Execute(unit, target);
+                    }
                 }
             }
 

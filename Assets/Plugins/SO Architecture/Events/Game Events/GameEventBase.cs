@@ -3,6 +3,65 @@ using System.Collections.Generic;
 
 namespace ScriptableObjectArchitecture
 {
+    public abstract class GameEventBase<T, Y> : GameEventBase, IGameEvent<T, Y>, IStackTraceObject
+    {
+        private readonly List<IGameEventListener<T, Y>> _typedListeners = new List<IGameEventListener<T, Y>>();
+        private readonly List<System.Action<T, Y>> _typedActions = new List<System.Action<T, Y>>();
+
+        [SerializeField]
+        protected T _debugValue = default(T);
+        [SerializeField]
+        protected Y _debugValue2 = default(Y);
+
+        public void Raise(T value, Y value2)
+        {
+            AddStackTrace(value);
+
+            for (int i = _typedListeners.Count - 1; i >= 0; i--)
+                _typedListeners[i].OnEventRaised(value, value2);
+
+            for (int i = _listeners.Count - 1; i >= 0; i--)
+                _listeners[i].OnEventRaised();
+
+            for (int i = _typedActions.Count - 1; i >= 0; i--)
+                _typedActions[i](value, value2);
+
+            for (int i = _actions.Count - 1; i >= 0; i--)
+                _actions[i]();
+        }
+
+        public void AddListener(IGameEventListener<T, Y> listener)
+        {
+            if (!_typedListeners.Contains(listener))
+                _typedListeners.Add(listener);
+        }
+
+        public void RemoveListener(IGameEventListener<T, Y> listener)
+        {
+            if (_typedListeners.Contains(listener))
+                _typedListeners.Remove(listener);
+        }
+
+        public void AddListener(System.Action<T, Y> action)
+        {
+            if (!_typedActions.Contains(action))
+                _typedActions.Add(action);
+        }
+
+        public void RemoveListener(System.Action<T, Y> action)
+        {
+            if (_typedActions.Contains(action))
+                _typedActions.Remove(action);
+        }
+
+        public override void RemoveAll()
+        {
+            base.RemoveAll();
+            _typedListeners.RemoveRange(0, _typedListeners.Count);
+            _typedActions.RemoveRange(0, _typedActions.Count);
+        }
+    }
+
     public abstract class GameEventBase<T> : GameEventBase, IGameEvent<T>, IStackTraceObject
     {
         private readonly List<IGameEventListener<T>> _typedListeners = new List<IGameEventListener<T>>();
