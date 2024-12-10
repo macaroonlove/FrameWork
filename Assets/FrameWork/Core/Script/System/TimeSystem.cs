@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Temporary.Core
 {
     /// <summary>
-    /// 시간을 계산하는 클래스
+    /// 전투에서 사용하는 시간을 관리하는 클래스
     /// </summary>
     public class TimeSystem : MonoBehaviour, ISubSystem
     {

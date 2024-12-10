@@ -97,6 +97,16 @@ namespace Temporary.Core
     }
 
     /// <summary>
+    /// 범위 타입
+    /// </summary>
+    public enum ERangeType
+    {
+        All,
+        Circle,
+        //Quad,
+    }
+
+    /// <summary>
     /// 유닛 타입
     /// </summary>
     public enum EUnitType
@@ -104,6 +114,7 @@ namespace Temporary.Core
         All,
         Agent,
         Enemy,
+        None,
     }
 
     public enum EOperator

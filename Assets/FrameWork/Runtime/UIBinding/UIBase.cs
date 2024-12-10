@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 namespace FrameWork.UIBinding
 {
+    [RequireComponent(typeof(CanvasGroupController))]
     public class UIBase : MonoBehaviour
     {
         private CanvasGroupController _controller;

@@ -6,7 +6,7 @@ namespace Temporary.Core
 {
     public abstract class GameTrigger : ScriptableObject
     {
-        public List<Effect> effects;
+        public List<Effect> effects = new List<Effect>();
 
         public abstract string GetLabel();
 

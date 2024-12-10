@@ -14,15 +14,17 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private string _displayName;
         [HideInInspector, SerializeField] private string _description;
 
-        [HideInInspector, SerializeField] private int _needMana;
+        [HideInInspector, SerializeField] private int _needCost;
         [HideInInspector, SerializeField] private float _cooldownTime;
-        [HideInInspector, SerializeField] private float _skillRange;
-
-        [HideInInspector, SerializeField] private string _parameterName;
-        [HideInInspector, SerializeField] private int _parameterHash;
+        [HideInInspector, SerializeField] private float _delay;
+        
+        [HideInInspector, SerializeField] private ERangeType _rangeType;
+        [HideInInspector, SerializeField] private float _range;
+        [HideInInspector, SerializeField] private EUnitType _unitType;
+        // 조건 추가
 
         [HideInInspector]
-        public List<EventEffect> effects;
+        public List<Effect> effects;
 
         #region 프로퍼티
         public Sprite sprite => _sprite;
@@ -31,11 +33,13 @@ namespace Temporary.Core
         public string displayName => _displayName;
         public string description => _description;
 
-        public int needMana => _needMana;
+        public int needCost => _needCost;
         public float cooldownTime => _cooldownTime;
-        public float skillRange => _skillRange;
-
-        public int parameterHash => _parameterHash;
+        public float delay => _delay;
+        
+        public ERangeType rangeType => _rangeType;
+        public float range => _range;
+        public EUnitType unitType => _unitType;
         #endregion
 
         #region 값 변경 메서드
@@ -64,14 +68,15 @@ namespace Temporary.Editor
         private SerializedProperty _id;
         private SerializedProperty _displayName;
         private SerializedProperty _description;
-        private SerializedProperty _needMana;
+        private SerializedProperty _needCost;
         private SerializedProperty _cooldownTime;
-        private SerializedProperty _skillRange;
-        private SerializedProperty _parameterName;
-        private SerializedProperty _parameterHash;
+        private SerializedProperty _delay;
+        private SerializedProperty _rangeType;
+        private SerializedProperty _range;
+        private SerializedProperty _unitType;
 
         private ReorderableList _effectsList;
-        private EventEffect _currentEffect;
+        private Effect _currentEffect;
 
         private void OnEnable()
         {
@@ -81,11 +86,12 @@ namespace Temporary.Editor
             _id = serializedObject.FindProperty("_id");
             _displayName = serializedObject.FindProperty("_displayName");
             _description = serializedObject.FindProperty("_description");
-            _needMana = serializedObject.FindProperty("_needMana");
+            _needCost = serializedObject.FindProperty("_needCost");
             _cooldownTime = serializedObject.FindProperty("_cooldownTime");
-            _skillRange = serializedObject.FindProperty("_skillRange");
-            _parameterName = serializedObject.FindProperty("_parameterName");
-            _parameterHash = serializedObject.FindProperty("_parameterHash");
+            _delay = serializedObject.FindProperty("_delay");
+            _rangeType = serializedObject.FindProperty("_rangeType");
+            _range = serializedObject.FindProperty("_range");
+            _unitType = serializedObject.FindProperty("_unitType");
 
             CreateEffectList();
         }
@@ -122,39 +128,39 @@ namespace Temporary.Editor
             GUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("소모 마나량", GUILayout.Width(192));
-            EditorGUILayout.PropertyField(_needMana, GUIContent.none);
+            GUILayout.Label("필요 코스트", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_needCost, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("쿨타임", GUILayout.Width(192));
             EditorGUILayout.PropertyField(_cooldownTime, GUIContent.none);
             GUILayout.EndHorizontal();
-
+            
             GUILayout.BeginHorizontal();
-            GUILayout.Label("스킬 범위", GUILayout.Width(192));
-            EditorGUILayout.PropertyField(_skillRange, GUIContent.none);
+            GUILayout.Label("지연 시간", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_delay, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("애니메이션 파라미터", GUILayout.Width(192));
-            EditorGUILayout.PropertyField(_parameterName, GUIContent.none);
+            GUILayout.Label("범위 방식", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_rangeType, GUIContent.none);
             GUILayout.EndHorizontal();
+
+            if (_rangeType.enumValueIndex == (int)ERangeType.Circle)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("범위", GUILayout.Width(192));
+                EditorGUILayout.PropertyField(_range, GUIContent.none);
+                GUILayout.EndHorizontal();
+            }
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("파라미터 해시 값", GUILayout.Width(192));
-            GUI.enabled = false;
-            EditorGUILayout.PropertyField(_parameterHash, GUIContent.none);
-            GUI.enabled = true;
+            GUILayout.Label("유닛 타입", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_unitType, GUIContent.none);
             GUILayout.EndHorizontal();
-
-            GUILayout.Space(4);
-            if (GUILayout.Button("해시 값 생성"))
-            {
-                _parameterHash.intValue = Animator.StringToHash(_parameterName.stringValue);
-            }
 
             GUILayout.Space(20);
 
@@ -173,16 +179,16 @@ namespace Temporary.Editor
         {
             var menu = new GenericMenu();
 
-            menu.AddItem(new GUIContent("즉시 데미지 스킬"), false, CreateEffectCallback, typeof(InstantDamageEventEffect));
-            menu.AddItem(new GUIContent("투사체 데미지 스킬"), false, CreateEffectCallback, typeof(ProjectileDamageEventEffect));
-            menu.AddItem(new GUIContent("즉시 회복 스킬"), false, CreateEffectCallback, typeof(InstantHealEventEffect));
-            menu.AddItem(new GUIContent("투사체 회복 스킬"), false, CreateEffectCallback, typeof(ProjectileHealEventEffect));
-            menu.AddItem(new GUIContent("즉시 보호막 스킬"), false, CreateEffectCallback, typeof(InstantShieldEventEffect));
-            menu.AddItem(new GUIContent("투사체 보호막 스킬"), false, CreateEffectCallback, typeof(ProjectileShieldEventEffect));
-            menu.AddItem(new GUIContent("즉시 버프 스킬"), false, CreateEffectCallback, typeof(InstantBuffEventEffect));
-            menu.AddItem(new GUIContent("투사체 버프 스킬"), false, CreateEffectCallback, typeof(ProjectileBuffEventEffect));
-            menu.AddItem(new GUIContent("즉시 상태이상 스킬"), false, CreateEffectCallback, typeof(InstantAbnormalStatusEventEffect));
-            menu.AddItem(new GUIContent("투사체 상태이상 스킬"), false, CreateEffectCallback, typeof(ProjectileAbnormalStatusEventEffect));
+            if (_target.unitType == EUnitType.None)
+            {
+                menu.AddItem(new GUIContent("Int 변수 변경"), false, CreateEffectCallback, typeof(ChangeIntVariableGlobalEffect));
+                menu.AddItem(new GUIContent("Float 변수 변경"), false, CreateEffectCallback, typeof(ChangeFloatVariableGlobalEffect));
+                menu.AddItem(new GUIContent("특정 그룹의 유닛에게 버프 적용"), false, CreateEffectCallback, typeof(BuffByConditionGlobalEffect));
+            }
+            else
+            {
+                //menu.AddItem(new GUIContent("즉시 데미지 스킬"), false, CreateEffectCallback, typeof(InstantDamageEventEffect));
+            }
 
             menu.ShowAsContext();
         }
@@ -241,7 +247,7 @@ namespace Temporary.Editor
 
         private void CreateEffectCallback(object obj)
         {
-            var effect = ScriptableObject.CreateInstance((Type)obj) as EventEffect;
+            var effect = ScriptableObject.CreateInstance((Type)obj) as Effect;
 
             if (effect != null)
             {

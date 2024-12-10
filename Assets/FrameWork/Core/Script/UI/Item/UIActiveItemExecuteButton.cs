@@ -1,0 +1,343 @@
+using FrameWork.UIBinding;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+namespace Temporary.Core
+{
+    public class UIActiveItemExecuteButton : UIBase, IPointerDownHandler, IPointerMoveHandler
+    {
+        #region 바인딩
+        enum Images
+        {
+            Icon,
+            CooldownTimeImage,
+        }
+        enum Texts
+        {
+            NeedCost,
+            CooldownTimeText,
+        }
+        #endregion
+
+        private Image _cooldownTimeImage;
+
+        private TextMeshProUGUI _needCostText;
+        private TextMeshProUGUI _coolDownTimeText;
+
+        private Color _lackCostColor = new Color(1, 0.27f, 0);
+
+        private CostSystem _costSystem;
+        private ActiveItemRangeRenderer _rangeRenderer;
+        private ActiveItemTemplate _template;
+
+        private int _currentCost;
+        private float _inverseMaxCoolDownTime;
+        private float _currentCoolDownTime;
+
+        private bool _isActiveRangeRenderer;
+        private bool _isInteractable;
+        private float _threshold = 0.1f;
+        private bool _isPointerDown;
+        private Vector2 _cachedPointerDownPosition;
+
+        #region 프로퍼티
+        private bool IsInteractable
+        {
+            get
+            {
+                if (_isInteractable == false) return false;
+
+                return true;
+            }
+        }
+
+        private int finalNeedCost
+        {
+            get
+            {
+                int result = _template.needCost;
+
+                return result;
+            }
+        }
+
+        private float finalCoolDownTime
+        {
+            get
+            {
+                float result = _template.cooldownTime;
+
+                return result;
+            }
+        }
+        #endregion
+
+        protected override void Initialize()
+        {
+            BindImage(typeof(Images));
+            BindText(typeof(Texts));
+
+            _cooldownTimeImage = GetImage((int)Images.CooldownTimeImage);
+            _needCostText = GetText((int)Texts.NeedCost);
+            _coolDownTimeText = GetText((int)Texts.CooldownTimeText);
+
+            _cooldownTimeImage.gameObject.SetActive(false);
+
+            _threshold *= _threshold;
+        }
+
+        internal void Show(ActiveItemTemplate template)
+        {
+            GetImage((int)Images.Icon).sprite = template.sprite;
+
+            _template = template;
+
+            _needCostText.text = $"Cost: {finalNeedCost}";
+
+            _rangeRenderer = BattleManager.Instance.GetSubSystem<ActiveItemRangeRenderer>();
+            _costSystem = BattleManager.Instance.GetSubSystem<CostSystem>();
+            _costSystem.onChangedCost += OnChangeCost;
+
+            CalcMaxCoolDownTime();
+            _currentCoolDownTime = 0;
+
+            CheckInteractable();
+
+            base.Show();
+        }
+
+        internal void Hide()
+        {
+            base.Hide();
+
+            _template = null;
+            _rangeRenderer = null;
+
+            _costSystem.onChangedCost -= OnChangeCost;
+            _costSystem = null;
+        }
+
+        private void OnChangeCost(int cost)
+        {
+            _currentCost = cost;
+            CheckInteractable();
+        }
+
+        private void CalcMaxCoolDownTime()
+        {
+            if (finalCoolDownTime == 0)
+            {
+                _inverseMaxCoolDownTime = 0;
+            }
+            else
+            {
+                _inverseMaxCoolDownTime = 1 / finalCoolDownTime;
+            }
+        }
+
+        private void UpdateCoolDownTime()
+        {
+            if (_currentCoolDownTime == 0) return;
+
+            _currentCoolDownTime -= Time.deltaTime;
+            
+            if (_currentCoolDownTime < 0)
+            {
+                _currentCoolDownTime = 0;
+                _cooldownTimeImage.gameObject.SetActive(false);
+                CheckInteractable();
+            }
+            else
+            {
+                _coolDownTimeText.text = _currentCoolDownTime.ToString("F1");
+                _cooldownTimeImage.fillAmount = _currentCoolDownTime * _inverseMaxCoolDownTime;
+            }
+        }
+
+        /// <summary>
+        /// 해당 아이템이 사용 가능한지 여부 체크
+        /// </summary>
+        private void CheckInteractable()
+        {
+            bool isInteractable = true;
+            if (_currentCoolDownTime > 0)
+            {
+                isInteractable = false;
+                _isInteractable = false;
+                _cooldownTimeImage.gameObject.SetActive(true);
+                ResetPointer();
+            }
+            if (_currentCost < finalNeedCost)
+            {
+                isInteractable = false;
+                _isInteractable = false;
+                _needCostText.color = _lackCostColor;
+                ResetPointer();
+            }
+
+            if (isInteractable == true)
+            {
+                _isInteractable = true;
+                _cooldownTimeImage.gameObject.SetActive(false);
+                _needCostText.color = Color.white;
+            }
+        }
+
+        private void Update()
+        {
+            UpdateCoolDownTime();
+
+            CheckPointerUp();
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            if (IsInteractable == false) return;
+            if (_isPointerDown == true) return;
+
+            _isPointerDown = true;
+            _cachedPointerDownPosition = eventData.position;
+        }
+
+        public void OnPointerMove(PointerEventData eventData)
+        {
+            if (IsInteractable == false) return;
+            if (_isPointerDown == false) return;
+            if (_isActiveRangeRenderer == true) return;
+            if (_template.rangeType == ERangeType.All) return;
+
+            float distSquare = (_cachedPointerDownPosition - eventData.position).sqrMagnitude;
+
+            if (distSquare > _threshold)
+            {
+                switch(_template.rangeType)
+                {
+                    case ERangeType.Circle:
+                        InitializeCircleRenderer();
+                        break;
+                }
+            }
+        }
+
+        private void CheckPointerUp()
+        {
+#if UNITY_EDITOR || UNITY_STANDALONE
+            if (Input.GetMouseButtonUp(0))
+            {
+                OnPointerUp();
+            }
+#elif UNITY_ANDROID || UNITY_IOS
+            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
+            {
+                OnPointerUp();
+            }
+#endif
+        }
+
+        public void OnPointerUp()
+        {
+            if (IsInteractable == false) return;
+            if (_isPointerDown == false) return;
+
+            if (_template.unitType == EUnitType.None)
+            {
+                ExecuteEffect();
+            }
+            else if (_isActiveRangeRenderer)
+            {
+                _rangeRenderer.Confirm(_template.delay, ExecuteItem);
+            }
+            else
+            {
+                switch (_template.rangeType)
+                {
+                    case ERangeType.All:
+                        InitializeAllRenderer();
+                        break;
+                    case ERangeType.Circle:
+                        InitializeCircleRenderer();
+                        return;
+                }
+            }
+
+            ResetPointer();
+        }
+
+        private void ResetPointer()
+        {
+            _isPointerDown = false;
+            _cachedPointerDownPosition = Vector2.zero;
+            _isActiveRangeRenderer = false;
+        }
+
+        private void InitializeAllRenderer()
+        {
+            _rangeRenderer.Show_AllRange(_template.unitType, _template.delay, (units) => {
+                if (units.Count > 0)
+                {
+                    ExecuteEffect(units);
+
+                    // TODO: 해당 아이템의 FX 재생시키기
+                }
+                else
+                {
+                    // TODO: 대상 검출에 실패했다는 UI를 보여주거나 실패 사운드 들려주기
+                }
+            }, ExecuteItem);
+        }
+
+        private void InitializeCircleRenderer()
+        {
+            _rangeRenderer.Show_CircleRange(_template.unitType, _template.range, (units) => {
+                if (units.Count > 0)
+                {
+                    ExecuteEffect(units);
+
+                    // TODO: 해당 아이템의 FX 재생시키기
+                }
+                else
+                {
+                    // TODO: 대상 검출에 실패했다는 UI를 보여주거나 실패 사운드 들려주기
+                }
+            });
+            _isActiveRangeRenderer = true;
+        }
+
+        private void ExecuteItem()
+        {
+            // 쿨타임 적용
+            _currentCoolDownTime = finalCoolDownTime;
+            CalcMaxCoolDownTime();
+
+            // 코스트 지불
+            _costSystem.PayCost(finalNeedCost);
+
+            CheckInteractable();
+        }
+
+        private void ExecuteEffect()
+        {
+            foreach (var effect in _template.effects)
+            {
+                if (effect is GlobalEffect globalEffect)
+                {
+                    globalEffect.Execute();
+                }
+            }
+        }
+
+        private void ExecuteEffect(List<Unit> units)
+        {
+            foreach (var effect in _template.effects)
+            {
+                if (effect is ActiveItemEffect activeItemEffect)
+                {
+                    activeItemEffect.Execute(units);
+                }
+            }
+        }
+    }
+}
