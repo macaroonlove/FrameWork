@@ -4,18 +4,13 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    [CreateAssetMenu(menuName = "Templates/AbnormalStatus", fileName = "AbnormalStatus", order = 0)]
-    public class AbnormalStatusTemplate : ScriptableObject
+    [CreateAssetMenu(menuName = "Templates/GlobalStatus", fileName = "GlobalStatus", order = 0)]
+    public class GlobalStatusTemplate : ScriptableObject
     {
         [HideInInspector, SerializeField] private Sprite _sprite;
 
         [HideInInspector, SerializeField] private string _displayName;
         [HideInInspector, SerializeField] private string _description;
-
-        [HideInInspector, SerializeField] private float _delay;
-
-        [HideInInspector, SerializeField] private bool _useHitCountLimit;
-        [HideInInspector, SerializeField] private int _hitCount;
 
         [HideInInspector]
         public List<Effect> effects = new List<Effect>();
@@ -32,11 +27,6 @@ namespace Temporary.Core
         public Sprite sprite => _sprite;
         public string displayName => _displayName;
         public string description => _description;
-
-        public float delay => _delay;
-
-        public bool useHitCountLimit => _useHitCountLimit;
-        public int hitCount => _hitCount;
         #endregion
 
         #region 값 변경 메서드
@@ -56,31 +46,25 @@ namespace Temporary.Editor
     using UnityEditor;
     using UnityEditorInternal;
 
-    [CustomEditor(typeof(AbnormalStatusTemplate)), CanEditMultipleObjects]
-    public class AbnormalStatusTemplateEditor : EffectEditor
+    [CustomEditor(typeof(GlobalStatusTemplate)), CanEditMultipleObjects]
+    public class GlobalStatusTemplateEditor : EffectEditor
     {
-        private AbnormalStatusTemplate _target;
+        private GlobalStatusTemplate _target;
 
         private SerializedProperty _sprite;
         private SerializedProperty _displayName;
         private SerializedProperty _description;
-        private SerializedProperty _delay;
-        private SerializedProperty _useHitCountLimit;
-        private SerializedProperty _hitCount;
 
         private ReorderableList _effectsList;
         private Effect _currentEffect;
 
         private void OnEnable()
         {
-            _target = target as AbnormalStatusTemplate;
+            _target = target as GlobalStatusTemplate;
 
             _sprite = serializedObject.FindProperty("_sprite");
             _displayName = serializedObject.FindProperty("_displayName");
             _description = serializedObject.FindProperty("_description");
-            _delay = serializedObject.FindProperty("_delay");
-            _useHitCountLimit = serializedObject.FindProperty("_useHitCountLimit");
-            _hitCount = serializedObject.FindProperty("_hitCount");
 
             CreateEffectList();
         }
@@ -96,40 +80,18 @@ namespace Temporary.Editor
             EditorGUILayout.BeginVertical();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("상태이상 이름", GUILayout.Width(80));
+            GUILayout.Label("전역 상태 이름", GUILayout.Width(80));
             EditorGUILayout.PropertyField(_displayName, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("상태이상 설명", GUILayout.Width(80));
+            GUILayout.Label("전역 상태 설명", GUILayout.Width(80));
             _description.stringValue = EditorGUILayout.TextArea(_description.stringValue, GUILayout.Height(74));
             GUILayout.EndHorizontal();
 
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();
-
-            GUILayout.Space(10);
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("지연 시간", GUILayout.Width(192));
-            EditorGUILayout.PropertyField(_delay, GUIContent.none);
-            GUILayout.EndHorizontal();
-
-            GUILayout.Space(10);
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("피격 시, 상태이상이 해제될지", GUILayout.Width(192));
-            EditorGUILayout.PropertyField(_useHitCountLimit, GUIContent.none);
-            GUILayout.EndHorizontal();
-
-            if (_useHitCountLimit.boolValue == true)
-            {
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("피격 횟수", GUILayout.Width(192));
-                EditorGUILayout.PropertyField(_hitCount, GUIContent.none);
-                GUILayout.EndHorizontal();
-            }
 
             GUILayout.Space(20);
 
@@ -148,22 +110,20 @@ namespace Temporary.Editor
         {
             var menu = new GenericMenu();
 
-            menu.AddItem(new GUIContent("이동 불가"), false, CreateEffectCallback, typeof(UnableToMoveEffect));
-            menu.AddItem(new GUIContent("공격 불가"), false, CreateEffectCallback, typeof(UnableToAttackEffect));
-            menu.AddItem(new GUIContent("회복 불가"), false, CreateEffectCallback, typeof(UnableToHealEffect));
-            menu.AddItem(new GUIContent("스킬 사용 불가"), false, CreateEffectCallback, typeof(UnableToSkillEffect));
-            menu.AddItem(new GUIContent("이동속도 증감"), false, CreateEffectCallback, typeof(MoveIncreaseDataEffect));
-            menu.AddItem(new GUIContent("물리 저항력 증감"), false, CreateEffectCallback, typeof(PhysicalResistanceIncreaseDataEffect));
-            menu.AddItem(new GUIContent("마법 저항력 증감"), false, CreateEffectCallback, typeof(MagicResistanceIncreaseDataEffect));
-            menu.AddItem(new GUIContent("받는 피해량 증감"), false, CreateEffectCallback, typeof(ReceiveDamageIncreaseDataEffect));
-            menu.AddItem(new GUIContent("최대 체력 비례 초당 체력 회복량"), false, CreateEffectCallback, typeof(HPRecoveryPerSecByMaxHPIncreaseDataEffect));
+            menu.AddItem(new GUIContent("골드 추가 획득"), false, CreateEffectCallback, typeof(GoldGainAdditionalDataEffect));
+            menu.AddItem(new GUIContent("골드 획득량 증감"), false, CreateEffectCallback, typeof(GoldGainIncreaseDataEffect));
+            menu.AddItem(new GUIContent("골드 획득량 상승·하락"), false, CreateEffectCallback, typeof(GoldGainMultiplierDataEffect));
+
+            menu.AddItem(new GUIContent("코스트 증가 속도 차감"), false, CreateEffectCallback, typeof(CostRecoveryTimeAdditionalDataEffect));
+            menu.AddItem(new GUIContent("코스트 증가 속도 증감"), false, CreateEffectCallback, typeof(CostRecoveryTimeIncreaseDataEffect));
+            menu.AddItem(new GUIContent("코스트 증가 속도 상승·하락"), false, CreateEffectCallback, typeof(CostRecoveryTimeMultiplierDataEffect));
 
             menu.ShowAsContext();
         }
 
         private void CreateEffectList()
         {
-            _effectsList = SetupReorderableList("Abnormal Status Effects", _target.effects,
+            _effectsList = SetupReorderableList("Global Status Effects", _target.effects,
                 (rect, x) =>
                 {
                 },
@@ -222,7 +182,7 @@ namespace Temporary.Editor
                 effect.hideFlags = HideFlags.HideInHierarchy;
                 _target.effects.Add(effect);
 
-                var template = target as AbnormalStatusTemplate;
+                var template = target as GlobalStatusTemplate;
                 var path = AssetDatabase.GetAssetPath(template);
                 AssetDatabase.AddObjectToAsset(effect, path);
                 EditorUtility.SetDirty(template);

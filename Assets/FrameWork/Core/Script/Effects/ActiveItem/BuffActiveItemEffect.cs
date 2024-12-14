@@ -4,29 +4,35 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class InstantAbnormalStatusEventEffect : EventEffect
+    public class BuffActiveItemEffect : ActiveItemEffect
     {
         [SerializeField] protected bool _isInfinity;
         [SerializeField] protected float _duration;
-        [SerializeField] protected AbnormalStatusTemplate _abnormalStatus;
+        [SerializeField] protected BuffTemplate _buff;
 
         public override string GetDescription()
         {
-            return "즉시 상태이상";
-        }
-
-        public override void Execute(Unit casterUnit, Unit targetUnit)
-        {
-            if (casterUnit == null || targetUnit == null) return;
-            if (targetUnit.isDie) return;
-
             if (_isInfinity)
             {
-                targetUnit.GetAbility<AbnormalStatusAbility>().ApplyAbnormalStatus(_abnormalStatus, int.MaxValue);
+                return "엑티브 아이템 대상 유닛들에게 무한 지속 버프 적용";
             }
-            else
+            return $"엑티브 아이템 대상 유닛들에게 {_duration}초 간 버프 적용";
+        }
+
+        public override void Execute(List<Unit> targetUnits)
+        {
+            foreach (var targetUnit in targetUnits)
             {
-                targetUnit.GetAbility<AbnormalStatusAbility>().ApplyAbnormalStatus(_abnormalStatus, _duration);
+                if (targetUnit == null || targetUnit.isDie) continue;
+
+                if (_isInfinity)
+                {
+                    targetUnit.GetAbility<BuffAbility>().ApplyBuff(_buff, int.MaxValue);
+                }
+                else
+                {
+                    targetUnit.GetAbility<BuffAbility>().ApplyBuff(_buff, _duration);
+                }
             }
         }
 
@@ -48,8 +54,8 @@ namespace Temporary.Core
 
             labelRect.y += 20;
             valueRect.y += 20;
-            GUI.Label(labelRect, "상태이상");
-            _abnormalStatus = (AbnormalStatusTemplate)EditorGUI.ObjectField(valueRect, _abnormalStatus, typeof(AbnormalStatusTemplate), false);
+            GUI.Label(labelRect, "버프");
+            _buff = (BuffTemplate)EditorGUI.ObjectField(valueRect, _buff, typeof(BuffTemplate), false);
         }
 
         public override int GetNumRows()

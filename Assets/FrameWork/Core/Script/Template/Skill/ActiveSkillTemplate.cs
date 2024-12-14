@@ -22,7 +22,7 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private int _parameterHash;
 
         [HideInInspector]
-        public List<EventEffect> effects;
+        public List<EventEffect> effects = new List<EventEffect>();
 
         #region 프로퍼티
         public Sprite sprite => _sprite;

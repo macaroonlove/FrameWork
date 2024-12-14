@@ -15,7 +15,7 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private int _attackCount;
 
         [HideInInspector]
-        public List<Effect> effects;
+        public List<Effect> effects = new List<Effect>();
 
         //[Header("FX")]
         //[Tooltip("시작 시 적용되는 효과")]

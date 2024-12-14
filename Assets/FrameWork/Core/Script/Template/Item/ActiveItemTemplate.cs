@@ -24,7 +24,7 @@ namespace Temporary.Core
         // 조건 추가
 
         [HideInInspector]
-        public List<Effect> effects;
+        public List<Effect> effects = new List<Effect>();
 
         #region 프로퍼티
         public Sprite sprite => _sprite;
@@ -145,22 +145,25 @@ namespace Temporary.Editor
             GUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("범위 방식", GUILayout.Width(192));
-            EditorGUILayout.PropertyField(_rangeType, GUIContent.none);
-            GUILayout.EndHorizontal();
-
-            if (_rangeType.enumValueIndex == (int)ERangeType.Circle)
-            {
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("범위", GUILayout.Width(192));
-                EditorGUILayout.PropertyField(_range, GUIContent.none);
-                GUILayout.EndHorizontal();
-            }
-
-            GUILayout.BeginHorizontal();
             GUILayout.Label("유닛 타입", GUILayout.Width(192));
             EditorGUILayout.PropertyField(_unitType, GUIContent.none);
             GUILayout.EndHorizontal();
+
+            if (_unitType.enumValueIndex != (int)EUnitType.None)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("범위 방식", GUILayout.Width(192));
+                EditorGUILayout.PropertyField(_rangeType, GUIContent.none);
+                GUILayout.EndHorizontal();
+
+                if (_rangeType.enumValueIndex == (int)ERangeType.Circle)
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label("범위", GUILayout.Width(192));
+                    EditorGUILayout.PropertyField(_range, GUIContent.none);
+                    GUILayout.EndHorizontal();
+                }
+            }
 
             GUILayout.Space(20);
 
@@ -184,10 +187,15 @@ namespace Temporary.Editor
                 menu.AddItem(new GUIContent("Int 변수 변경"), false, CreateEffectCallback, typeof(ChangeIntVariableGlobalEffect));
                 menu.AddItem(new GUIContent("Float 변수 변경"), false, CreateEffectCallback, typeof(ChangeFloatVariableGlobalEffect));
                 menu.AddItem(new GUIContent("특정 그룹의 유닛에게 버프 적용"), false, CreateEffectCallback, typeof(BuffByConditionGlobalEffect));
+                menu.AddItem(new GUIContent("전역 상태 적용"), false, CreateEffectCallback, typeof(GlobalStatusGlobalEffect));
             }
             else
             {
-                //menu.AddItem(new GUIContent("즉시 데미지 스킬"), false, CreateEffectCallback, typeof(InstantDamageEventEffect));
+                menu.AddItem(new GUIContent("엑티브 아이템 대상 유닛들에게 데미지 적용"), false, CreateEffectCallback, typeof(DamageActiveItemEffect));
+                menu.AddItem(new GUIContent("엑티브 아이템 대상 유닛들에게 회복 적용"), false, CreateEffectCallback, typeof(HealActiveItemEffect));
+                menu.AddItem(new GUIContent("엑티브 아이템 대상 유닛들에게 보호막 적용"), false, CreateEffectCallback, typeof(ShieldActiveItemEffect));
+                menu.AddItem(new GUIContent("엑티브 아이템 대상 유닛들에게 버프 적용"), false, CreateEffectCallback, typeof(BuffActiveItemEffect));
+                menu.AddItem(new GUIContent("엑티브 아이템 대상 유닛들에게 상태이상 적용"), false, CreateEffectCallback, typeof(AbnormalStatusActiveItemEffect));
             }
 
             menu.ShowAsContext();

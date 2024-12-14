@@ -264,7 +264,7 @@ namespace Temporary.Core
             return false;
         }
 
-        internal void Healed(int value, Unit casterUnit)
+        internal void Healed(int value, Unit casterUnit = null)
         {
             // 회복 불가인 상태라면 무시
             if (finalIsHealAble == false) return;

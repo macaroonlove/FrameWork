@@ -86,6 +86,16 @@ namespace Temporary.Core
     }
 
     /// <summary>
+    /// 적용 방식(타겟 기준으로만 적용)
+    /// </summary>
+    public enum EApplyType_TargetOnly
+    {
+        Basic,
+        Enemy_CurrentHP,
+        Enemy_MAXHP,
+    }
+
+    /// <summary>
     /// 등급
     /// </summary>
     public enum ERarity

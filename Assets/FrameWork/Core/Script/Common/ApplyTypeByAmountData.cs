@@ -6,4 +6,11 @@ namespace Temporary.Core
         public EApplyType applyType;
         public float amount;
     }
+    
+    [System.Serializable]
+    public class ApplyType_TargetOnlyByAmountData
+    {
+        public EApplyType_TargetOnly applyType;
+        public float amount;
+    }
 }

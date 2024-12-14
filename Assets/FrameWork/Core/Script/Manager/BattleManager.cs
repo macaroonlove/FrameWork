@@ -13,8 +13,8 @@ namespace Temporary.Core
     {
         private Dictionary<Type, ISubSystem> _subSystems = new Dictionary<Type, ISubSystem>();
 
-        internal UnityAction onBattleInitialize;
-        internal UnityAction onBattleDeinitialize;
+        internal event UnityAction onBattleInitialize;
+        internal event UnityAction onBattleDeinitialize;
 
         protected override void Awake()
         {

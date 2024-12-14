@@ -11,6 +11,8 @@ namespace Temporary.Core
     {
         [SerializeField] private ObscuredIntVariable _costVariable;
 
+        private GlobalStatusSystem _globalStatusSystem;
+
         private bool _isInitializeCostSystem;
         private float _costRecoveryTimeProgress;
 
@@ -29,6 +31,31 @@ namespace Temporary.Core
             {
                 float result = 1;
 
+                #region 추가·차감
+                foreach (var effect in _globalStatusSystem.CostRecoveryTimeAdditionalDataEffects)
+                {
+                    result -= effect.value;
+                }
+                #endregion
+
+                #region 증가·감소
+                float increase = 1;
+
+                foreach (var effect in _globalStatusSystem.CostRecoveryTimeIncreaseDataEffects)
+                {
+                    increase += effect.value;
+                }
+
+                result /= increase;
+                #endregion
+
+                #region 상승·하락
+                foreach (var effect in _globalStatusSystem.CostRecoveryTimeMultiplierDataEffects)
+                {
+                    result /= effect.value;
+                }
+                #endregion
+
                 return result;
             }
         }
@@ -38,6 +65,8 @@ namespace Temporary.Core
 
         public void Initialize()
         {
+            _globalStatusSystem = BattleManager.Instance.GetSubSystem<GlobalStatusSystem>();
+
             _isInitializeCostSystem = true;
 
             // TODO: 초기값이 있다면 수정해주기
@@ -46,6 +75,8 @@ namespace Temporary.Core
 
         public void Deinitialize()
         {
+            _globalStatusSystem = null;
+
             _isInitializeCostSystem = false;
         }
 

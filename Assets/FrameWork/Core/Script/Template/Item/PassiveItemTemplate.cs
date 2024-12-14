@@ -213,6 +213,7 @@ namespace Temporary.Editor
                 if (_currentTrigger is UnitEventGameTrigger || _currentTrigger is GlobalEventGameTrigger)
                 {
                     menu.AddItem(new GUIContent("특정 그룹의 유닛에게 버프 적용"), false, CreateEffectCallback, typeof(BuffByConditionGlobalEffect));
+                    menu.AddItem(new GUIContent("전역 상태 적용"), false, CreateEffectCallback, typeof(GlobalStatusGlobalEffect));
 
                     if (_currentTrigger is UnitEventGameTrigger)
                     {

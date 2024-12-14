@@ -47,6 +47,12 @@ namespace Temporary.Editor
         private Vector2 abnormalStatusScrollPosition;
         private List<Tuple<AbnormalStatusTemplate, Texture2D>> abnormalStatusTemplates = new List<Tuple<AbnormalStatusTemplate, Texture2D>>();
         #endregion
+        #region 상태이상
+        private UnityEditor.Editor globalStatusEditor;
+        private int selectedGlobalStatusIndex = 0;
+        private Vector2 globalStatusScrollPosition;
+        private List<Tuple<GlobalStatusTemplate, Texture2D>> globalStatusTemplates = new List<Tuple<GlobalStatusTemplate, Texture2D>>();
+        #endregion
         #endregion
 
         #region 스킬
@@ -178,12 +184,14 @@ namespace Temporary.Editor
             GUILayout.BeginHorizontal();
             if (GUILayout.Toggle(selectedStatusTitle == 0, "버프", "Button")) selectedStatusTitle = 0;
             if (GUILayout.Toggle(selectedStatusTitle == 1, "상태이상", "Button")) selectedStatusTitle = 1;
+            if (GUILayout.Toggle(selectedStatusTitle == 2, "전역 상태", "Button")) selectedStatusTitle = 2;
             GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
 
             if (selectedStatusTitle == 0) DrawBuffTab();
-            else DrawAbnormalStatusTab();
+            else if (selectedStatusTitle == 1) DrawAbnormalStatusTab();
+            else DrawGlobalStatusTab();
         }
 
         private void DrawSkillTitle()
@@ -291,8 +299,8 @@ namespace Temporary.Editor
             AgentTemplate newAgent = CreateInstance<AgentTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Core/GameData/Agent";
-            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Agent", "Agent_", "asset", "아군 템플릿은 FrameWork/Core/GameData/Agent 위치에 저장됩니다..", defaultPath);
+            string defaultPath = "Assets/FrameWork/Core/GameData/Unit/Agent";
+            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Unit/Agent", "Agent_", "asset", "아군 템플릿은 FrameWork/Core/GameData/Unit/Agent 위치에 저장됩니다..", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
                 newAgent.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("Agent_", ""));
@@ -411,8 +419,8 @@ namespace Temporary.Editor
             EnemyTemplate newEnemy = CreateInstance<EnemyTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Core/GameData/Enemy";
-            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Enemy", "Enemy_", "asset", "적 템플릿은 FrameWork/Core/GameData/Enemy 위치에 저장됩니다..", defaultPath);
+            string defaultPath = "Assets/FrameWork/Core/GameData/Unit/Enemy";
+            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Unit/Enemy", "Enemy_", "asset", "적 템플릿은 FrameWork/Core/GameData/Unit/Enemy 위치에 저장됩니다..", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
                 newEnemy.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("Enemy_", ""));
@@ -683,6 +691,126 @@ namespace Temporary.Editor
                 texture = texture.ResizeTexture(30, 30);
 
                 abnormalStatusTemplates.Add(new Tuple<AbnormalStatusTemplate, Texture2D>(abnormalStatus, texture));
+            }
+        }
+        #endregion
+
+        #region 전역 상태
+        private void DrawGlobalStatusTab()
+        {
+            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
+            GUILayout.BeginVertical(GUILayout.Width(200));
+            if (GUILayout.Button("전역 상태 추가"))
+            {
+                AddGlobalStatusTemplate();
+            }
+            if (GUILayout.Button("전역 상태 삭제"))
+            {
+                DeleteSelectedGlobalStatusTemplate();
+            }
+            if (GUILayout.Button("전역 상태 탐색"))
+            {
+                LoadGlobalStatusTemplates();
+            }
+
+            DrawLine();
+
+            globalStatusScrollPosition = GUILayout.BeginScrollView(globalStatusScrollPosition, false, true);
+
+            var abnormalStatusCatalog = new GUIStyle(GUI.skin.button);
+            abnormalStatusCatalog.alignment = TextAnchor.MiddleLeft;
+            abnormalStatusCatalog.padding = new RectOffset(5, 5, 5, 5);
+            abnormalStatusCatalog.margin = new RectOffset(5, 5, -2, -2);
+            abnormalStatusCatalog.border = new RectOffset(0, 0, 0, 0);
+            abnormalStatusCatalog.fixedWidth = GUI.skin.box.fixedWidth;
+            abnormalStatusCatalog.fixedHeight = GUI.skin.box.fixedHeight;
+
+            for (int i = 0; i < globalStatusTemplates.Count; i++)
+            {
+                bool isSelected = (selectedGlobalStatusIndex == i);
+
+                var text = "  " + globalStatusTemplates[i].Item1.displayName;
+                text = text.Substring(0, Mathf.Min(text.Length, 13));
+                GUIContent content = new GUIContent(text, globalStatusTemplates[i].Item2);
+
+                if (GUILayout.Toggle(isSelected, content, abnormalStatusCatalog))
+                {
+                    if (selectedGlobalStatusIndex != i)
+                    {
+                        selectedGlobalStatusIndex = i;
+
+                        GUI.FocusControl(null);
+                    }
+                }
+            }
+            GUILayout.EndScrollView();
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+
+            if (globalStatusTemplates.Count > 0 && selectedGlobalStatusIndex < globalStatusTemplates.Count)
+            {
+                GlobalStatusTemplate selectedGlobalStatus = globalStatusTemplates[selectedGlobalStatusIndex].Item1;
+
+                if (globalStatusEditor == null || globalStatusEditor.target != selectedGlobalStatus)
+                {
+                    globalStatusEditor = UnityEditor.Editor.CreateEditor(selectedGlobalStatus);
+                }
+
+                contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
+                globalStatusEditor.OnInspectorGUI();
+                GUILayout.EndScrollView();
+            }
+
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+        }
+
+        private void AddGlobalStatusTemplate()
+        {
+            // 상태이상 템플릿 생성
+            GlobalStatusTemplate newGlobalStatus = CreateInstance<GlobalStatusTemplate>();
+
+            // 에셋 저장
+            string defaultPath = "Assets/FrameWork/Core/GameData/Status/GlobalStatus";
+            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Status/GlobalStatus", "GlobalStatus_", "asset", "상태이상 템플릿은 FrameWork/Core/GameData/Status/GlobalStatus 위치에 저장됩니다..", defaultPath);
+            if (!string.IsNullOrEmpty(path))
+            {
+                newGlobalStatus.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("GlobalStatus_", ""));
+
+                AssetDatabase.CreateAsset(newGlobalStatus, path);
+                AssetDatabase.SaveAssets();
+                LoadGlobalStatusTemplates();
+            }
+        }
+
+        private void DeleteSelectedGlobalStatusTemplate()
+        {
+            if (globalStatusTemplates.Count > 0)
+            {
+                GlobalStatusTemplate selectedGlobalStatus = globalStatusTemplates[selectedGlobalStatusIndex].Item1;
+                string assetPath = AssetDatabase.GetAssetPath(selectedGlobalStatus);
+                globalStatusTemplates.RemoveAt(selectedGlobalStatusIndex);
+                AssetDatabase.DeleteAsset(assetPath);
+                AssetDatabase.SaveAssets();
+            }
+        }
+
+        private void LoadGlobalStatusTemplates()
+        {
+            if (emptyTexture2D == null) emptyTexture2D = CreateTexture(Color.gray);
+
+            globalStatusTemplates.Clear();
+            string[] guids = AssetDatabase.FindAssets("t:GlobalStatusTemplate");
+            foreach (var guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                GlobalStatusTemplate globalStatus = AssetDatabase.LoadAssetAtPath<GlobalStatusTemplate>(path);
+
+                var texture = (globalStatus.sprite == null) ? emptyTexture2D : globalStatus.sprite.texture;
+                texture = texture.ResizeTexture(30, 30);
+
+                globalStatusTemplates.Add(new Tuple<GlobalStatusTemplate, Texture2D>(globalStatus, texture));
             }
         }
         #endregion

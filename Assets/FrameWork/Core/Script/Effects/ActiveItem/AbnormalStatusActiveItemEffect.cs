@@ -4,36 +4,35 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class ProjectileAbnormalStatusEventEffect : EventEffect
+    public class AbnormalStatusActiveItemEffect : ActiveItemEffect
     {
-        [SerializeField] protected GameObject _prefab;
-
         [SerializeField] protected bool _isInfinity;
         [SerializeField] protected float _duration;
         [SerializeField] protected AbnormalStatusTemplate _abnormalStatus;
 
         public override string GetDescription()
         {
-            return "투사체 상태이상";
-        }
-
-        public override void Execute(Unit casterUnit, Unit targetUnit)
-        {
-            if (casterUnit == null || targetUnit == null) return;
-            if (targetUnit.isDie) return;
-
-            casterUnit.GetAbility<ProjectileAbility>().SpawnProjectile(_prefab, targetUnit, (caster, target) => { SkillImpact(target); });
-        }
-
-        public void SkillImpact(Unit targetUnit)
-        {
             if (_isInfinity)
             {
-                targetUnit.GetAbility<AbnormalStatusAbility>().ApplyAbnormalStatus(_abnormalStatus, int.MaxValue);
+                return "엑티브 아이템 대상 유닛들에게 무한 지속 상태이상 적용";
             }
-            else
+            return $"엑티브 아이템 대상 유닛들에게 {_duration}초 간 상태이상 적용";
+        }
+
+        public override void Execute(List<Unit> targetUnits)
+        {
+            foreach (var targetUnit in targetUnits)
             {
-                targetUnit.GetAbility<AbnormalStatusAbility>().ApplyAbnormalStatus(_abnormalStatus, _duration);
+                if (targetUnit == null || targetUnit.isDie) continue;
+
+                if (_isInfinity)
+                {
+                    targetUnit.GetAbility<AbnormalStatusAbility>().ApplyAbnormalStatus(_abnormalStatus, int.MaxValue);
+                }
+                else
+                {
+                    targetUnit.GetAbility<AbnormalStatusAbility>().ApplyAbnormalStatus(_abnormalStatus, _duration);
+                }
             }
         }
 
@@ -57,16 +56,11 @@ namespace Temporary.Core
             valueRect.y += 20;
             GUI.Label(labelRect, "상태이상");
             _abnormalStatus = (AbnormalStatusTemplate)EditorGUI.ObjectField(valueRect, _abnormalStatus, typeof(AbnormalStatusTemplate), false);
-
-            labelRect.y += 20;
-            valueRect.y += 20;
-            GUI.Label(labelRect, "프리팹");
-            _prefab = (GameObject)EditorGUI.ObjectField(valueRect, _prefab, typeof(GameObject), false);
         }
 
         public override int GetNumRows()
         {
-            int rowNum = 2;
+            int rowNum = 1;
 
             if (!_isInfinity)
             {

@@ -1,39 +1,30 @@
+using ScriptableObjectArchitecture;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class ProjectileAbnormalStatusEventEffect : EventEffect
+    public class GlobalStatusGlobalEffect : GlobalEffect
     {
-        [SerializeField] protected GameObject _prefab;
-
         [SerializeField] protected bool _isInfinity;
         [SerializeField] protected float _duration;
-        [SerializeField] protected AbnormalStatusTemplate _abnormalStatus;
+        [SerializeField] protected GlobalStatusTemplate _globalStatus;
 
         public override string GetDescription()
         {
-            return "투사체 상태이상";
+            return "전역 상태 적용";
         }
 
-        public override void Execute(Unit casterUnit, Unit targetUnit)
-        {
-            if (casterUnit == null || targetUnit == null) return;
-            if (targetUnit.isDie) return;
-
-            casterUnit.GetAbility<ProjectileAbility>().SpawnProjectile(_prefab, targetUnit, (caster, target) => { SkillImpact(target); });
-        }
-
-        public void SkillImpact(Unit targetUnit)
+        public override void Execute()
         {
             if (_isInfinity)
             {
-                targetUnit.GetAbility<AbnormalStatusAbility>().ApplyAbnormalStatus(_abnormalStatus, int.MaxValue);
+                BattleManager.Instance.GetSubSystem<GlobalStatusSystem>().ApplyGlobalStatus(_globalStatus, int.MaxValue);
             }
             else
             {
-                targetUnit.GetAbility<AbnormalStatusAbility>().ApplyAbnormalStatus(_abnormalStatus, _duration);
+                BattleManager.Instance.GetSubSystem<GlobalStatusSystem>().ApplyGlobalStatus(_globalStatus, _duration);
             }
         }
 
@@ -55,13 +46,8 @@ namespace Temporary.Core
 
             labelRect.y += 20;
             valueRect.y += 20;
-            GUI.Label(labelRect, "상태이상");
-            _abnormalStatus = (AbnormalStatusTemplate)EditorGUI.ObjectField(valueRect, _abnormalStatus, typeof(AbnormalStatusTemplate), false);
-
-            labelRect.y += 20;
-            valueRect.y += 20;
-            GUI.Label(labelRect, "프리팹");
-            _prefab = (GameObject)EditorGUI.ObjectField(valueRect, _prefab, typeof(GameObject), false);
+            GUI.Label(labelRect, "전역 상태");
+            _globalStatus = (GlobalStatusTemplate)EditorGUI.ObjectField(valueRect, _globalStatus, typeof(GlobalStatusTemplate), false);
         }
 
         public override int GetNumRows()
