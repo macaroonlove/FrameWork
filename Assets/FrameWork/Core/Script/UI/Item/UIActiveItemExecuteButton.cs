@@ -244,6 +244,7 @@ namespace Temporary.Core
 
             if (_template.unitType == EUnitType.None)
             {
+                ExecuteItem();
                 ExecuteEffect();
             }
             else if (_isActiveRangeRenderer)

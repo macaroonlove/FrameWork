@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f20c545ee78bf4944be4cf0cae3eeb72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isInfinity: 0
   _duration: 0
   _abnormalStatus: {fileID: 0}
 --- !u!114 &-8918635671254068684
@@ -27,6 +28,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 0}
+  _isInfinity: 0
   _duration: 0
   _abnormalStatus: {fileID: 0}
 --- !u!114 &-7012309897486930459
@@ -57,6 +59,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f20c545ee78bf4944be4cf0cae3eeb72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isInfinity: 0
   _duration: 0
   _abnormalStatus: {fileID: 0}
 --- !u!114 &-5294319458878991197
@@ -79,6 +82,26 @@ MonoBehaviour:
   _isInfinity: 0
   _duration: 0
   _applyTypeByAmountDatas: []
+--- !u!114 &-4649271391693832486
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c88c7b21d5e2c32469d4f5e28e7b07d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 0}
+  _skillRange: 0
+  _skillType: 1
+  _projectileAngleStep: 0
+  _projectileCount: 0
+  _isInfinity: 0
+  _duration: 0
+  _buff: {fileID: 0}
 --- !u!114 &-3253398718840259794
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -138,6 +161,48 @@ MonoBehaviour:
   _tickCycle: 0
   _tickCount: 0
   _applyTypeByAmountDatas: []
+--- !u!114 &-1223977166111386603
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b8f05f37c1ec3b498d2690ab06ede4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 0}
+  _skillRange: 0
+  _skillType: 0
+  _projectileAngleStep: 0
+  _projectileCount: 0
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _applyTypeByAmountDatas: []
+--- !u!114 &-926857952006336461
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c88c7b21d5e2c32469d4f5e28e7b07d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 0}
+  _skillRange: 0
+  _skillType: 0
+  _projectileAngleStep: 0
+  _projectileCount: 0
+  _isInfinity: 0
+  _duration: 0
+  _buff: {fileID: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -156,10 +221,34 @@ MonoBehaviour:
   _description: 
   _needMana: 0
   _cooldownTime: 0
+  _skillType: 2
+  _unitType: 0
   _skillRange: 0
   _parameterName: 
   _parameterHash: 0
   effects: []
+--- !u!114 &777072007764886082
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b8f05f37c1ec3b498d2690ab06ede4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 0}
+  _skillRange: 0
+  _skillType: 1
+  _projectileAngleStep: 0
+  _projectileCount: 0
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _applyTypeByAmountDatas: []
 --- !u!114 &2388913939809195445
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -172,6 +261,94 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f20c545ee78bf4944be4cf0cae3eeb72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isInfinity: 0
+  _duration: 0
+  _abnormalStatus: {fileID: 0}
+--- !u!114 &2714210238072905782
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b300daef843afeb4fba7642cb314b082, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 0}
+  _skillRange: 0
+  _skillType: 1
+  _projectileAngleStep: 0
+  _projectileCount: 0
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _isInfinity: 0
+  _duration: 0
+  _applyTypeByAmountDatas: []
+--- !u!114 &3490514606210881035
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85bccbf8b4f0aba41a55d06c10bd33d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 0}
+  _skillRange: 0
+  _skillType: 0
+  _projectileAngleStep: 0
+  _projectileCount: 0
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _damageType: 0
+  _applyTypeByAmountDatas: []
+--- !u!114 &3813538389366827765
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cd7ccfea46953a4ebdddc1e9f215bf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 0}
+  _skillRange: 0
+  _skillType: 1
+  _projectileAngleStep: 0
+  _projectileCount: 0
+  _isInfinity: 0
+  _duration: 0
+  _abnormalStatus: {fileID: 0}
+--- !u!114 &5205571454154914317
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cd7ccfea46953a4ebdddc1e9f215bf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 0}
+  _skillRange: 0
+  _skillType: 0
+  _projectileAngleStep: 0
+  _projectileCount: 0
+  _isInfinity: 0
   _duration: 0
   _abnormalStatus: {fileID: 0}
 --- !u!114 &6983108347474873265
@@ -205,6 +382,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f20c545ee78bf4944be4cf0cae3eeb72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isInfinity: 0
   _duration: 0
   _abnormalStatus: {fileID: 0}
 --- !u!114 &8181696544537975786
@@ -222,6 +400,29 @@ MonoBehaviour:
   _isInfinity: 0
   _duration: 0
   _buff: {fileID: 0}
+--- !u!114 &8649607088759894018
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85bccbf8b4f0aba41a55d06c10bd33d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 0}
+  _skillRange: 0
+  _skillType: 0
+  _projectileAngleStep: 0
+  _projectileCount: 0
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _damageType: 0
+  _applyTypeByAmountDatas: []
 --- !u!114 &9163672994921588475
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -234,5 +435,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f20c545ee78bf4944be4cf0cae3eeb72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isInfinity: 0
   _duration: 0
   _abnormalStatus: {fileID: 0}

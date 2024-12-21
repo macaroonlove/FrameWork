@@ -17,7 +17,7 @@ namespace Temporary.Core
         private int _currentMana;
         private float _baseManaRecoveryPerSec;
         private float _manaRecoveryCooldown = 1;
-        private EManaRecoveryType manaRecoveryType;
+        private EManaRecoveryType _manaRecoveryType;
 
         internal event UnityAction<int> onChangedMana;
 
@@ -97,7 +97,7 @@ namespace Temporary.Core
 
         internal override void UpdateAbility()
         {
-            if (manaRecoveryType == EManaRecoveryType.Automatic)
+            if (_manaRecoveryType == EManaRecoveryType.Automatic)
             {
                 OnRecoveryWhenAutomatic();
             }
@@ -106,7 +106,7 @@ namespace Temporary.Core
         #region 마나 회복 이벤트
         private void SetManaRecoveryType(bool isActive)
         {
-            switch (manaRecoveryType)
+            switch (_manaRecoveryType)
             {
                 case EManaRecoveryType.Attack:
                     if (isActive) unit.GetAbility<AttackAbility>().onAttack += OnRecoveryWhenAttack;
@@ -170,11 +170,18 @@ namespace Temporary.Core
 
             int finalMana = _currentMana - needMana;
 
+            SetMana(finalMana);
 
             return true;
         }
 
-
+        /// <summary>
+        /// 마나가 충분하다면 True, 충분하지 않다면 False
+        /// </summary>
+        internal bool CheckMana(int needMana)
+        {
+            return _currentMana > needMana;
+        }
         #endregion
     }
 }

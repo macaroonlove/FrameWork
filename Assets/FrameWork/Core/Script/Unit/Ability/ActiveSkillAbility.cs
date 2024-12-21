@@ -16,7 +16,10 @@ namespace Temporary.Core
         private AbnormalStatusAbility _abnormalStatusAbility;
 
         private ActiveSkillTemplate _template;
+        
         private bool _isSkillActive;
+        private Unit _targetUnit;
+        private Vector3 _targetVector;
 
         private SkillEventHandler _skillEventHandler;
         private bool _isEventSkill;
@@ -80,7 +83,22 @@ namespace Temporary.Core
             // 마나가 부족하다면
             if (_manaAbility.TryExecuteSkill(template.needMana) == false) return false;
 
-            // 스킬의 목표 타겟이 존재한다면
+            switch (template.skillType)
+            {
+                case EActiveSkillType.Instant:
+                    return TryExecuteInstantSkill(template);
+                case EActiveSkillType.Targeting:
+                    return TryExecuteTargetingSkill(template);
+                case EActiveSkillType.NonTargeting:
+                    return TryExecuteNonTargetingSkill(template);
+            }
+
+            return false;
+        }
+
+        #region 스킬 발동 방식 별 시도 로직
+        private bool TryExecuteInstantSkill(ActiveSkillTemplate template)
+        {
             foreach (var effect in _template.effects)
             {
                 if (effect is IGetTarget targetEffect)
@@ -96,6 +114,51 @@ namespace Temporary.Core
 
             return false;
         }
+
+        private bool TryExecuteTargetingSkill(ActiveSkillTemplate template)
+        {
+            LayerMask layerMask;
+            switch (template.unitType)
+            {
+                case EUnitType.All:
+                    layerMask = LayerMask.GetMask("Agent", "Enemy");
+                    break;
+                case EUnitType.Agent:
+                    layerMask = LayerMask.GetMask("Agent");
+                    break;
+                case EUnitType.Enemy:
+                    layerMask = LayerMask.GetMask("Enemy");
+                    break;
+                default:
+                    return false;
+            }
+
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, layerMask))
+            {
+                var distance = Vector3.Distance(unit.transform.position, hit.point);
+
+                if (distance <= template.skillRange)
+                {
+                    _targetUnit = hit.collider.GetComponent<Unit>();
+                    return SkillAnimation(template);
+                }
+            }
+
+            return false;
+        }
+
+        private bool TryExecuteNonTargetingSkill(ActiveSkillTemplate template)
+        {
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity))
+            {
+                _targetVector = hit.point;
+
+                return SkillAnimation(template);
+            }
+
+            return false;
+        }
+        #endregion
 
         private bool SkillAnimation(ActiveSkillTemplate template)
         {
@@ -119,17 +182,17 @@ namespace Temporary.Core
 
         private void ExecuteSkill()
         {
-            foreach (var effect in _template.effects)
+            switch (_template.skillType)
             {
-                if (effect is IGetTarget targetEffect)
-                {
-                    var targets = targetEffect.GetTarget(unit);
-
-                    foreach (var target in targets)
-                    {
-                        effect.Execute(unit, target);
-                    }
-                }
+                case EActiveSkillType.Instant:
+                    ExecuteInstantSkill(_template);
+                    break;
+                case EActiveSkillType.Targeting:
+                    ExecuteTargetingSkill(_template);
+                    break;
+                case EActiveSkillType.NonTargeting:
+                    ExecuteNonTargetingSkill(_template);
+                    break;
             }
 
             if (!_isEventSkill)
@@ -137,6 +200,49 @@ namespace Temporary.Core
                 OnSkillEndEvent();
             }
         }
+
+        #region 스킬 발동 방식 별 실행 로직
+        private void ExecuteInstantSkill(ActiveSkillTemplate template)
+        {
+            foreach (var effect in template.effects)
+            {
+                if (effect is EventEffect eventEffect)
+                {
+                    if (eventEffect is IGetTarget targetEffect)
+                    {
+                        var targets = targetEffect.GetTarget(unit);
+
+                        foreach (var target in targets)
+                        {
+                            eventEffect.Execute(unit, target);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ExecuteTargetingSkill(ActiveSkillTemplate template)
+        {
+            foreach (var effect in template.effects)
+            {
+                if (effect is EventEffect eventEffect)
+                {
+                    eventEffect.Execute(unit, _targetUnit);
+                }
+            }
+        }
+
+        private void ExecuteNonTargetingSkill(ActiveSkillTemplate template)
+        {
+            foreach (var effect in template.effects)
+            {
+                if (effect is PointEffect pointEffect)
+                {
+                    pointEffect.Execute(unit, _targetVector);
+                }
+            }
+        }
+        #endregion
 
         private void OnSkillEndEvent()
         {

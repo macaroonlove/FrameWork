@@ -117,6 +117,25 @@ namespace Temporary.Core
     }
 
     /// <summary>
+    /// 액티브 스킬 타입
+    /// </summary>
+    public enum EActiveSkillType
+    {
+        Instant,
+        Targeting,
+        NonTargeting,
+    }
+
+    /// <summary>
+    /// 논타겟 액티브 스킬 타입
+    /// </summary>
+    public enum ENonTargetingActiveSkillType
+    {
+        Straight,
+        Cone,
+    }
+
+    /// <summary>
     /// 유닛 타입
     /// </summary>
     public enum EUnitType

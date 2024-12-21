@@ -19,11 +19,9 @@ namespace Temporary.Core
         private int _baseHPRecoveryPerSec;
         private float _hpRecoveryCooldown = 1;
 
-        #region
         internal int currentHP => _currentHP;
 
         internal bool isAlive => _currentHP > 0;
-        #endregion
 
 
         #region 보호막 필드

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -25,9 +23,16 @@ namespace Temporary.Core
 
         internal void SpawnProjectile(GameObject prefab, Unit targetUnit, UnityAction<Unit, Unit> action)
         {
-            var projectile = _poolSystem.Spawn(prefab).GetComponent<Projectile>();
+            var projectile = _poolSystem.Spawn(prefab).GetComponent<UnitProjectile>();
             projectile.transform.SetPositionAndRotation(_projectileSpawnPoint.position, Quaternion.identity);
             projectile.Initialize(unit, targetUnit, action);
+        }
+
+        internal void SpawnProjectile(GameObject prefab, Vector3 targetVector, UnityAction<Unit, Unit> action)
+        {
+            var projectile = _poolSystem.Spawn(prefab).GetComponent<PointProjectile>();
+            projectile.transform.SetPositionAndRotation(_projectileSpawnPoint.position, Quaternion.identity);
+            projectile.Initialize(unit, targetVector, action);
         }
     }
 }

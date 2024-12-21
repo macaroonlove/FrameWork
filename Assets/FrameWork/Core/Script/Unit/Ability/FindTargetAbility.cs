@@ -17,6 +17,27 @@ namespace Temporary.Core
             _enemySystem = BattleManager.Instance.GetSubSystem<EnemySystem>();
         }
 
+        internal List<Unit> FindAllTarget(EUnitType unitType)
+        {
+            List<Unit> targets = new List<Unit>();
+
+            switch (unitType)
+            {
+                case EUnitType.All:
+                    targets.AddRange(BattleManager.Instance.GetSubSystem<AgentSystem>().GetAllAgents());
+                    targets.AddRange(BattleManager.Instance.GetSubSystem<EnemySystem>().GetAllEnemies());
+                    break;
+                case EUnitType.Agent:
+                    targets.AddRange(BattleManager.Instance.GetSubSystem<AgentSystem>().GetAllAgents());
+                    break;
+                case EUnitType.Enemy:
+                    targets.AddRange(BattleManager.Instance.GetSubSystem<EnemySystem>().GetAllEnemies());
+                    break;
+            }
+
+            return targets;
+        }
+
         /// <summary>
         /// 공격 가능한 유닛 찾기
         /// </summary>
