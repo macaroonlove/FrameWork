@@ -1,19 +1,19 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class InstantHealByTargetEventEffect : InstantHealEventEffect, IGetTarget
+    public class ProjectileAbnormalStatusByTargetUnitEffect : ProjectileAbnormalStatusUnitEffect, IGetTarget
     {
+        [SerializeField] private EAttackType _attackType;
         [SerializeField] private ETarget _target;
         [SerializeField] private float _radius;
         [SerializeField] private int _numberOfTarget;
 
         public List<Unit> GetTarget(Unit casterUnit)
         {
-            return casterUnit.GetAbility<FindTargetAbility>().FindHealableTarget(_target, _radius, _numberOfTarget);
+            return casterUnit.GetAbility<FindTargetAbility>().FindAttackableTarget(_target, _radius, _attackType, _numberOfTarget);
         }
 
 #if UNITY_EDITOR
@@ -22,7 +22,12 @@ namespace Temporary.Core
             var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
             var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
 
-            GUI.Label(labelRect, "회복 대상");
+            GUI.Label(labelRect, "공격 방식");
+            _attackType = (EAttackType)EditorGUI.EnumPopup(valueRect, _attackType);
+
+            labelRect.y += 20;
+            valueRect.y += 20;
+            GUI.Label(labelRect, "대상");
             _target = (ETarget)EditorGUI.EnumPopup(valueRect, _target);
 
             if (_target != ETarget.Myself && _target != ETarget.AllTarget)
@@ -37,7 +42,7 @@ namespace Temporary.Core
             {
                 labelRect.y += 20;
                 valueRect.y += 20;
-                GUI.Label(labelRect, "회복시킬 아군의 수");
+                GUI.Label(labelRect, "공격할 적의 수");
                 _numberOfTarget = EditorGUI.IntField(valueRect, _numberOfTarget);
             }
 
@@ -47,7 +52,7 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 7;
+            int rowNum = 6;
 
             if (_target != ETarget.Myself && _target != ETarget.AllTarget)
             {
@@ -58,13 +63,6 @@ namespace Temporary.Core
             {
                 rowNum++;
             }
-
-            if (_isTick)
-            {
-                rowNum += 2;
-            }
-
-            rowNum += (int)(_applyTypeByAmountDatas.Count * 1.2f);
 
             return rowNum;
         }

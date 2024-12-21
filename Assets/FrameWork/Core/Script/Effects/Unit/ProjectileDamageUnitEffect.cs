@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class ProjectileShieldEventEffect : EventEffect
+    public class ProjectileDamageUnitEffect : UnitEffect
     {
         [SerializeField] protected GameObject _prefab;
 
@@ -13,14 +13,13 @@ namespace Temporary.Core
         [SerializeField] protected bool _isTick;
         [SerializeField] protected int _tickCycle;
         [SerializeField] protected int _tickCount;
-        [SerializeField] protected bool _isInfinity;
-        [SerializeField] protected float _duration;
+        [SerializeField] protected EDamageType _damageType;
 
         [SerializeField] protected List<ApplyTypeByAmountData> _applyTypeByAmountDatas = new List<ApplyTypeByAmountData>();
 
         public override string GetDescription()
         {
-            return "투사체 보호막";
+            return "즉시 데미지";
         }
 
         public int GetAmount(Unit casterUnit, Unit targetUnit)
@@ -71,12 +70,12 @@ namespace Temporary.Core
 
         public void SkillImpact(Unit casterUnit, Unit targetUnit)
         {
-            int amount = GetAmount(casterUnit, targetUnit);
+            int damage = GetAmount(casterUnit, targetUnit);
 
-            Execute_RepeatCount(casterUnit, targetUnit, amount);
+            Execute_RepeatCount(casterUnit, targetUnit, damage);
         }
 
-        private void Execute_RepeatCount(Unit casterUnit, Unit targetUnit, int amount)
+        private void Execute_RepeatCount(Unit casterUnit, Unit targetUnit, int damage)
         {
             if (_repeatCount > 1)
             {
@@ -84,28 +83,28 @@ namespace Temporary.Core
                 {
                     if (targetUnit.isDie) return;
 
-                    Execute_Tick(casterUnit, targetUnit, amount);
+                    Execute_Tick(casterUnit, targetUnit, damage);
                 }
             }
             else
             {
-                Execute_Tick(casterUnit, targetUnit, amount);
+                Execute_Tick(casterUnit, targetUnit, damage);
             }
         }        
 
-        private void Execute_Tick(Unit casterUnit, Unit targetUnit, int amount)
+        private void Execute_Tick(Unit casterUnit, Unit targetUnit, int damage)
         {
             if (_isTick)
             {
-                targetUnit.StartCoroutine(CoExecute_Tick(casterUnit, targetUnit, amount));
+                targetUnit.StartCoroutine(CoExecute_Tick(casterUnit, targetUnit, damage));
             }
             else
             {
-                Execute_Duration(casterUnit, targetUnit, amount);
+                Execute_DamageType(casterUnit, targetUnit, damage);
             }
         }
 
-        private IEnumerator CoExecute_Tick(Unit casterUnit, Unit targetUnit, int amount)
+        private IEnumerator CoExecute_Tick(Unit casterUnit, Unit targetUnit, int damage)
         {
             var wfs = new WaitForSeconds(_tickCycle);
 
@@ -113,20 +112,20 @@ namespace Temporary.Core
             {
                 if (targetUnit.isDie) yield break;
 
-                Execute_Duration(casterUnit, targetUnit, amount);
+                Execute_DamageType(casterUnit, targetUnit, damage);
                 yield return wfs;
             }
         }
 
-        private void Execute_Duration(Unit casterUnit, Unit targetUnit, int amount)
+        private void Execute_DamageType(Unit casterUnit, Unit targetUnit, int damage)
         {
-            if (_isInfinity)
+            if (_damageType == EDamageType.TrueDamage)
             {
-                targetUnit.healthAbility.AddShield(amount);
+                targetUnit.GetAbility<HitAbility>().Hit(damage, casterUnit.id);
             }
             else
             {
-                targetUnit.healthAbility.AddShield(amount, _duration);
+                targetUnit.GetAbility<HitAbility>().Hit(damage, _damageType, casterUnit.id);
             }
         }
 
@@ -137,17 +136,17 @@ namespace Temporary.Core
             var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
 
             GUI.Label(labelRect, "프리팹");
-            _prefab = (GameObject)EditorGUI.ObjectField(valueRect, _prefab, typeof(GameObject), false);
+            _prefab = (GameObject)EditorGUI.ObjectField(valueRect, _prefab, typeof(GameObject), false);            
 
             labelRect.y += 40;
             valueRect.y += 40;
-            GUI.Label(labelRect, "보호막 횟수");
+            GUI.Label(labelRect, "피해 횟수");
             _repeatCount = EditorGUI.IntField(valueRect, _repeatCount);
             if (_repeatCount <= 0) _repeatCount = 1;
 
             labelRect.y += 40;
             valueRect.y += 40;
-            GUI.Label(labelRect, "주기마다 보호막 사용 여부");
+            GUI.Label(labelRect, "주기마다 피해 사용 여부");
             _isTick = EditorGUI.Toggle(valueRect, _isTick);
             if (_isTick)
             {
@@ -158,21 +157,14 @@ namespace Temporary.Core
 
                 labelRect.y += 20;
                 valueRect.y += 20;
-                GUI.Label(labelRect, "주기마다 보호막 횟수");
+                GUI.Label(labelRect, "주기마다 피해 횟수");
                 _tickCount = EditorGUI.IntField(valueRect, _tickCount);
             }
 
             labelRect.y += 40;
             valueRect.y += 40;
-            GUI.Label(labelRect, "무한지속 사용 여부");
-            _isInfinity = EditorGUI.Toggle(valueRect, _isInfinity);
-            if (!_isInfinity)
-            {
-                labelRect.y += 20;
-                valueRect.y += 20;
-                GUI.Label(labelRect, "지속시간");
-                _duration = EditorGUI.FloatField(valueRect, _duration);
-            }
+            GUI.Label(labelRect, "데미지 타입");
+            _damageType = (EDamageType)EditorGUI.EnumPopup(valueRect, _damageType);
 
             labelRect.y += 20;
             valueRect.y += 20;
@@ -213,11 +205,6 @@ namespace Temporary.Core
             if (_isTick)
             {
                 rowNum += 2;
-            }
-
-            if (!_isInfinity)
-            {
-                rowNum++;
             }
 
             rowNum += (int)(_applyTypeByAmountDatas.Count * 1.2f);

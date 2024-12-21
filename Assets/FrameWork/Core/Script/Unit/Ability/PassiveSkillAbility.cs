@@ -12,17 +12,17 @@ namespace Temporary.Core
     public class PassiveSkillAbility : AlwaysAbility
     {
         #region Effect List
-        private List<EventEffect> _attackEventEffects = new List<EventEffect>();
-        private List<EventEffect> _hitEventEffects = new List<EventEffect>();
-        private List<EventEffect> _healEventEffects = new List<EventEffect>();
-        private List<EventEffect> _destroyShieldEventEffects = new List<EventEffect>();
+        private List<UnitEffect> _attackEventEffects = new List<UnitEffect>();
+        private List<UnitEffect> _hitEventEffects = new List<UnitEffect>();
+        private List<UnitEffect> _healEventEffects = new List<UnitEffect>();
+        private List<UnitEffect> _destroyShieldEventEffects = new List<UnitEffect>();
         
 
         #region 프로퍼티
-        internal IReadOnlyList<EventEffect> attackEventEffects => _attackEventEffects;
-        internal IReadOnlyList<EventEffect> hitEventEffects => _hitEventEffects;
-        internal IReadOnlyList<EventEffect> healEventEffects => _healEventEffects;
-        internal IReadOnlyList<EventEffect> destroyShieldEventEffects => _destroyShieldEventEffects;
+        internal IReadOnlyList<UnitEffect> attackEventEffects => _attackEventEffects;
+        internal IReadOnlyList<UnitEffect> hitEventEffects => _hitEventEffects;
+        internal IReadOnlyList<UnitEffect> healEventEffects => _healEventEffects;
+        internal IReadOnlyList<UnitEffect> destroyShieldEventEffects => _destroyShieldEventEffects;
         
         #endregion
         #endregion
@@ -51,7 +51,7 @@ namespace Temporary.Core
                         {
                             foreach (var effect in attackEventUnitTrigger.effects)
                             {
-                                if (effect is EventEffect eventEffect)
+                                if (effect is UnitEffect eventEffect)
                                 {
                                     _attackEventEffects.Add(eventEffect);
                                 }
@@ -62,7 +62,7 @@ namespace Temporary.Core
                         {
                             foreach (var effect in hitEventUnitTrigger.effects)
                             {
-                                if (effect is EventEffect eventEffect)
+                                if (effect is UnitEffect eventEffect)
                                 {
                                     _hitEventEffects.Add(eventEffect);
                                 }
@@ -73,9 +73,9 @@ namespace Temporary.Core
                         {
                             foreach (var effect in healEventUnitTrigger.effects)
                             {
-                                if (effect is EventEffect eventEffect)
+                                if (effect is UnitEffect unitEffect)
                                 {
-                                    _healEventEffects.Add(eventEffect);
+                                    _healEventEffects.Add(unitEffect);
                                 }
                             }
                         }
@@ -84,9 +84,9 @@ namespace Temporary.Core
                         {
                             foreach (var effect in destroyShieldEventUnitTrigger.effects)
                             {
-                                if (effect is EventEffect eventEffect)
+                                if (effect is UnitEffect unitEffect)
                                 {
-                                    _destroyShieldEventEffects.Add(eventEffect);
+                                    _destroyShieldEventEffects.Add(unitEffect);
                                 }
                             }
                         }

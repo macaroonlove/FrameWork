@@ -4,15 +4,17 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class InstantBuffEventEffect : EventEffect
+    public class ProjectileAbnormalStatusUnitEffect : UnitEffect
     {
+        [SerializeField] protected GameObject _prefab;
+
         [SerializeField] protected bool _isInfinity;
         [SerializeField] protected float _duration;
-        [SerializeField] protected BuffTemplate _buff;
+        [SerializeField] protected AbnormalStatusTemplate _abnormalStatus;
 
         public override string GetDescription()
         {
-            return "즉시 버프";
+            return "투사체 상태이상";
         }
 
         public override void Execute(Unit casterUnit, Unit targetUnit)
@@ -20,13 +22,18 @@ namespace Temporary.Core
             if (casterUnit == null || targetUnit == null) return;
             if (targetUnit.isDie) return;
 
+            casterUnit.GetAbility<ProjectileAbility>().SpawnProjectile(_prefab, targetUnit, (caster, target) => { SkillImpact(target); });
+        }
+
+        public void SkillImpact(Unit targetUnit)
+        {
             if (_isInfinity)
             {
-                targetUnit.GetAbility<BuffAbility>().ApplyBuff(_buff, int.MaxValue);
+                targetUnit.GetAbility<AbnormalStatusAbility>().ApplyAbnormalStatus(_abnormalStatus, int.MaxValue);
             }
             else
             {
-                targetUnit.GetAbility<BuffAbility>().ApplyBuff(_buff, _duration);
+                targetUnit.GetAbility<AbnormalStatusAbility>().ApplyAbnormalStatus(_abnormalStatus, _duration);
             }
         }
 
@@ -48,13 +55,18 @@ namespace Temporary.Core
 
             labelRect.y += 20;
             valueRect.y += 20;
-            GUI.Label(labelRect, "버프");
-            _buff = (BuffTemplate)EditorGUI.ObjectField(valueRect, _buff, typeof(BuffTemplate), false);
+            GUI.Label(labelRect, "상태이상");
+            _abnormalStatus = (AbnormalStatusTemplate)EditorGUI.ObjectField(valueRect, _abnormalStatus, typeof(AbnormalStatusTemplate), false);
+
+            labelRect.y += 20;
+            valueRect.y += 20;
+            GUI.Label(labelRect, "프리팹");
+            _prefab = (GameObject)EditorGUI.ObjectField(valueRect, _prefab, typeof(GameObject), false);
         }
 
         public override int GetNumRows()
         {
-            int rowNum = 1;
+            int rowNum = 2;
 
             if (!_isInfinity)
             {

@@ -4,16 +4,15 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class ProjectileAbnormalStatusByTargetEventEffect : ProjectileAbnormalStatusEventEffect, IGetTarget
+    public class InstantBuffByTargetUnitEffect : InstantBuffUnitEffect, IGetTarget
     {
-        [SerializeField] private EAttackType _attackType;
         [SerializeField] private ETarget _target;
         [SerializeField] private float _radius;
         [SerializeField] private int _numberOfTarget;
 
         public List<Unit> GetTarget(Unit casterUnit)
         {
-            return casterUnit.GetAbility<FindTargetAbility>().FindAttackableTarget(_target, _radius, _attackType, _numberOfTarget);
+            return casterUnit.GetAbility<FindTargetAbility>().FindAllyTarget(_target, _radius, _numberOfTarget);
         }
 
 #if UNITY_EDITOR
@@ -22,12 +21,7 @@ namespace Temporary.Core
             var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
             var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
 
-            GUI.Label(labelRect, "공격 방식");
-            _attackType = (EAttackType)EditorGUI.EnumPopup(valueRect, _attackType);
-
-            labelRect.y += 20;
-            valueRect.y += 20;
-            GUI.Label(labelRect, "대상");
+            GUI.Label(labelRect, "피해 대상");
             _target = (ETarget)EditorGUI.EnumPopup(valueRect, _target);
 
             if (_target != ETarget.Myself && _target != ETarget.AllTarget)
@@ -52,7 +46,7 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 6;
+            int rowNum = 4;
 
             if (_target != ETarget.Myself && _target != ETarget.AllTarget)
             {
@@ -60,6 +54,11 @@ namespace Temporary.Core
             }
 
             if (_target == ETarget.NumTargetInRange)
+            {
+                rowNum++;
+            }
+
+            if (!_isInfinity)
             {
                 rowNum++;
             }

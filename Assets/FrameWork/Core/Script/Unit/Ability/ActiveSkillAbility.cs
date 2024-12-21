@@ -206,15 +206,15 @@ namespace Temporary.Core
         {
             foreach (var effect in template.effects)
             {
-                if (effect is EventEffect eventEffect)
+                if (effect is UnitEffect unitEffect)
                 {
-                    if (eventEffect is IGetTarget targetEffect)
+                    if (unitEffect is IGetTarget targetEffect)
                     {
                         var targets = targetEffect.GetTarget(unit);
 
                         foreach (var target in targets)
                         {
-                            eventEffect.Execute(unit, target);
+                            unitEffect.Execute(unit, target);
                         }
                     }
                 }
@@ -225,9 +225,9 @@ namespace Temporary.Core
         {
             foreach (var effect in template.effects)
             {
-                if (effect is EventEffect eventEffect)
+                if (effect is UnitEffect unitEffect)
                 {
-                    eventEffect.Execute(unit, _targetUnit);
+                    unitEffect.Execute(unit, _targetUnit);
                 }
             }
         }

@@ -5,8 +5,10 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class InstantShieldEventEffect : EventEffect
+    public class ProjectileShieldUnitEffect : UnitEffect
     {
+        [SerializeField] protected GameObject _prefab;
+
         [SerializeField] protected int _repeatCount;
         [SerializeField] protected bool _isTick;
         [SerializeField] protected int _tickCycle;
@@ -18,7 +20,7 @@ namespace Temporary.Core
 
         public override string GetDescription()
         {
-            return "즉시 보호막";
+            return "투사체 보호막";
         }
 
         public int GetAmount(Unit casterUnit, Unit targetUnit)
@@ -64,6 +66,11 @@ namespace Temporary.Core
             if (casterUnit == null || targetUnit == null) return;
             if (targetUnit.isDie) return;
 
+            casterUnit.GetAbility<ProjectileAbility>().SpawnProjectile(_prefab, targetUnit, (caster, target) => { SkillImpact(caster, target); });
+        }
+
+        public void SkillImpact(Unit casterUnit, Unit targetUnit)
+        {
             int amount = GetAmount(casterUnit, targetUnit);
 
             Execute_RepeatCount(casterUnit, targetUnit, amount);
@@ -129,6 +136,11 @@ namespace Temporary.Core
             var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
             var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
 
+            GUI.Label(labelRect, "프리팹");
+            _prefab = (GameObject)EditorGUI.ObjectField(valueRect, _prefab, typeof(GameObject), false);
+
+            labelRect.y += 40;
+            valueRect.y += 40;
             GUI.Label(labelRect, "보호막 횟수");
             _repeatCount = EditorGUI.IntField(valueRect, _repeatCount);
             if (_repeatCount <= 0) _repeatCount = 1;
@@ -196,7 +208,7 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 6;
+            int rowNum = 8;
 
             if (_isTick)
             {

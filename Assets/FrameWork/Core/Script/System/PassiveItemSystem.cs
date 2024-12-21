@@ -101,7 +101,7 @@ namespace Temporary.Core
                             {
                                 globalEffect.Execute();
                             }
-                            else if (effect is EventEffect unitEffect)
+                            else if (effect is UnitEffect unitEffect)
                             {
                                 unitEffect.Execute(casterUnit, targetUnit);
                             }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class InstantShieldByTargetEventEffect : InstantShieldEventEffect, IGetTarget
+    public class ProjectileShieldByTargetUnitEffect : ProjectileShieldUnitEffect, IGetTarget
     {
         [SerializeField] private ETarget _target;
         [SerializeField] private float _radius;
@@ -47,7 +47,7 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 9;
+            int rowNum = 11;
 
             if (_target != ETarget.Myself && _target != ETarget.AllTarget)
             {
