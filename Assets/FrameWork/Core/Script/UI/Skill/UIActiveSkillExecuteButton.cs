@@ -26,10 +26,21 @@ namespace Temporary.Core
         }
         #endregion
 
+        private enum EActionType
+        {
+            Skill_1,
+            Skill_2,
+            Skill_3,
+            Skill_4,
+        }
+
+        [SerializeField] private EActionType _actionType;
+
         private Image _cooldownTimeImage;
 
         private TextMeshProUGUI _coolDownTimeText;
 
+        private InputSystem _inputSystem;
         private ManaAbility _manaAbility;
 
         private Unit _unit;
@@ -81,6 +92,7 @@ namespace Temporary.Core
             _unit = unit;
             _template = template;
 
+            _inputSystem = BattleManager.Instance.GetSubSystem<InputSystem>();
             _manaAbility = _unit.GetAbility<ManaAbility>();
             _manaAbility.onChangedMana += OnChangeMana;
 
@@ -88,6 +100,8 @@ namespace Temporary.Core
             _currentCoolDownTime = 0;
 
             CheckInteractable();
+
+            InputBinding();
         }
 
         internal void Hide()
@@ -97,7 +111,50 @@ namespace Temporary.Core
 
             _manaAbility.onChangedMana -= OnChangeMana;
             _manaAbility = null;
+
+            InputCancelBinding();
+            _inputSystem = null;
         }
+
+        #region Input Binding
+        private void InputBinding()
+        {
+            switch (_actionType)
+            {
+                case EActionType.Skill_1:
+                    _inputSystem.onSkill_1 += ExecuteSkill;
+                    break;
+                case EActionType.Skill_2:
+                    _inputSystem.onSkill_2 += ExecuteSkill;
+                    break;
+                case EActionType.Skill_3:
+                    _inputSystem.onSkill_3 += ExecuteSkill;
+                    break;
+                case EActionType.Skill_4:
+                    _inputSystem.onSkill_4 += ExecuteSkill;
+                    break;
+            }
+        }
+
+        private void InputCancelBinding()
+        {
+            switch (_actionType)
+            {
+                case EActionType.Skill_1:
+                    _inputSystem.onSkill_1 -= ExecuteSkill;
+                    break;
+                case EActionType.Skill_2:
+                    _inputSystem.onSkill_2 -= ExecuteSkill;
+                    break;
+                case EActionType.Skill_3:
+                    _inputSystem.onSkill_3 -= ExecuteSkill;
+                    break;
+                case EActionType.Skill_4:
+                    _inputSystem.onSkill_4 -= ExecuteSkill;
+                    break;
+            }
+        }
+        #endregion
 
         private void OnChangeMana(int mana)
         {
