@@ -22,6 +22,15 @@ namespace Temporary.Core
         }
         #endregion
 
+        private enum EActionType
+        {
+            Item_1,
+            Item_2,
+            Item_3,
+        }
+
+        [SerializeField] private EActionType _actionType;
+
         private Image _cooldownTimeImage;
 
         private TextMeshProUGUI _needCostText;
@@ -29,6 +38,7 @@ namespace Temporary.Core
 
         private Color _lackCostColor = new Color(1, 0.27f, 0);
 
+        private InputSystem _inputSystem;
         private CostSystem _costSystem;
         private ActiveItemRangeRenderer _rangeRenderer;
         private ActiveItemTemplate _template;
@@ -98,6 +108,7 @@ namespace Temporary.Core
             _needCostText.text = $"Cost: {finalNeedCost}";
 
             _rangeRenderer = BattleManager.Instance.GetSubSystem<ActiveItemRangeRenderer>();
+            _inputSystem = BattleManager.Instance.GetSubSystem<InputSystem>();
             _costSystem = BattleManager.Instance.GetSubSystem<CostSystem>();
             _costSystem.onChangedCost += OnChangeCost;
 
@@ -105,6 +116,8 @@ namespace Temporary.Core
             _currentCoolDownTime = 0;
 
             CheckInteractable();
+
+            InputBinding();
 
             base.Show();
         }
@@ -118,7 +131,136 @@ namespace Temporary.Core
 
             _costSystem.onChangedCost -= OnChangeCost;
             _costSystem = null;
+
+            InputCancelBinding();
+            _inputSystem = null;
         }
+
+        #region Input Binding
+        private void InputBinding()
+        {
+            if (_template.unitType == EUnitType.None)
+            {
+                switch (_actionType)
+                {
+                    case EActionType.Item_1:
+                        _inputSystem.onItem_1 += ShortcutNoneRenderer;
+                        break;
+                    case EActionType.Item_2:
+                        _inputSystem.onItem_2 += ShortcutNoneRenderer;
+                        break;
+                    case EActionType.Item_3:
+                        _inputSystem.onItem_3 += ShortcutNoneRenderer;
+                        break;
+                }
+
+                return;
+            }
+
+            switch (_template.rangeType)
+            {
+                case ERangeType.All:
+                    switch (_actionType)
+                    {
+                        case EActionType.Item_1:
+                            _inputSystem.onItem_1 += ShortcutAllRenderer;
+                            break;
+                        case EActionType.Item_2:
+                            _inputSystem.onItem_2 += ShortcutAllRenderer;
+                            break;
+                        case EActionType.Item_3:
+                            _inputSystem.onItem_3 += ShortcutAllRenderer;
+                            break;
+                    }
+                    break;
+                case ERangeType.Circle:
+                    switch (_actionType)
+                    {
+                        case EActionType.Item_1:
+                            _inputSystem.onItem_1 += ShortcutCircleRenderer;
+                            break;
+                        case EActionType.Item_2:
+                            _inputSystem.onItem_2 += ShortcutCircleRenderer;
+                            break;
+                        case EActionType.Item_3:
+                            _inputSystem.onItem_3 += ShortcutCircleRenderer;
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        private void InputCancelBinding()
+        {
+            if (_template.unitType == EUnitType.None)
+            {
+                switch (_actionType)
+                {
+                    case EActionType.Item_1:
+                        _inputSystem.onItem_1 -= ShortcutNoneRenderer;
+                        break;
+                    case EActionType.Item_2:
+                        _inputSystem.onItem_2 -= ShortcutNoneRenderer;
+                        break;
+                    case EActionType.Item_3:
+                        _inputSystem.onItem_3 -= ShortcutNoneRenderer;
+                        break;
+                }
+
+                return;
+            }
+
+            switch (_template.rangeType)
+            {
+                case ERangeType.All:
+                    switch (_actionType)
+                    {
+                        case EActionType.Item_1:
+                            _inputSystem.onItem_1 -= ShortcutAllRenderer;
+                            break;
+                        case EActionType.Item_2:
+                            _inputSystem.onItem_2 -= ShortcutAllRenderer;
+                            break;
+                        case EActionType.Item_3:
+                            _inputSystem.onItem_3 -= ShortcutAllRenderer;
+                            break;
+                    }
+                    break;
+                case ERangeType.Circle:
+                    switch (_actionType)
+                    {
+                        case EActionType.Item_1:
+                            _inputSystem.onItem_1 -= ShortcutCircleRenderer;
+                            break;
+                        case EActionType.Item_2:
+                            _inputSystem.onItem_2 -= ShortcutCircleRenderer;
+                            break;
+                        case EActionType.Item_3:
+                            _inputSystem.onItem_3 -= ShortcutCircleRenderer;
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        private void ShortcutNoneRenderer()
+        {
+            InitializeNoneRenderer();
+        }
+
+        private void ShortcutAllRenderer()
+        {
+            _isPointerDown = true;
+            InitializeAllRenderer();
+        }
+
+        private void ShortcutCircleRenderer()
+        {
+            _isPointerDown = true;
+            _isActiveRangeRenderer = true;
+            InitializeCircleRenderer();
+        }
+        #endregion
 
         private void OnChangeCost(int cost)
         {
@@ -244,8 +386,7 @@ namespace Temporary.Core
 
             if (_template.unitType == EUnitType.None)
             {
-                ExecuteItem();
-                ExecuteEffect();
+                InitializeNoneRenderer();
             }
             else if (_isActiveRangeRenderer)
             {
@@ -272,6 +413,12 @@ namespace Temporary.Core
             _isPointerDown = false;
             _cachedPointerDownPosition = Vector2.zero;
             _isActiveRangeRenderer = false;
+        }
+
+        private void InitializeNoneRenderer()
+        {
+            ExecuteItem();
+            ExecuteEffect();
         }
 
         private void InitializeAllRenderer()

@@ -528,6 +528,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f428d87af98f6e441928c490489e1fa0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _actionType: 1
 --- !u!1 &1453065718026445237
 GameObject:
   m_ObjectHideFlags: 0
@@ -1064,6 +1065,82 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &4116460296812746077
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8930232376433477235}
+  - component: {fileID: 6469315460560098732}
+  - component: {fileID: 528826198924392557}
+  m_Layer: 0
+  m_Name: InputSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8930232376433477235
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4116460296812746077}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3922504144110307591}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6469315460560098732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4116460296812746077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 34bcf04346cd36049a9cfd0ed40de7e6,
+    type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Battle
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
+--- !u!114 &528826198924392557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4116460296812746077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cf70456a822b674c87ad349a093a355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4220791289374802386
 GameObject:
   m_ObjectHideFlags: 0
@@ -1444,6 +1521,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f428d87af98f6e441928c490489e1fa0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _actionType: 2
 --- !u!1 &5410945874669684441
 GameObject:
   m_ObjectHideFlags: 0
@@ -1615,7 +1693,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6462597325493746499}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.015, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -2311,6 +2389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f428d87af98f6e441928c490489e1fa0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _actionType: 0
 --- !u!1 &8704917616393573368
 GameObject:
   m_ObjectHideFlags: 0
@@ -2341,15 +2420,16 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 720132362877123212}
+  - {fileID: 8930232376433477235}
   - {fileID: 3855389133519955064}
   - {fileID: 3569998641611991089}
-  - {fileID: 8532087935065050818}
   - {fileID: 2732570360920927933}
   - {fileID: 3535599450379851767}
+  - {fileID: 8532087935065050818}
   - {fileID: 5473748943773749713}
-  - {fileID: 7380159677907212168}
-  - {fileID: 4601714228318269500}
   - {fileID: 2221946199226633625}
+  - {fileID: 4601714228318269500}
+  - {fileID: 7380159677907212168}
   - {fileID: 4497056214624323783}
   - {fileID: 4512401954550358914}
   - {fileID: 3546449877731120229}
