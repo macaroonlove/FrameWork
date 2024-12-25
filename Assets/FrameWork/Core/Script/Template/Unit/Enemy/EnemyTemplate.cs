@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    [CreateAssetMenu(menuName = "Templates/Enemy", fileName = "Enemy", order = 0)]
+    [CreateAssetMenu(menuName = "Templates/Unit/Enemy", fileName = "Enemy_", order = 1)]
     public class EnemyTemplate : ScriptableObject
     {
         [HideInInspector, SerializeField] private int _id;

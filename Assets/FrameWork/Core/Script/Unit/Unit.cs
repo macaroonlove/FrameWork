@@ -8,12 +8,26 @@ namespace Temporary.Core
 {
     public class Unit : MonoBehaviour
     {
+        #region 유닛 위치
+        [SerializeField] private Transform _headPoint;
+        [SerializeField] private Transform _bodyPoint;
+        [SerializeField] private Transform _leftHandPoint;
+        [SerializeField] private Transform _rightHandPoint;
+        [SerializeField] private Transform _footPoint;
         [SerializeField] private Transform _projectileHitPoint;
+
+        internal Transform headPoint => _headPoint;
+        internal Transform bodyPoint => _bodyPoint;
+        internal Transform leftHandPoint => _leftHandPoint;
+        internal Transform rightHandPoint => _rightHandPoint;
+        internal Transform footPoint => _footPoint;
+        internal Transform projectileHitPoint => _projectileHitPoint;
+        #endregion
+
         protected int _id;
         private HealthAbility _healthAbility;
 
         #region 프로퍼티
-        internal Transform projectileHitPoint => _projectileHitPoint;
         internal int id => _id;
         internal HealthAbility healthAbility => _healthAbility;
         internal bool isDie => !_healthAbility.isAlive;

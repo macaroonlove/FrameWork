@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    [CreateAssetMenu(menuName = "Templates/AbnormalStatus", fileName = "AbnormalStatus", order = 0)]
+    [CreateAssetMenu(menuName = "Templates/Status/AbnormalStatus", fileName = "AbnormalStatus", order = 1)]
     public class AbnormalStatusTemplate : ScriptableObject
     {
         [HideInInspector, SerializeField] private Sprite _sprite;

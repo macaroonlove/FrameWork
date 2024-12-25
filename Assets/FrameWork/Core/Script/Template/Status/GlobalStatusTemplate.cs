@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    [CreateAssetMenu(menuName = "Templates/GlobalStatus", fileName = "GlobalStatus", order = 0)]
+    [CreateAssetMenu(menuName = "Templates/Status/GlobalStatus", fileName = "GlobalStatus", order = 2)]
     public class GlobalStatusTemplate : ScriptableObject
     {
         [HideInInspector, SerializeField] private Sprite _sprite;

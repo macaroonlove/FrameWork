@@ -30,29 +30,6 @@ namespace FrameWork.Sound
             prevCancelableSoundID = id;
         }
 
-        public static int PlaySoundDealy(AudioClip clip, float dealay)
-        {
-            if (dealay == 0)
-            {
-                return PlaySound(clip);
-            }
-            else
-            {
-                Instance.DealayPlaySound(clip, dealay);
-                return -1;
-            }
-        }
-
-        private void DealayPlaySound(AudioClip clip, float dealay)
-        {
-            StartCoroutine(Co_DealayPlaySound(clip, dealay));
-        }
-        private IEnumerator Co_DealayPlaySound(AudioClip clip, float dealay)
-        {
-            yield return new WaitForSeconds(dealay);
-            PlaySound(clip);
-        }
-
         /// <summary>
         /// When set to true, new music audios that have the same audio clip as any other music audios, will be ignored
         /// </summary>

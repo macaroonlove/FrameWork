@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -55,6 +56,27 @@ namespace Temporary.Core
                 return newObj;
             }
         }
+
+        #region Spawn 메서드 지속시간 적용
+        internal GameObject Spawn(GameObject obj, float duration, Transform parent = null)
+        {
+            var newObj = Spawn(obj, parent);
+
+            if (duration > 0)
+            {
+                StartCoroutine(CoSpawn(obj, duration));
+            }
+
+            return newObj;
+        }
+
+        private IEnumerator CoSpawn(GameObject obj, float duration = 0)
+        {
+            yield return new WaitForSeconds(duration);
+
+            DeSpawn(obj);
+        }
+        #endregion
 
         internal void DeSpawn(GameObject obj)
         {

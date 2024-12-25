@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    [CreateAssetMenu(menuName = "Templates/Buff", fileName = "Buff", order = 0)]
+    [CreateAssetMenu(menuName = "Templates/Status/Buff", fileName = "Buff", order = 0)]
     public class BuffTemplate : ScriptableObject
     {
         [HideInInspector, SerializeField] private string _displayName;

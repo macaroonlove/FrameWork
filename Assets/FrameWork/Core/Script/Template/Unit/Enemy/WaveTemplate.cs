@@ -8,7 +8,7 @@ namespace Temporary.Core
     /// <summary>
     /// 한 웨이브(스테이지)를 관리
     /// </summary>
-    [CreateAssetMenu(menuName = "Templates/Wave", fileName = "Wave", order = 0)]
+    [CreateAssetMenu(menuName = "Templates/Unit/Wave", fileName = "Wave", order = 2)]
     public class WaveTemplate : ScriptableObject
     {
         [Label("최초 스폰 시간")] public float spawnTime;

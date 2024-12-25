@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    [CreateAssetMenu(menuName = "Templates/Agent", fileName = "Agent", order = 0)]
+    [CreateAssetMenu(menuName = "Templates/Unit/Agent", fileName = "Agent_", order = 0)]
     public class AgentTemplate : ScriptableObject
     {
         [HideInInspector, SerializeField] private int _id;
