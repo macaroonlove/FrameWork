@@ -182,6 +182,8 @@ namespace Temporary.Core
 
         private void ExecuteSkill()
         {
+            ExecuteCasterFX(_template);
+
             switch (_template.skillType)
             {
                 case EActiveSkillType.Instant:
@@ -230,6 +232,8 @@ namespace Temporary.Core
                     unitEffect.Execute(unit, _targetUnit);
                 }
             }
+
+            ExecuteTargetFX(template, _targetUnit);
         }
 
         private void ExecuteNonTargetingSkill(ActiveSkillTemplate template)
@@ -241,12 +245,40 @@ namespace Temporary.Core
                     pointEffect.Execute(unit, _targetVector);
                 }
             }
+
+            ExecuteTargetFX(template, _targetVector);
         }
         #endregion
 
         private void OnSkillEndEvent()
         {
             _isSkillActive = false;
+        }
+        #endregion
+
+        #region FX
+        private void ExecuteCasterFX(ActiveSkillTemplate template)
+        {
+            if (template.casterFX != null)
+            {
+                template.casterFX.Play(unit);
+            }
+        }
+
+        private void ExecuteTargetFX(ActiveSkillTemplate template, Unit target)
+        {
+            if (template.targetFX != null)
+            {
+                template.targetFX.Play(target);
+            }
+        }
+
+        private void ExecuteTargetFX(ActiveSkillTemplate template, Vector3 targetVector)
+        {
+            if (template.targetFX != null)
+            {
+                template.targetFX.Play(targetVector);
+            }
         }
         #endregion
     }

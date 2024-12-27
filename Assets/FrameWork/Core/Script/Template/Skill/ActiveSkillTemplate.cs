@@ -1,5 +1,3 @@
-using FrameWork.Editor;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,6 +22,9 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private string _parameterName;
         [HideInInspector, SerializeField] private int _parameterHash;
 
+        [HideInInspector, SerializeField] private FX _casterFX;
+        [HideInInspector, SerializeField] private FX _targetFX;
+
         [HideInInspector]
         public List<Effect> effects = new List<Effect>();
 
@@ -36,12 +37,15 @@ namespace Temporary.Core
 
         public int needMana => _needMana;
         public float cooldownTime => _cooldownTime;
-        
+
         public EActiveSkillType skillType => _skillType;
         public EUnitType unitType => _unitType;
         public float skillRange => _skillRange;
 
         public int parameterHash => _parameterHash;
+
+        public FX casterFX => _casterFX;
+        public FX targetFX => _targetFX;
         #endregion
 
         #region 값 변경 메서드
@@ -77,6 +81,8 @@ namespace Temporary.Editor
         private SerializedProperty _skillRange;
         private SerializedProperty _parameterName;
         private SerializedProperty _parameterHash;
+        private SerializedProperty _casterFX;
+        private SerializedProperty _targetFX;
 
         private ReorderableList _effectsList;
         private Effect _currentEffect;
@@ -96,6 +102,8 @@ namespace Temporary.Editor
             _skillRange = serializedObject.FindProperty("_skillRange");
             _parameterName = serializedObject.FindProperty("_parameterName");
             _parameterHash = serializedObject.FindProperty("_parameterHash");
+            _casterFX = serializedObject.FindProperty("_casterFX");
+            _targetFX = serializedObject.FindProperty("_targetFX");
 
             CreateEffectList();
         }
@@ -105,9 +113,9 @@ namespace Temporary.Editor
             serializedObject.Update();
 
             GUILayout.BeginHorizontal();
-            
+
             _sprite.objectReferenceValue = EditorGUILayout.ObjectField(_sprite.objectReferenceValue, typeof(Sprite), false, GUILayout.Width(96), GUILayout.Height(96));
-            
+
             GUILayout.BeginVertical();
 
             GUILayout.BeginHorizontal();
@@ -126,7 +134,7 @@ namespace Temporary.Editor
             GUILayout.EndHorizontal();
 
             GUILayout.EndVertical();
-            
+
             GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
@@ -144,8 +152,8 @@ namespace Temporary.Editor
             GUILayout.BeginHorizontal();
             GUILayout.Label("스킬 타입", GUILayout.Width(192));
             EditorGUILayout.PropertyField(_skillType, GUIContent.none);
-            GUILayout.EndHorizontal();            
-            
+            GUILayout.EndHorizontal();
+
             if (_skillType.enumValueIndex == (int)EActiveSkillType.Targeting)
             {
                 GUILayout.BeginHorizontal();
@@ -177,6 +185,21 @@ namespace Temporary.Editor
             if (GUILayout.Button("해시 값 생성"))
             {
                 _parameterHash.intValue = Animator.StringToHash(_parameterName.stringValue);
+            }
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("스킬 사용 시, 시전자 FX", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_casterFX, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            if (_skillType.enumValueIndex != (int)EActiveSkillType.Instant)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("스킬 사용 시, 마우스 위치에 생성될 FX", GUILayout.Width(192));
+                EditorGUILayout.PropertyField(_targetFX, GUIContent.none);
+                GUILayout.EndHorizontal();
             }
 
             GUILayout.Space(20);

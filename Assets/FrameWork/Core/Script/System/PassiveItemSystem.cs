@@ -106,13 +106,14 @@ namespace Temporary.Core
                                 unitEffect.Execute(casterUnit, targetUnit);
                             }
                         }
+
+                        ExecuteCasterFX(template, casterUnit);
                     };
 
                     unitTrigger.unitEvent.AddListener(action);
 
                     _unitEvents.Add(unitTrigger.unitEvent);
                 }
-
             }
         }
 
@@ -134,5 +135,15 @@ namespace Temporary.Core
             
             _items.Clear();
         }
+
+        #region FX
+        private void ExecuteCasterFX(PassiveItemTemplate template, Unit caster)
+        {
+            if (template.casterFX != null)
+            {
+                template.casterFX.Play(caster);
+            }
+        }
+        #endregion
     }
 }

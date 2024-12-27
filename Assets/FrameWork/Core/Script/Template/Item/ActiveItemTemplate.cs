@@ -23,6 +23,9 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private EUnitType _unitType;
         // 조건 추가
 
+        [HideInInspector, SerializeField] private FX _itemFX;
+        [HideInInspector, SerializeField] private FX _afterDelayFX;
+
         [HideInInspector]
         public List<Effect> effects = new List<Effect>();
 
@@ -40,6 +43,9 @@ namespace Temporary.Core
         public ERangeType rangeType => _rangeType;
         public float range => _range;
         public EUnitType unitType => _unitType;
+
+        public FX itemFX => _itemFX;
+        public FX afterDelayFX => _afterDelayFX;
         #endregion
 
         #region 값 변경 메서드
@@ -74,6 +80,8 @@ namespace Temporary.Editor
         private SerializedProperty _rangeType;
         private SerializedProperty _range;
         private SerializedProperty _unitType;
+        private SerializedProperty _itemFX;
+        private SerializedProperty _afterDelayFX;
 
         private ReorderableList _effectsList;
         private Effect _currentEffect;
@@ -92,6 +100,8 @@ namespace Temporary.Editor
             _rangeType = serializedObject.FindProperty("_rangeType");
             _range = serializedObject.FindProperty("_range");
             _unitType = serializedObject.FindProperty("_unitType");
+            _itemFX = serializedObject.FindProperty("_itemFX");
+            _afterDelayFX = serializedObject.FindProperty("_afterDelayFX");
 
             CreateEffectList();
         }
@@ -163,6 +173,21 @@ namespace Temporary.Editor
                     EditorGUILayout.PropertyField(_range, GUIContent.none);
                     GUILayout.EndHorizontal();
                 }
+            }
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("아이템 발동 시, FX", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_itemFX, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            if (_delay.floatValue > 0)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("아이템 발동 지연 시간 이후, FX", GUILayout.Width(192));
+                EditorGUILayout.PropertyField(_afterDelayFX, GUIContent.none);
+                GUILayout.EndHorizontal();
             }
 
             GUILayout.Space(20);

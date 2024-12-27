@@ -115,6 +115,8 @@ namespace Temporary.Core
             // 상태이상 효과 적용 (동일한 상태이상 효과는 중복되지 않음)
             if (isContained == false)
             {
+                ExecuteApplyFX(template);
+
                 foreach (var effect in template.effects)
                 {
                     if (effect is UnableToMoveEffect unableToMoveEffect)
@@ -173,6 +175,8 @@ namespace Temporary.Core
 #if UNITY_EDITOR
                 statusList.Remove(template);
 #endif
+
+                ExecuteRemoveFX(template);
             }
         }
 
@@ -212,6 +216,8 @@ namespace Temporary.Core
 #if UNITY_EDITOR
                     statusList.Remove(template);
 #endif
+
+                    ExecuteRemoveFX(template);
                 }
             }
         }
@@ -223,6 +229,8 @@ namespace Temporary.Core
                 var instance = status.Value;
 
                 RemoveStatus(status.Key.effects);
+
+                ExecuteRemoveFX(status.Key);
 
                 if (instance.corutine != null)
                 {
@@ -302,6 +310,24 @@ namespace Temporary.Core
                 }
             }
             return isContains;
+        }
+        #endregion
+
+        #region FX
+        private void ExecuteApplyFX(AbnormalStatusTemplate template)
+        {
+            if (template.applyFX != null)
+            {
+                template.applyFX.Play(unit);
+            }
+        }
+
+        private void ExecuteRemoveFX(AbnormalStatusTemplate template)
+        {
+            if (template.removeFX != null)
+            {
+                template.removeFX.Play(unit);
+            }
         }
         #endregion
     }

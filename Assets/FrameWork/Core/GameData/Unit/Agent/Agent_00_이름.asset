@@ -36,4 +36,6 @@ MonoBehaviour:
   _hpRecoveryPerSec: 0
   _manaRecoveryPerSec: 0
   _skillTreeGraph: {fileID: 0}
+  _casterFX: {fileID: 0}
+  _targetFX: {fileID: 0}
   isOwned: 0

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Temporary.Core
@@ -40,6 +41,9 @@ namespace Temporary.Core
 
         [HideInInspector, SerializeField] private SkillTreeGraph _skillTreeGraph;
 
+        [HideInInspector, SerializeField] private FX _casterFX;
+        [HideInInspector, SerializeField] private FX _targetFX;
+
         #region 프로퍼티
         public int id => _id;
         public string displayName => _displayName;
@@ -75,6 +79,9 @@ namespace Temporary.Core
         public int ManaRecoveryPerSec => _manaRecoveryPerSec;
 
         public SkillTreeGraph skillTreeGraph => _skillTreeGraph;
+
+        public FX casterFX => _casterFX;
+        public FX targetFX => _targetFX;
         #endregion
 
         #region 값 변경 메서드
@@ -119,6 +126,8 @@ namespace Temporary.Editor
         private SerializedProperty _hpRecoveryPerSec;
         private SerializedProperty _manaRecoveryPerSec;
         private SerializedProperty _skillTreeGraph;
+        private SerializedProperty _casterFX;
+        private SerializedProperty _targetFX;
 
         private void OnEnable()
         {
@@ -146,6 +155,8 @@ namespace Temporary.Editor
             _hpRecoveryPerSec = serializedObject.FindProperty("_hpRecoveryPerSec");
             _manaRecoveryPerSec = serializedObject.FindProperty("_manaRecoveryPerSec");
             _skillTreeGraph = serializedObject.FindProperty("_skillTreeGraph");
+            _casterFX = serializedObject.FindProperty("_casterFX");
+            _targetFX = serializedObject.FindProperty("_targetFX");
         }
 
         public override void OnInspectorGUI()
@@ -293,6 +304,18 @@ namespace Temporary.Editor
             GUILayout.BeginHorizontal();
             GUILayout.Label("스킬 트리", GUILayout.Width(192));
             EditorGUILayout.PropertyField(_skillTreeGraph, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("공격 시, 시전자 FX", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_casterFX, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("공격 시, 대상자 FX", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_targetFX, GUIContent.none);
             GUILayout.EndHorizontal();
 
             serializedObject.ApplyModifiedProperties();

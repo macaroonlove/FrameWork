@@ -1,4 +1,5 @@
 using FrameWork.UIBinding;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -52,6 +53,7 @@ namespace Temporary.Core
         private float _threshold = 0.1f;
         private bool _isPointerDown;
         private Vector2 _cachedPointerDownPosition;
+        private Vector3 _cachedLastRendererPosition;
 
         #region 프로퍼티
         private bool IsInteractable
@@ -262,6 +264,7 @@ namespace Temporary.Core
         }
         #endregion
 
+        #region 아이템 사용 조건 로직
         private void OnChangeCost(int cost)
         {
             _currentCost = cost;
@@ -327,6 +330,7 @@ namespace Temporary.Core
                 _needCostText.color = Color.white;
             }
         }
+        #endregion
 
         private void Update()
         {
@@ -335,6 +339,7 @@ namespace Temporary.Core
             CheckPointerUp();
         }
 
+        #region 포인터(마우스 및 터치) 관리
         public void OnPointerDown(PointerEventData eventData)
         {
             if (IsInteractable == false) return;
@@ -414,13 +419,40 @@ namespace Temporary.Core
             _cachedPointerDownPosition = Vector2.zero;
             _isActiveRangeRenderer = false;
         }
+        #endregion
 
+        #region 렌더러 초기화
+        #region None Renderer
         private void InitializeNoneRenderer()
         {
-            ExecuteItem();
-            ExecuteEffect();
+            // TODO: 맵의 중앙 or 화면의 중앙에 있는 땅을 반환하도록 수정
+            ExecuteItem(Vector3.zero);
+
+            if (_template.delay > 0)
+            {
+                StartCoroutine(CoConfirmNoneRenderer(_template.delay));
+            }
+            else
+            {
+                ConfirmNoneRenderer();
+            }
         }
 
+        private IEnumerator CoConfirmNoneRenderer(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            ConfirmNoneRenderer();
+        }
+
+        private void ConfirmNoneRenderer()
+        {
+            ExecuteEffect();
+
+            ExecuteAfterDelayFX();
+        }
+        #endregion
+
+        #region All Renderer
         private void InitializeAllRenderer()
         {
             _rangeRenderer.Show_AllRange(_template.unitType, _template.delay, (units) => {
@@ -428,7 +460,7 @@ namespace Temporary.Core
                 {
                     ExecuteEffect(units);
 
-                    // TODO: 해당 아이템의 FX 재생시키기
+                    ExecuteAfterDelayFX();
                 }
                 else
                 {
@@ -436,7 +468,9 @@ namespace Temporary.Core
                 }
             }, ExecuteItem);
         }
+        #endregion
 
+        #region Circle Renderer
         private void InitializeCircleRenderer()
         {
             _rangeRenderer.Show_CircleRange(_template.unitType, _template.range, (units) => {
@@ -444,7 +478,7 @@ namespace Temporary.Core
                 {
                     ExecuteEffect(units);
 
-                    // TODO: 해당 아이템의 FX 재생시키기
+                    ExecuteAfterDelayFX();
                 }
                 else
                 {
@@ -453,9 +487,14 @@ namespace Temporary.Core
             });
             _isActiveRangeRenderer = true;
         }
+        #endregion
+        #endregion
 
-        private void ExecuteItem()
+        private void ExecuteItem(Vector3 pos)
         {
+            // FX 적용
+            ExecuteItemFX(pos);
+
             // 쿨타임 적용
             _currentCoolDownTime = finalCoolDownTime;
             CalcMaxCoolDownTime();
@@ -466,6 +505,7 @@ namespace Temporary.Core
             CheckInteractable();
         }
 
+        #region 효과 수행
         private void ExecuteEffect()
         {
             foreach (var effect in _template.effects)
@@ -487,5 +527,28 @@ namespace Temporary.Core
                 }
             }
         }
+        #endregion
+
+        #region FX
+        private void ExecuteItemFX(Vector3 pos)
+        {
+            if (_template.itemFX != null)
+            {
+                _template.itemFX.Play(pos);
+            }
+
+            _cachedLastRendererPosition = pos;
+        }
+
+        private void ExecuteAfterDelayFX()
+        {
+            if (_template.delay <= 0) return;
+
+            if (_template.afterDelayFX != null)
+            {
+                _template.afterDelayFX.Play(_cachedLastRendererPosition);
+            }
+        }
+        #endregion
     }
 }

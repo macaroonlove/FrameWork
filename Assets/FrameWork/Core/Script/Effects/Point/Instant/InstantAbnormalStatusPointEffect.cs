@@ -54,12 +54,9 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 6;
+            int rowNum = base.GetNumRows();
 
-            if (_skillType == ENonTargetingActiveSkillType.Straight)
-            {
-                rowNum++;
-            }
+            rowNum += 4;
 
             if (!_isInfinity)
             {

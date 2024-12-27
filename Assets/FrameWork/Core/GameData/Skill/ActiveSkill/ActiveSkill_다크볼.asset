@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f20c545ee78bf4944be4cf0cae3eeb72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
   _isInfinity: 0
   _duration: 0
   _abnormalStatus: {fileID: 0}
@@ -28,6 +29,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 0}
+  _spawnPoint: 0
   _isInfinity: 0
   _duration: 0
   _abnormalStatus: {fileID: 0}
@@ -44,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 0}
+  _spawnPoint: 0
   _isInfinity: 0
   _duration: 0
   _buff: {fileID: 0}
@@ -59,9 +62,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f20c545ee78bf4944be4cf0cae3eeb72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
   _isInfinity: 0
   _duration: 0
   _abnormalStatus: {fileID: 0}
+--- !u!114 &-5986662972142647650
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f02eef8dd605ba4cbba495894cdde8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _skillRange: 0
+  _skillType: 0
+  _unitType: 0
+  _skillWidth: 0
+  _skillAngle: 0
+  _targetFX: {fileID: 0}
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _isInfinity: 0
+  _duration: 0
+  _applyTypeByAmountDatas: []
 --- !u!114 &-5294319458878991197
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -75,12 +104,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 0}
+  _spawnPoint: 0
   _repeatCount: 1
   _isTick: 0
   _tickCycle: 0
   _tickCount: 0
   _isInfinity: 0
   _duration: 0
+  _applyTypeByAmountDatas: []
+--- !u!114 &-5000745753491972847
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76afb4c3b44eade44ac5b7290f6e96c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _skillRange: 0
+  _skillType: 0
+  _unitType: 0
+  _skillWidth: 0
+  _skillAngle: 0
+  _targetFX: {fileID: 0}
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _damageType: 0
   _applyTypeByAmountDatas: []
 --- !u!114 &-4649271391693832486
 MonoBehaviour:
@@ -95,6 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 0}
+  _spawnPoint: 0
   _skillRange: 0
   _skillType: 1
   _projectileAngleStep: 0
@@ -115,6 +170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 0}
+  _spawnPoint: 0
   _repeatCount: 1
   _isTick: 0
   _tickCycle: 0
@@ -138,6 +194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 0}
+  _spawnPoint: 0
   _repeatCount: 0
   _isTick: 0
   _tickCycle: 0
@@ -156,6 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb428401ee444924f87c89dfbaedb7e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
   _repeatCount: 0
   _isTick: 0
   _tickCycle: 0
@@ -174,6 +232,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 0}
+  _spawnPoint: 0
   _skillRange: 0
   _skillType: 0
   _projectileAngleStep: 0
@@ -196,6 +255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 0}
+  _spawnPoint: 0
   _skillRange: 0
   _skillType: 0
   _projectileAngleStep: 0
@@ -221,11 +281,13 @@ MonoBehaviour:
   _description: 
   _needMana: 0
   _cooldownTime: 0
-  _skillType: 2
+  _skillType: 0
   _unitType: 0
   _skillRange: 0
   _parameterName: 
   _parameterHash: 0
+  _casterFX: {fileID: 0}
+  _targetFX: {fileID: 0}
   effects: []
 --- !u!114 &777072007764886082
 MonoBehaviour:
@@ -240,6 +302,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 0}
+  _spawnPoint: 0
   _skillRange: 0
   _skillType: 1
   _projectileAngleStep: 0
@@ -261,6 +324,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f20c545ee78bf4944be4cf0cae3eeb72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
   _isInfinity: 0
   _duration: 0
   _abnormalStatus: {fileID: 0}
@@ -277,6 +341,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 0}
+  _spawnPoint: 0
   _skillRange: 0
   _skillType: 1
   _projectileAngleStep: 0
@@ -301,6 +366,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 0}
+  _spawnPoint: 0
   _skillRange: 0
   _skillType: 0
   _projectileAngleStep: 0
@@ -324,6 +390,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 0}
+  _spawnPoint: 0
   _skillRange: 0
   _skillType: 1
   _projectileAngleStep: 0
@@ -331,6 +398,29 @@ MonoBehaviour:
   _isInfinity: 0
   _duration: 0
   _abnormalStatus: {fileID: 0}
+--- !u!114 &3926738173520614494
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2468a6a634185654c8ce0ab02e8208f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _damageType: 0
+  _applyTypeByAmountDatas: []
+  _attackType: 0
+  _target: 0
+  _radius: 0
+  _numberOfTarget: 0
 --- !u!114 &5205571454154914317
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -344,6 +434,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 0}
+  _spawnPoint: 0
   _skillRange: 0
   _skillType: 0
   _projectileAngleStep: 0
@@ -351,6 +442,27 @@ MonoBehaviour:
   _isInfinity: 0
   _duration: 0
   _abnormalStatus: {fileID: 0}
+--- !u!114 &6870388135551569686
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ec03adda36aeb54fa598e3eba4d34f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 0}
+  _spawnPoint: 0
+  _isInfinity: 0
+  _duration: 0
+  _abnormalStatus: {fileID: 0}
+  _attackType: 0
+  _target: 0
+  _radius: 0
+  _numberOfTarget: 0
 --- !u!114 &6983108347474873265
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -363,6 +475,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76f800ec646a2ad4d91742d63265e5b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
   _repeatCount: 1
   _isTick: 0
   _tickCycle: 0
@@ -382,9 +495,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f20c545ee78bf4944be4cf0cae3eeb72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
   _isInfinity: 0
   _duration: 0
   _abnormalStatus: {fileID: 0}
+--- !u!114 &7617040240498521325
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e142ffecf24b6e4d903fd26472a3da8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
+  _isInfinity: 0
+  _duration: 0
+  _abnormalStatus: {fileID: 0}
+  _target: 0
+  _attackType: 0
+  _radius: 0
+  _numberOfTarget: 0
 --- !u!114 &8181696544537975786
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -397,6 +531,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ff8910d893c2544bb2c1ad1cbf9ea53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
   _isInfinity: 0
   _duration: 0
   _buff: {fileID: 0}
@@ -413,6 +548,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 0}
+  _spawnPoint: 0
   _skillRange: 0
   _skillType: 0
   _projectileAngleStep: 0
@@ -435,6 +571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f20c545ee78bf4944be4cf0cae3eeb72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
   _isInfinity: 0
   _duration: 0
   _abnormalStatus: {fileID: 0}

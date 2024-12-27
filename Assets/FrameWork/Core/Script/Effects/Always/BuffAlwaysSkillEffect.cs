@@ -9,7 +9,7 @@ namespace Temporary.Core
 
         public override string GetDescription()
         {
-            return "자기 자신에게 무한 지속 버프 적용";
+            return "모든 유닛에게 무한 지속 버프 적용";
         }
 
         public override void Execute(Unit casterUnit)

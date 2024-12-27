@@ -1,11 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class ProjectileDamageByTargetUnitEffect : ProjectileDamageUnitEffect, IGetTarget
+    public class ProjectileAbnormalStatusByTargetUnitEffect : ProjectileAbnormalStatusUnitEffect, IGetTarget
     {
         [SerializeField] private EAttackType _attackType;
         [SerializeField] private ETarget _target;
@@ -53,7 +52,9 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 12;
+            int rowNum = base.GetNumRows();
+
+            rowNum += 3;
 
             if (_target != ETarget.Myself && _target != ETarget.AllTarget)
             {
@@ -64,13 +65,6 @@ namespace Temporary.Core
             {
                 rowNum++;
             }
-
-            if (_isTick)
-            {
-                rowNum += 2;
-            }
-
-            rowNum += (int)(_applyTypeByAmountDatas.Count * 1.2f);
 
             return rowNum;
         }

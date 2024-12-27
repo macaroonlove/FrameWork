@@ -19,6 +19,8 @@ namespace Temporary.Core
                 return;
             }
 
+            ExecuteCasterFX(caster);
+
             if (_isLookTarget)
             {
                 transform.GetChild(0).LookAt(_target.projectileHitPoint);
@@ -46,6 +48,8 @@ namespace Temporary.Core
         protected void OnCollision()
         {
             _action?.Invoke(_caster, _target);
+
+            ExecuteTargetFX(_target);
 
             DeSpawn();
         }

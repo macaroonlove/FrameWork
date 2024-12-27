@@ -197,12 +197,9 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 12;
+            int rowNum = base.GetNumRows();
 
-            if (_skillType == ENonTargetingActiveSkillType.Straight)
-            {
-                rowNum++;
-            }
+            rowNum += 9;
 
             if (_isTick)
             {

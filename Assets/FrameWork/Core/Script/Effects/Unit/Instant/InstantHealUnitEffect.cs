@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class InstantHealUnitEffect : UnitEffect
+    public class InstantHealUnitEffect : InstantUnitEffect
     {
         [SerializeField] protected int _repeatCount;
         [SerializeField] protected bool _isTick;
@@ -57,11 +57,8 @@ namespace Temporary.Core
             return (int)totalAmount;
         }
 
-        public override void Execute(Unit casterUnit, Unit targetUnit)
+        protected override void SkillImpact(Unit casterUnit, Unit targetUnit)
         {
-            if (casterUnit == null || targetUnit == null) return;
-            if (targetUnit.isDie) return;
-
             int heal = GetAmount(casterUnit, targetUnit);
 
             Execute_RepeatCount(casterUnit, targetUnit, heal);
@@ -112,9 +109,13 @@ namespace Temporary.Core
 #if UNITY_EDITOR
         public override void Draw(Rect rect)
         {
-            var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
-            var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
+            base.Draw(rect);
 
+            var labelRect = new Rect(rect.x, lastRectY, 140, rect.height);
+            var valueRect = new Rect(rect.x + 140, lastRectY, rect.width - 140, rect.height);
+
+            labelRect.y += 40;
+            valueRect.y += 40;
             GUI.Label(labelRect, "È¸º¹ È½¼ö");
             _repeatCount = EditorGUI.IntField(valueRect, _repeatCount);
             if (_repeatCount <= 0) _repeatCount = 1;
@@ -170,7 +171,9 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 4;
+            int rowNum = base.GetNumRows();
+
+            rowNum += 5;
 
             if (_isTick)
             {

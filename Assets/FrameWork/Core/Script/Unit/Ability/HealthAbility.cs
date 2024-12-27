@@ -1,3 +1,4 @@
+using FrameWork.Editor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +50,7 @@ namespace Temporary.Core
             }
         }
 
-        [SerializeField] private GameObject _shieldFX;
+        [SerializeField, Label("º¸È£¸·")] private GameObject _shieldFX;
 
         private List<ShieldInstance> _shields = new List<ShieldInstance>();
         private GameObject _shieldObject;

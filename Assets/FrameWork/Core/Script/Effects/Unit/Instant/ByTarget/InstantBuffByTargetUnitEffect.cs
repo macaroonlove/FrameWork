@@ -1,11 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class ProjectileShieldByTargetUnitEffect : ProjectileShieldUnitEffect, IGetTarget
+    public class InstantBuffByTargetUnitEffect : InstantBuffUnitEffect, IGetTarget
     {
         [SerializeField] private ETarget _target;
         [SerializeField] private float _radius;
@@ -22,7 +21,7 @@ namespace Temporary.Core
             var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
             var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
 
-            GUI.Label(labelRect, "대상");
+            GUI.Label(labelRect, "피해 대상");
             _target = (ETarget)EditorGUI.EnumPopup(valueRect, _target);
 
             if (_target != ETarget.Myself && _target != ETarget.AllTarget)
@@ -37,7 +36,7 @@ namespace Temporary.Core
             {
                 labelRect.y += 20;
                 valueRect.y += 20;
-                GUI.Label(labelRect, "보호막 적용할 아군의 수");
+                GUI.Label(labelRect, "공격할 적의 수");
                 _numberOfTarget = EditorGUI.IntField(valueRect, _numberOfTarget);
             }
 
@@ -47,7 +46,9 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 11;
+            int rowNum = base.GetNumRows();
+
+            rowNum += 3;
 
             if (_target != ETarget.Myself && _target != ETarget.AllTarget)
             {
@@ -58,18 +59,6 @@ namespace Temporary.Core
             {
                 rowNum++;
             }
-
-            if (_isTick)
-            {
-                rowNum += 2;
-            }
-
-            if (!_isInfinity)
-            {
-                rowNum++;
-            }
-
-            rowNum += (int)(_applyTypeByAmountDatas.Count * 1.2f);
 
             return rowNum;
         }

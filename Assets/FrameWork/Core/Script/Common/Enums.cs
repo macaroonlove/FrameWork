@@ -121,8 +121,18 @@ namespace Temporary.Core
     /// </summary>
     public enum EActiveSkillType
     {
+        /// <summary>
+        /// 스킬을 사용하는 유닛의 위치를 기준으로 주위 유닛이 타겟
+        /// </summary>
         Instant,
+        /// <summary>
+        /// 마우스 위치에 유닛이 있다면 해당 유닛이 타겟
+        /// </summary>
         Targeting,
+        /// <summary>
+        /// 마우스 위치를 기준으로 스킬을 발동
+        /// <para>Cone형과 Straight형 스킬에 사용됩니다.</para>
+        /// </summary>
         NonTargeting,
     }
 
@@ -151,5 +161,18 @@ namespace Temporary.Core
         Add,
         Multiply,
         Set,
+    }
+
+    /// <summary>
+    /// 유닛을 기준으로 한 투사체, 파티클 등의 스폰 위치
+    /// </summary>
+    public enum ESpawnPoint
+    {
+        Head,
+        Body,
+        RightHand,
+        LeftHand,
+        Foot,
+        ProjectileHit,
     }
 }

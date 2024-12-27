@@ -94,6 +94,8 @@ namespace Temporary.Core
             // 전역 상태 적용 (동일한 전역 상태는 중복되지 않음)
             if (isContained == false)
             {
+                ExecuteApplyFX(template);
+
                 foreach (var effect in template.effects)
                 {
                     if (effect is GoldGainAdditionalDataEffect goldGainAdditionalDataEffect)
@@ -142,10 +144,11 @@ namespace Temporary.Core
 #if UNITY_EDITOR
                 statusList.Remove(template);
 #endif
+
+                ExecuteRemoveFX(template);
             }
         }
 
-        #region 콜백 메서드
         private void ClearStatusEffects()
         {
             foreach (var status in statusDic)
@@ -153,6 +156,8 @@ namespace Temporary.Core
                 var instance = status.Value;
 
                 RemoveStatus(status.Key.effects);
+
+                ExecuteRemoveFX(status.Key);
 
                 if (instance.corutine != null)
                 {
@@ -167,7 +172,6 @@ namespace Temporary.Core
             statusList.Clear();
 #endif
         }
-        #endregion
 
         /// <summary>
         /// 전역 상태 제거
@@ -221,6 +225,24 @@ namespace Temporary.Core
                 }
             }
             return isContains;
+        }
+        #endregion
+
+        #region FX
+        private void ExecuteApplyFX(GlobalStatusTemplate template)
+        {
+            if (template.applyFX != null)
+            {
+                template.applyFX.Play(null);
+            }
+        }
+
+        private void ExecuteRemoveFX(GlobalStatusTemplate template)
+        {
+            if (template.removeFX != null)
+            {
+                template.removeFX.Play(null);
+            }
         }
         #endregion
     }

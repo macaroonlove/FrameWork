@@ -10,6 +10,8 @@ namespace Temporary.Core
         [SerializeField] protected EUnitType _unitType;
         [SerializeField] protected float _skillWidth;
         [SerializeField] protected float _skillAngle;
+        
+        [SerializeField] protected FX _targetFX;
 
         public override void Execute(Unit casterUnit, Vector3 targetVector)
         {
@@ -45,6 +47,8 @@ namespace Temporary.Core
                 {
                     SkillImpact(casterUnit, target);
                 }
+
+                ExecuteTargetFX(target);
             }
         }
 
@@ -64,10 +68,22 @@ namespace Temporary.Core
                 {
                     SkillImpact(casterUnit, target);
                 }
+
+                ExecuteTargetFX(target);
             }
         }
 
         protected abstract void SkillImpact(Unit casterUnit, Unit targetUnit);
+
+        #region FX
+        private void ExecuteTargetFX(Unit target)
+        {
+            if (_targetFX != null)
+            {
+                _targetFX.Play(target);
+            }
+        }
+        #endregion
 
 #if UNITY_EDITOR
         protected float lastRectY { get; private set; }
@@ -77,6 +93,11 @@ namespace Temporary.Core
             var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
             var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
 
+            GUI.Label(labelRect, "대상자 FX");
+            _targetFX = (FX)EditorGUI.ObjectField(valueRect, _targetFX, typeof(FX), false);
+
+            labelRect.y += 40;
+            valueRect.y += 40;
             GUI.Label(labelRect, "범위");
             _skillRange = EditorGUI.FloatField(valueRect, _skillRange);
 
@@ -106,6 +127,18 @@ namespace Temporary.Core
             }
 
             lastRectY = labelRect.y;
+        }
+
+        public override int GetNumRows()
+        {
+            int rowNum = 4;
+
+            if (_skillType == ENonTargetingActiveSkillType.Straight)
+            {
+                rowNum++;
+            }
+
+            return rowNum;
         }
 #endif
     }

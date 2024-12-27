@@ -47,7 +47,7 @@ namespace Temporary.Core
         /// <summary>
         /// 타입에 맞는 모든 유닛을 반환
         /// </summary>
-        internal void Show_AllRange(EUnitType unitType, float delay, UnityAction<List<Unit>> action, UnityAction processAction)
+        internal void Show_AllRange(EUnitType unitType, float delay, UnityAction<List<Unit>> action, UnityAction<Vector3> processAction)
         {
             _rangeType = ERangeType.All;
             _unitType = unitType;
@@ -59,7 +59,8 @@ namespace Temporary.Core
             {
                 StartCoroutine(CoConfirm(delay, units));
 
-                processAction?.Invoke();
+                // TODO: 맵의 중앙 or 화면의 중앙에 있는 땅을 반환하도록 수정
+                processAction?.Invoke(Vector3.zero);
             }
         }
 
@@ -84,7 +85,7 @@ namespace Temporary.Core
         /// <summary>
         /// 범위 확정하기
         /// </summary>
-        internal void Confirm(float delay, UnityAction processAction)
+        internal void Confirm(float delay, UnityAction<Vector3> processAction)
         {
             var units = GetUnits_CircleRange(_parent.position);
 
@@ -92,7 +93,7 @@ namespace Temporary.Core
             {
                 StartCoroutine(CoConfirm(delay, units));
 
-                processAction?.Invoke();
+                processAction?.Invoke(_parent.position);
             }
 
             Hide();

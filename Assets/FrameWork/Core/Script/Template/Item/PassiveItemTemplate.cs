@@ -14,6 +14,8 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private RarityTemplate _rarity;
         [HideInInspector, SerializeField] private int _price;
 
+        [HideInInspector, SerializeField] private FX _casterFX;
+
         [HideInInspector]
         public List<GameTrigger> triggers = new List<GameTrigger>();
 
@@ -25,6 +27,8 @@ namespace Temporary.Core
         public string description => _description;
         public RarityTemplate rarity => _rarity;
         public int price => _price;
+
+        public FX casterFX => _casterFX;
         #endregion
 
         #region 값 변경 메서드
@@ -55,6 +59,7 @@ namespace Temporary.Editor
         private SerializedProperty _description;
         private SerializedProperty _rarity;
         private SerializedProperty _price;
+        private SerializedProperty _casterFX;
 
         private ReorderableList _triggersList;
         private GameTrigger _currentTrigger;
@@ -72,6 +77,7 @@ namespace Temporary.Editor
             _description = serializedObject.FindProperty("_description");
             _rarity = serializedObject.FindProperty("_rarity");
             _price = serializedObject.FindProperty("_price");
+            _casterFX = serializedObject.FindProperty("_casterFX");
 
             CreateEventTriggerList();
         }
@@ -135,8 +141,17 @@ namespace Temporary.Editor
 
             if (_currentTrigger != null)
             {
-                GUILayout.Space(20);
                 _currentTrigger.Draw();
+
+                GUILayout.Space(10);
+                if (_currentTrigger is UnitEventGameTrigger)
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label("유닛 아이템 발동 시, 시전자 FX", GUILayout.Width(192));
+                    EditorGUILayout.PropertyField(_casterFX, GUIContent.none);
+                    GUILayout.EndHorizontal();
+                }
+
                 GUILayout.Space(10);
                 _effectsList?.DoLayoutList();
             }
@@ -202,7 +217,7 @@ namespace Temporary.Editor
 
             if (_currentTrigger is AlwaysGameTrigger)
             {
-                menu.AddItem(new GUIContent("자기 자신에게 무한 지속 버프 적용"), false, CreateEffectCallback, typeof(BuffAlwaysEffect));
+                menu.AddItem(new GUIContent("모든 유닛에게 무한 지속 버프 적용"), false, CreateEffectCallback, typeof(BuffAlwaysEffect));
                 menu.AddItem(new GUIContent("특정 그룹의 유닛에게 무한 지속 버프 적용"), false, CreateEffectCallback, typeof(BuffByConditionAlwaysEffect));
             }
             else

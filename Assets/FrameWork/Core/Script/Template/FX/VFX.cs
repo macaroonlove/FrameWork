@@ -3,20 +3,11 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    [CreateAssetMenu(menuName = "Template/FX/VFX", fileName = "VFX_", order = 0)]
+    [CreateAssetMenu(menuName = "Templates/FX/VFX", fileName = "VFX_", order = 1)]
     public class VFX : FX
     {
-        public enum ESpawnPoint
-        {
-            Head,
-            Body,
-            RightHand,
-            LeftHand,
-            Foot,
-            ProjectileHit,
-        }
-
-        [SerializeField, Label("파티클")] private ParticleSystem _particleSystem;
+        [SerializeField, Label("파티클인가?")] private bool _isParticle;
+        [SerializeField, Label("VFX")] private GameObject _vfxObj;
         [SerializeField, Label("생성 위치")] private ESpawnPoint _spawnPoint;
         [SerializeField, Label("지속 시간")] private float _duration;
         [SerializeField, Label("위치 오프셋")] private Vector3 _posOffset;
@@ -56,14 +47,20 @@ namespace Temporary.Core
         private GameObject Play(Vector3 pos, Quaternion rot)
         {
             var poolSystem = BattleManager.Instance.GetSubSystem<PoolSystem>();
-            var obj = poolSystem.Spawn(_particleSystem.gameObject, _duration);
+            var obj = poolSystem.Spawn(_vfxObj, _duration);
 
             pos += _posOffset;
 
             obj.transform.SetPositionAndRotation(pos, rot);
 
-            var particle = obj.GetComponent<ParticleSystem>();
-            particle.Play();
+            if (_isParticle)
+            {
+                var particle = obj.GetComponent<ParticleSystem>();
+                if (particle != null)
+                {
+                    particle.Play();
+                }
+            }
 
             return obj;
         }

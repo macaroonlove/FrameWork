@@ -4,18 +4,22 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    [CreateAssetMenu(menuName = "Template/FX/SFX", fileName = "SFX_", order = 1)]
+    [CreateAssetMenu(menuName = "Templates/FX/SFX", fileName = "SFX_", order = 2)]
     public class SFX : FX
     {
         [SerializeField, Label("오디오 소스")] private AudioClip _clip;
 
         public override void Play(Unit target)
         {
+            if (_clip == null) return;
+
             SoundManager.PlaySound(_clip);
         }
 
         public override void Play(Vector3 pos)
         {
+            if (_clip == null) return;
+
             SoundManager.PlaySound(_clip);
         }
     }

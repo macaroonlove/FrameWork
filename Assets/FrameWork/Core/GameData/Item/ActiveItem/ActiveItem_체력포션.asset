@@ -22,4 +22,6 @@ MonoBehaviour:
   _rangeType: 1
   _range: 2
   _unitType: 1
+  _itemFX: {fileID: 0}
+  _afterDelayFX: {fileID: 0}
   effects: []

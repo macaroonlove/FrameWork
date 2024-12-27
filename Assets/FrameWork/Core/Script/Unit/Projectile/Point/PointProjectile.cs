@@ -18,6 +18,8 @@ namespace Temporary.Core
             _targetVector = targetVector;
             _action = action;
 
+            ExecuteCasterFX(caster);
+
             if (_isLookTarget)
             {
                 transform.GetChild(0).LookAt(_targetVector);
@@ -55,6 +57,8 @@ namespace Temporary.Core
         private void OnCollision(Unit target)
         {
             _action?.Invoke(_caster, target);
+
+            ExecuteTargetFX(target);
 
             // 관통되는 투사체가 아니라면
             if (_isPiercing == false)

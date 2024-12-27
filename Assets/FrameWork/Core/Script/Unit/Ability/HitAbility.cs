@@ -1,3 +1,4 @@
+using FrameWork.Editor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,9 @@ namespace Temporary.Core
         private HealthAbility _healthAbility;
         private PassiveSkillAbility _passiveSkillAbility;
         private BuffAbility _buffAbility;
+
+        [Header("FX")]
+        [SerializeField, Label("피격시 실행되는 FX")] private FX _hitFX;
 
         #region 피해 면역 필드
         private class DamageImmunityInstance
@@ -119,6 +123,8 @@ namespace Temporary.Core
                 // 피해 면역 로직
                 if (UsedDamageImmunity(damageType)) return;
 
+                ExecuteHitFX();
+
                 int damage = _damageCalculateAbility.GetDamage(attackedUnit, damageType);
                 _healthAbility.Damaged(damage, attackedUnit.id);
 
@@ -138,6 +144,9 @@ namespace Temporary.Core
         {
             // 피해 면역 로직
             if (UsedDamageImmunity(damageType)) return;
+
+            ExecuteHitFX();
+
             damage = _damageCalculateAbility.GetDamage(damage, damageType);
             _healthAbility.Damaged(damage, id);
 
@@ -156,6 +165,8 @@ namespace Temporary.Core
         {
             // 피해 면역 로직
             if (UsedDamageImmunity(EDamageType.TrueDamage)) return;
+
+            ExecuteHitFX();
 
             _healthAbility.Damaged(damage, id);
 
@@ -238,5 +249,13 @@ namespace Temporary.Core
             }
         }
         #endregion
+
+        private void ExecuteHitFX()
+        {
+            if (_hitFX != null)
+            {
+                _hitFX.Play(unit);
+            }
+        }
     }
 }

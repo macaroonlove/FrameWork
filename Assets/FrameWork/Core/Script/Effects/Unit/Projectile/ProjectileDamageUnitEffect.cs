@@ -5,10 +5,8 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class ProjectileDamageUnitEffect : UnitEffect
+    public class ProjectileDamageUnitEffect : ProjectileUnitEffect
     {
-        [SerializeField] protected GameObject _prefab;
-
         [SerializeField] protected int _repeatCount;
         [SerializeField] protected bool _isTick;
         [SerializeField] protected int _tickCycle;
@@ -60,15 +58,7 @@ namespace Temporary.Core
             return (int)totalAmount;
         }
 
-        public override void Execute(Unit casterUnit, Unit targetUnit)
-        {
-            if (casterUnit == null || targetUnit == null) return;
-            if (targetUnit.isDie) return;
-
-            casterUnit.GetAbility<ProjectileAbility>().SpawnProjectile(_prefab, targetUnit, (caster, target) => { SkillImpact(caster, target); });
-        }
-
-        public void SkillImpact(Unit casterUnit, Unit targetUnit)
+        protected override void SkillImpact(Unit casterUnit, Unit targetUnit)
         {
             int damage = GetAmount(casterUnit, targetUnit);
 
@@ -90,7 +80,7 @@ namespace Temporary.Core
             {
                 Execute_Tick(casterUnit, targetUnit, damage);
             }
-        }        
+        }
 
         private void Execute_Tick(Unit casterUnit, Unit targetUnit, int damage)
         {
@@ -132,11 +122,10 @@ namespace Temporary.Core
 #if UNITY_EDITOR
         public override void Draw(Rect rect)
         {
-            var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
-            var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
+            base.Draw(rect);
 
-            GUI.Label(labelRect, "ÇÁ¸®ÆÕ");
-            _prefab = (GameObject)EditorGUI.ObjectField(valueRect, _prefab, typeof(GameObject), false);            
+            var labelRect = new Rect(rect.x, lastRectY, 140, rect.height);
+            var valueRect = new Rect(rect.x + 140, lastRectY, rect.width - 140, rect.height);
 
             labelRect.y += 40;
             valueRect.y += 40;
@@ -200,7 +189,9 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 8;
+            int rowNum = base.GetNumRows();
+
+            rowNum += 7;
 
             if (_isTick)
             {

@@ -1,5 +1,4 @@
 using FrameWork.Editor;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -12,9 +11,9 @@ namespace Temporary.Core
     /// </summary>
     public class AttackAbility : AlwaysAbility
     {
-        [SerializeField] private bool isProjectileAttack;
-        [SerializeField, Condition("isProjectileAttack", true, true)] private GameObject projectilePrefab;
-        
+        [SerializeField] private bool _isProjectileAttack;
+        [SerializeField, Label("투사체 프리팹"), Condition("_isProjectileAttack", true, true)] private GameObject _projectilePrefab;
+        [SerializeField, Label("투사체 스폰 위치"), Condition("_isProjectileAttack", true, true)] private ESpawnPoint _spawnPoint;
 
         private UnitAnimationAbility _unitAnimationAbility;
         private PassiveSkillAbility _passiveSkillAbility;
@@ -34,6 +33,9 @@ namespace Temporary.Core
 
         private EAttackType _currentAttackType;
         private List<Unit> _currentTarget = new List<Unit>();
+
+        private FX _casterFX;
+        private FX _targetFX;
 
         #region 프로퍼티
         internal int baseATK => _baseATK;
@@ -175,6 +177,8 @@ namespace Temporary.Core
                 _baseAttackTerm = agentUnit.template.AttackTerm;
                 _baseAttackRange = agentUnit.template.AttackRange;
                 _baseAttackType = agentUnit.template.AttackType;
+                _casterFX = agentUnit.template.casterFX;
+                _targetFX = agentUnit.template.targetFX;
             }
             else if (unit is EnemyUnit enemyUnit)
             {
@@ -182,6 +186,8 @@ namespace Temporary.Core
                 _baseAttackTerm = enemyUnit.template.AttackTerm;
                 _baseAttackRange = enemyUnit.template.AttackRange;
                 _baseAttackType = enemyUnit.template.AttackType;
+                _casterFX = enemyUnit.template.casterFX;
+                _targetFX = enemyUnit.template.targetFX;
             }
 
             _attackCooldown = finalAttackTerm;
@@ -315,13 +321,15 @@ namespace Temporary.Core
 
         private void ExecuteAttack()
         {
+            ExecuteCasterFX();
+
             // 투사체 공격일 경우
-            if (isProjectileAttack)
+            if (_isProjectileAttack)
             {
                 // 투사체 생성
                 foreach (var attackTarget in _currentTarget)
                 {
-                    _projectileAbility.SpawnProjectile(projectilePrefab, attackTarget, (caster, target) => { ApplyAction(target); });
+                    _projectileAbility.SpawnProjectile(_projectilePrefab, _spawnPoint, attackTarget, (caster, target) => { ApplyAction(target); });
                 }
             }
             // 즉시 공격일 경우
@@ -336,10 +344,12 @@ namespace Temporary.Core
 
         private void ApplyAttack(Unit attackTarget)
         {
+            ExecuteTargetFX(attackTarget);
+
             attackTarget.GetAbility<HitAbility>().Hit(unit);
-            
+
             onAttack?.Invoke();
-            
+
             foreach (var effect in _passiveSkillAbility.attackEventEffects)
             {
                 effect.Execute(unit, attackTarget);
@@ -373,13 +383,15 @@ namespace Temporary.Core
 
         private void ExecuteHeal()
         {
+            ExecuteCasterFX();
+
             // 투사체 회복일 경우
-            if (isProjectileAttack)
+            if (_isProjectileAttack)
             {
                 // 투사체 생성
                 foreach (var healTarget in _currentTarget)
                 {
-                    _projectileAbility.SpawnProjectile(projectilePrefab, healTarget, (caster, target) => { ApplyAction(target); });
+                    _projectileAbility.SpawnProjectile(_projectilePrefab, _spawnPoint, healTarget, (caster, target) => { ApplyAction(target); });
                 }
             }
             // 즉시 회복일 경우
@@ -394,6 +406,8 @@ namespace Temporary.Core
 
         private void ApplyHeal(Unit healTarget)
         {
+            ExecuteTargetFX(healTarget);
+
             healTarget.GetAbility<HealthAbility>().Healed(finalATK, unit);
 
             onAttack?.Invoke();
@@ -401,6 +415,24 @@ namespace Temporary.Core
             foreach (var effect in _passiveSkillAbility.attackEventEffects)
             {
                 effect.Execute(unit, healTarget);
+            }
+        }
+        #endregion
+
+        #region FX
+        private void ExecuteCasterFX()
+        {
+            if (_casterFX != null)
+            {
+                _casterFX.Play(unit);
+            }
+        }
+
+        private void ExecuteTargetFX(Unit target)
+        {
+            if (_targetFX != null)
+            {
+                _targetFX.Play(target);
             }
         }
         #endregion

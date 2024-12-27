@@ -12,21 +12,19 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private string _displayName;
         [HideInInspector, SerializeField] private string _description;
 
+        [HideInInspector, SerializeField] private UIFX _applyFX;
+        [HideInInspector, SerializeField] private UIFX _removeFX;
+
         [HideInInspector]
         public List<Effect> effects = new List<Effect>();
-
-        //[Header("FX")]
-        //[Tooltip("시작 시 적용되는 효과")]
-        //public List<FX> EnableFX = new List<FX>();
-        //[Tooltip("매턴 적용되는 효과")]
-        //public List<FX> UpdateFX = new List<FX>();
-        //[Tooltip("해제 시 적용되는 효과")]
-        //public List<FX> DisableFX = new List<FX>();
 
         #region 프로퍼티
         public Sprite sprite => _sprite;
         public string displayName => _displayName;
         public string description => _description;
+
+        public UIFX applyFX => _applyFX;
+        public UIFX removeFX => _removeFX;
         #endregion
 
         #region 값 변경 메서드
@@ -54,6 +52,8 @@ namespace Temporary.Editor
         private SerializedProperty _sprite;
         private SerializedProperty _displayName;
         private SerializedProperty _description;
+        private SerializedProperty _applyFX;
+        private SerializedProperty _removeFX;
 
         private ReorderableList _effectsList;
         private Effect _currentEffect;
@@ -65,6 +65,8 @@ namespace Temporary.Editor
             _sprite = serializedObject.FindProperty("_sprite");
             _displayName = serializedObject.FindProperty("_displayName");
             _description = serializedObject.FindProperty("_description");
+            _applyFX = serializedObject.FindProperty("_applyFX");
+            _removeFX = serializedObject.FindProperty("_removeFX");
 
             CreateEffectList();
         }
@@ -91,6 +93,18 @@ namespace Temporary.Editor
 
             GUILayout.EndVertical();
 
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("상태이상 적용 시 FX", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_applyFX, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("상태이상 해제 시 FX", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_removeFX, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.Space(20);

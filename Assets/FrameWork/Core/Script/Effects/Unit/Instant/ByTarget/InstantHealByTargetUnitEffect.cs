@@ -1,10 +1,11 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class ProjectileBuffByTargetUnitEffect : ProjectileBuffUnitEffect, IGetTarget
+    public class InstantHealByTargetUnitEffect : InstantHealUnitEffect, IGetTarget
     {
         [SerializeField] private ETarget _target;
         [SerializeField] private float _radius;
@@ -12,7 +13,7 @@ namespace Temporary.Core
 
         public List<Unit> GetTarget(Unit casterUnit)
         {
-            return casterUnit.GetAbility<FindTargetAbility>().FindAllyTarget(_target, _radius, _numberOfTarget);
+            return casterUnit.GetAbility<FindTargetAbility>().FindHealableTarget(_target, _radius, _numberOfTarget);
         }
 
 #if UNITY_EDITOR
@@ -21,7 +22,7 @@ namespace Temporary.Core
             var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
             var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
 
-            GUI.Label(labelRect, "대상");
+            GUI.Label(labelRect, "회복 대상");
             _target = (ETarget)EditorGUI.EnumPopup(valueRect, _target);
 
             if (_target != ETarget.Myself && _target != ETarget.AllTarget)
@@ -36,7 +37,7 @@ namespace Temporary.Core
             {
                 labelRect.y += 20;
                 valueRect.y += 20;
-                GUI.Label(labelRect, "공격할 적의 수");
+                GUI.Label(labelRect, "회복시킬 아군의 수");
                 _numberOfTarget = EditorGUI.IntField(valueRect, _numberOfTarget);
             }
 
@@ -46,7 +47,9 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 6;
+            int rowNum = base.GetNumRows();
+
+            rowNum += 2;
 
             if (_target != ETarget.Myself && _target != ETarget.AllTarget)
             {
@@ -54,11 +57,6 @@ namespace Temporary.Core
             }
 
             if (_target == ETarget.NumTargetInRange)
-            {
-                rowNum++;
-            }
-
-            if (!_isInfinity)
             {
                 rowNum++;
             }
