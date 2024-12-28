@@ -6,19 +6,27 @@ namespace Temporary.Core
     [CreateAssetMenu(menuName = "Templates/FX/VFX", fileName = "VFX_", order = 1)]
     public class VFX : FX
     {
-        [SerializeField, Label("파티클인가?")] private bool _isParticle;
+        [SerializeField, Label("파티클인가?")] private bool _isParticle = true;
         [SerializeField, Label("VFX")] private GameObject _vfxObj;
         [SerializeField, Label("생성 위치")] private ESpawnPoint _spawnPoint;
+        
+        [Space(10)]
+        [SerializeField, Label("무한지속 여부")] private bool _isInfinity;
+        [Condition("_isInfinity", false, false)]
         [SerializeField, Label("지속 시간")] private float _duration;
+
+        [Space(10)]
         [SerializeField, Label("위치 오프셋")] private Vector3 _posOffset;
         [SerializeField, Label("회전 오프셋")] private Vector3 _rotOffset;
 
-        [Space]
+        [Space(10)]
         [Tooltip("타겟 방식으로 보내야만 사용 가능")]
         [SerializeField, Label("적을 따라갈지 여부")] private bool _isFollowTarget;
 
         public override void Play(Unit target)
         {
+            if (target == null) return;
+
             Vector3 pos = GetSpawnPoint(target);
 
             Quaternion baseRot = target.transform.rotation;
@@ -35,6 +43,8 @@ namespace Temporary.Core
                 }
                 follow.SetTarget(target.transform, _posOffset);
             }
+
+            target.GetAbility<FXAbility>().AddFX(obj);
         }
 
         public override void Play(Vector3 pos)
@@ -47,7 +57,16 @@ namespace Temporary.Core
         private GameObject Play(Vector3 pos, Quaternion rot)
         {
             var poolSystem = BattleManager.Instance.GetSubSystem<PoolSystem>();
-            var obj = poolSystem.Spawn(_vfxObj, _duration);
+            
+            GameObject obj;
+            if (_isInfinity)
+            {
+                obj = poolSystem.Spawn(_vfxObj);
+            }
+            else
+            {
+                obj = poolSystem.Spawn(_vfxObj, _duration);
+            }
 
             pos += _posOffset;
 

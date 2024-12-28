@@ -59,3 +59,5 @@ MonoBehaviour:
   - {fileID: -6053629681959291016}
   - {fileID: -6873538699799173777}
   - {fileID: -4809923683945712321}
+  _applyFX: {fileID: 11400000, guid: 5c0d8713045e6264f93ff24248f08a94, type: 2}
+  _removeFX: {fileID: 11400000, guid: 7814e4eaff311a84cac82a1ff4b473fa, type: 2}

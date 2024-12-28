@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    [CreateAssetMenu(menuName = "Templates/FX/SFX", fileName = "SFX_", order = 2)]
+    [CreateAssetMenu(menuName = "Templates/FX/SFX", fileName = "SFX_", order = 3)]
     public class SFX : FX
     {
         [SerializeField, Label("오디오 소스")] private AudioClip _clip;

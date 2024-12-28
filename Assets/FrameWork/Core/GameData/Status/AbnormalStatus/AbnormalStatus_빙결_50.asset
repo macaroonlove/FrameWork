@@ -24,6 +24,8 @@ MonoBehaviour:
   - {fileID: 3923264610113603637}
   - {fileID: 4143513637101410522}
   - {fileID: 4589862683347343080}
+  _applyFX: {fileID: 11400000, guid: a3bf426ab59984244919e5ca287c4bfb, type: 2}
+  _removeFX: {fileID: 11400000, guid: 143f81c561868554489d82a25d89c154, type: 2}
 --- !u!114 &2431386575118937547
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -50,6 +50,8 @@ MonoBehaviour:
   - {fileID: -2805571097056442521}
   - {fileID: 387344413209021073}
   - {fileID: 5531977814641384130}
+  _applyFX: {fileID: 11400000, guid: 27bb40a41bc5903448343b474dccd7e9, type: 2}
+  _removeFX: {fileID: 11400000, guid: 16fa3255efa886f4293c7d89c87e3ad9, type: 2}
 --- !u!114 &387344413209021073
 MonoBehaviour:
   m_ObjectHideFlags: 1

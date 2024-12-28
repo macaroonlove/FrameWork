@@ -34,3 +34,5 @@ MonoBehaviour:
   _hitCount: 0
   effects:
   - {fileID: -3638213792774150541}
+  _applyFX: {fileID: 11400000, guid: fd21fa12bb675314f97374bdd7bf3ac2, type: 2}
+  _removeFX: {fileID: 11400000, guid: c2092bcd4f3a46d43add2bcf6307a558, type: 2}

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    [CreateAssetMenu(menuName = "Templates/FX/UIFX", fileName = "UIFX_", order = 3)]
+    [CreateAssetMenu(menuName = "Templates/FX/UIFX", fileName = "UIFX_", order = 4)]
     public class UIFX : FX
     {
         [SerializeField, Label("UI 파티클 부모")] private GameObject _uiParticle;

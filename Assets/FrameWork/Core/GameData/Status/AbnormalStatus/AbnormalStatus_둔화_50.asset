@@ -20,6 +20,8 @@ MonoBehaviour:
   _hitCount: 0
   effects:
   - {fileID: 7737341697799894692}
+  _applyFX: {fileID: 11400000, guid: b986c524f29319a4396217ee986f90d6, type: 2}
+  _removeFX: {fileID: 11400000, guid: c4222be835f2b3a40a27338774041481, type: 2}
 --- !u!114 &7737341697799894692
 MonoBehaviour:
   m_ObjectHideFlags: 1
