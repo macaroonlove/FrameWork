@@ -124,23 +124,66 @@ namespace Temporary.Core
         #endregion
 
         #region ºŒ¿Ã¥ı
-        private MeshRenderer _renderer;
+        #region Mesh Renderer
+        //private MeshRenderer _renderer;
+        //private MaterialPropertyBlock _propertyBlock;
+        //private bool _isDirty;
+
+        //private void InitializeShaderFX()
+        //{
+        //    _renderer = GetComponentInChildren<MeshRenderer>();
+        //    _propertyBlock = new MaterialPropertyBlock();
+
+        //    _renderer?.SetPropertyBlock(_propertyBlock);
+        //}
+
+        //private void UpdateShaderFX()
+        //{
+        //    if (_isDirty)
+        //    {
+        //        _renderer?.SetPropertyBlock(_propertyBlock);
+        //        _isDirty = false;
+        //    }
+        //}
+
+        //public void SetShaderKeyword(string keywordName, bool isOn)
+        //{
+        //    if (isOn)
+        //    {
+        //        _renderer.material.EnableKeyword(keywordName);
+        //    }
+        //    else
+        //    {
+        //        _renderer.material.DisableKeyword(keywordName);
+        //    }
+        //    _isDirty = true;
+        //}
+        #endregion
+
+        #region Sprite Renderer (SPUM ±‚¡ÿ)
+        private List<SpriteRenderer> _renderers = new List<SpriteRenderer>();
         private MaterialPropertyBlock _propertyBlock;
         private bool _isDirty;
 
         private void InitializeShaderFX()
         {
-            _renderer = GetComponentInChildren<MeshRenderer>();
+            _renderers.AddRange(GetComponentsInChildren<SpriteRenderer>());
             _propertyBlock = new MaterialPropertyBlock();
 
-            _renderer?.SetPropertyBlock(_propertyBlock);
+            foreach (var renderer in _renderers)
+            {
+                renderer?.SetPropertyBlock(_propertyBlock);
+            }
         }
 
         private void UpdateShaderFX()
         {
             if (_isDirty)
             {
-                _renderer?.SetPropertyBlock(_propertyBlock);
+                foreach (var renderer in _renderers)
+                {
+                    renderer?.SetPropertyBlock(_propertyBlock);
+                }
                 _isDirty = false;
             }
         }
@@ -149,20 +192,28 @@ namespace Temporary.Core
         {
             if (isOn)
             {
-                _renderer.material.EnableKeyword(keywordName);
+                foreach (var renderer in _renderers)
+                {
+                    renderer?.material?.EnableKeyword(keywordName);
+                }
             }
             else
             {
-                _renderer.material.DisableKeyword(keywordName);
+                foreach (var renderer in _renderers)
+                {
+                    renderer?.material?.DisableKeyword(keywordName);
+                }
             }
             _isDirty = true;
         }
+        #endregion
 
         public void SetShaderProperty(string propertyName, float value)
         {
             _propertyBlock.SetFloat(propertyName, value);
             _isDirty = true;
         }
+        
 
         #region Fade
         public void FadeIn(string propertyName, float duration)
