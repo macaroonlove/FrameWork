@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 739d310a8ced1bc409d2d1d937fc99fc, type: 3}
   m_Name: VFX Despawn_Silence
   m_EditorClassIdentifier: 
-  _vfxObj: {fileID: 0}
+  _vfxObj: {fileID: 172654, guid: e9557b26c784d63468a2cb0974c86ca4, type: 3}

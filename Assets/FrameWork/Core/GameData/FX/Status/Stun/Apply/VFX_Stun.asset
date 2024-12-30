@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: VFX_Stun
   m_EditorClassIdentifier: 
   _isParticle: 1
-  _vfxObj: {fileID: 0}
+  _vfxObj: {fileID: 2647571981512825770, guid: 7b273352aaf8d9e48b96b87761a56ffd, type: 3}
   _spawnPoint: 0
   _isInfinity: 1
   _duration: 0

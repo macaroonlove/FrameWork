@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: VFX_Bind
   m_EditorClassIdentifier: 
   _isParticle: 1
-  _vfxObj: {fileID: 0}
+  _vfxObj: {fileID: 6155018981425521982, guid: 9a18edf017f5d694c9fbf8eab985b508, type: 3}
   _spawnPoint: 0
   _isInfinity: 1
   _duration: 0

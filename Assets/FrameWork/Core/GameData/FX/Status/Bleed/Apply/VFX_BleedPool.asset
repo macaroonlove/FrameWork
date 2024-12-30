@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dbc8768d1e4b2a3488ace831a0f8ef54, type: 3}
-  m_Name: VFX_Bleed
+  m_Name: VFX_BleedPool
   m_EditorClassIdentifier: 
   _isParticle: 1
-  _vfxObj: {fileID: 0}
-  _spawnPoint: 0
-  _isInfinity: 1
-  _duration: 0
+  _vfxObj: {fileID: 100000, guid: eecc3745611815548a3c0e871c7ef3fc, type: 3}
+  _spawnPoint: 4
+  _isInfinity: 0
+  _duration: 1
   _posOffset: {x: 0, y: 0, z: 0}
   _rotOffset: {x: 0, y: 0, z: 0}
-  _isFollowTarget: 1
+  _isFollowTarget: 0

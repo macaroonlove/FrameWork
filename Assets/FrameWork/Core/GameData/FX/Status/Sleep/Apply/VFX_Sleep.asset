@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: VFX_Sleep
   m_EditorClassIdentifier: 
   _isParticle: 1
-  _vfxObj: {fileID: 0}
+  _vfxObj: {fileID: 2497805569316965614, guid: 3476f5ffe3d3bf04f9549eae2c573648, type: 3}
   _spawnPoint: 0
   _isInfinity: 1
   _duration: 0
+  _isRepeat: 0
+  _cycle: 0
   _posOffset: {x: 0, y: 0, z: 0}
   _rotOffset: {x: 0, y: 0, z: 0}
   _isFollowTarget: 0

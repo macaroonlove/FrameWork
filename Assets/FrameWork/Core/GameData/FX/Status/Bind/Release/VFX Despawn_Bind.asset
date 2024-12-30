@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 739d310a8ced1bc409d2d1d937fc99fc, type: 3}
   m_Name: VFX Despawn_Bind
   m_EditorClassIdentifier: 
-  _vfxObj: {fileID: 0}
+  _vfxObj: {fileID: 6155018981425521982, guid: 9a18edf017f5d694c9fbf8eab985b508, type: 3}

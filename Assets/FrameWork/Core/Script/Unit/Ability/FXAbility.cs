@@ -33,6 +33,7 @@ namespace Temporary.Core
         private PoolSystem _poolSystem;
 
         private List<GameObject> _fxObjectList = new List<GameObject>();
+        private Dictionary<string, Coroutine> _activeCoroutines = new Dictionary<string, Coroutine>();
 
         private void InitializeParticleFX()
         {
@@ -61,10 +62,21 @@ namespace Temporary.Core
             }
         }
 
+        internal void AddCoroutineFX(GameObject fxObj, Coroutine coroutine)
+        {
+            string fxName = fxObj.name;
+
+            if (!_activeCoroutines.ContainsKey(fxName))
+            {
+                _activeCoroutines.Add(fxName, coroutine);
+            }
+        }
+
         internal void DespawnFX(GameObject fxObj)
         {
             string fxName = fxObj.name;
 
+            // 파티클 제거
             for (int i = _fxObjectList.Count - 1; i >= 0; i--)
             {
                 if (_fxObjectList[i] == null || _fxObjectList[i].activeSelf == false)
@@ -79,10 +91,18 @@ namespace Temporary.Core
                     _fxObjectList.RemoveAt(i);
                 }                
             }
+
+            // 코루틴 중지
+            if (_activeCoroutines.TryGetValue(fxName, out Coroutine coroutine))
+            {
+                StopCoroutine(coroutine);
+                _activeCoroutines.Remove(fxName);
+            }
         }
 
         private void DespawnAll()
         {
+            // 파티클 제거
             for (int i = _fxObjectList.Count - 1; i >= 0; i--)
             {
                 if (_fxObjectList[i] == null || _fxObjectList[i].activeSelf == false)
@@ -92,8 +112,14 @@ namespace Temporary.Core
 
                 _poolSystem.DeSpawn(_fxObjectList[i]);
             }
-
             _fxObjectList.Clear();
+
+            // 코루틴 중지
+            foreach (var coroutine in _activeCoroutines.Values)
+            {
+                StopCoroutine(coroutine);
+            }
+            _activeCoroutines.Clear();
         }
         #endregion
 

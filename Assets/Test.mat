@@ -25,7 +25,6 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ENABLEBURN_ON
   - _SHADERFADING_NONE
   - _SHADERSPACE_UV
   - _TEXTURELAYER1SHEETTOGGLE_ON
@@ -265,7 +264,7 @@ Material:
     - _EnableAlphaTint: 0
     - _EnableBlackTint: 0
     - _EnableBrightness: 0
-    - _EnableBurn: 1
+    - _EnableBurn: 0
     - _EnableCamouflage: 0
     - _EnableCheckerboard: 0
     - _EnableColorReplace: 0
@@ -529,7 +528,7 @@ Material:
     - _TextureLayer1Rows: 3
     - _TextureLayer1ScrollToggle: 0
     - _TextureLayer1SheetToggle: 1
-    - _TextureLayer1Speed: 20
+    - _TextureLayer1Speed: 10
     - _TextureLayer1StartFrame: 0
     - _TextureLayer2Columns: 3
     - _TextureLayer2Contrast: 1
@@ -710,7 +709,7 @@ Material:
     - _StrongTintTint: {r: 1, g: 1, b: 1, a: 1}
     - _TextureLayer1Color: {r: 0.4494117, g: 1.298301, b: 2.996079, a: 1}
     - _TextureLayer1Offset: {r: 0, g: 0, b: 0, a: 0}
-    - _TextureLayer1Scale: {r: 0.3, g: 0.3, b: 0, a: 0}
+    - _TextureLayer1Scale: {r: 0.5, g: 0.5, b: 0, a: 0}
     - _TextureLayer1ScrollSpeed: {r: 0, g: 1, b: 0, a: 0}
     - _TextureLayer2Color: {r: 0.4494117, g: 1.298301, b: 2.996079, a: 1}
     - _TextureLayer2Offset: {r: 0, g: 0, b: 0, a: 0}

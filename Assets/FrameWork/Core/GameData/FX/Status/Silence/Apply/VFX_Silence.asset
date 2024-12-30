@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: VFX_Silence
   m_EditorClassIdentifier: 
   _isParticle: 1
-  _vfxObj: {fileID: 0}
+  _vfxObj: {fileID: 172654, guid: e9557b26c784d63468a2cb0974c86ca4, type: 3}
   _spawnPoint: 0
   _isInfinity: 1
   _duration: 0
+  _isRepeat: 0
+  _cycle: 0
   _posOffset: {x: 0, y: 0, z: 0}
   _rotOffset: {x: 0, y: 0, z: 0}
   _isFollowTarget: 1

@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: VFX_Disarm
   m_EditorClassIdentifier: 
   _isParticle: 1
-  _vfxObj: {fileID: 0}
+  _vfxObj: {fileID: 1841273441885634, guid: cbab6193316d2de46b205de5b39441a7, type: 3}
   _spawnPoint: 0
   _isInfinity: 1
   _duration: 0
+  _isRepeat: 0
+  _cycle: 0
   _posOffset: {x: 0, y: 0, z: 0}
   _rotOffset: {x: 0, y: 0, z: 0}
   _isFollowTarget: 1
