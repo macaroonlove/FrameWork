@@ -172,6 +172,20 @@ namespace Temporary.Editor
         private List<AlwaysAbility> _alwaysAbilities = new List<AlwaysAbility>();
         private List<string> _abilityNames = new List<string>();
 
+        private static readonly Type[] _requireComponents =
+        {
+            typeof(AttackAbility),
+            typeof(HitAbility),
+            typeof(HealthAbility),
+            typeof(DamageCalculateAbility),
+            typeof(BuffAbility),
+            typeof(AbnormalStatusAbility),
+            typeof(ProjectileAbility),
+            typeof(FindTargetAbility),
+            typeof(UnitAnimationAbility),
+            typeof(FXAbility)
+        };
+
         private void OnEnable()
         {
             RenewalAbility();
@@ -204,12 +218,23 @@ namespace Temporary.Editor
 
             EditorGUILayout.BeginHorizontal();
 
-            _currentAbilityIndex = EditorGUILayout.Popup("수정할 능력", _currentAbilityIndex, _abilityNames.ToArray());
-
-            if (GUILayout.Button("Script", GUILayout.Width(40)))
+            if (_abilityNames.Count > 0)
             {
-                OpenScript();
+                _currentAbilityIndex = EditorGUILayout.Popup("수정할 능력", _currentAbilityIndex, _abilityNames.ToArray());
+
+                if (GUILayout.Button("Script", GUILayout.Width(40)))
+                {
+                    OpenScript();
+                }
             }
+            else
+            {
+                if (GUILayout.Button("필수 능력들 추가"))
+                {
+                    RequireComponents();
+                }
+            }
+
             if (GUILayout.Button("+", EditorStyles.miniButtonLeft, GUILayout.Width(20)))
             {
                 AddAbilityMenu();
@@ -257,10 +282,6 @@ namespace Temporary.Editor
         protected virtual void AddAbilityMenu()
         {
             GenericMenu menu = new GenericMenu();
-
-            // 여기에 Ability 종류별 추가 가능성 제공 (예: ConditionAbility, AlwaysAbility)
-            menu.AddItem(new GUIContent("ConditionAbility"), false, AddAbility, typeof(ConditionAbility));
-            menu.AddItem(new GUIContent("AlwaysAbility"), false, AddAbility, typeof(AlwaysAbility));
 
             menu.ShowAsContext();
         }
@@ -313,6 +334,20 @@ namespace Temporary.Editor
         #endregion
 
         #region 보조 메서드들
+        /// <summary>
+        /// 기본적으로 있어야할 능력들 적용시키기
+        /// </summary>
+        private void RequireComponents()
+        {
+            foreach (var componentType in _requireComponents)
+            {
+                if (_unit.GetComponent(componentType) == null)
+                {
+                    _unit.gameObject.AddComponent(componentType);
+                }
+            }
+        }
+
         /// <summary>
         /// 능력 최신화
         /// </summary>

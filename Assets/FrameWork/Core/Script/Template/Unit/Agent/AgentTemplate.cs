@@ -21,6 +21,10 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private float _attackTerm;
         [HideInInspector, SerializeField] private float _attackRange;
 
+        [HideInInspector, SerializeField] private bool _isProjectileAttack;
+        [HideInInspector, SerializeField] private GameObject _projectilePrefab;
+        [HideInInspector, SerializeField] private ESpawnPoint _spawnPoint;
+
         [HideInInspector, SerializeField] private EAttackType _attackType;
         [HideInInspector, SerializeField] private EDamageType _damageType;
 
@@ -61,6 +65,10 @@ namespace Temporary.Core
         public int ATK => _atk;
         public float AttackTerm => _attackTerm;
         public float AttackRange => _attackRange;
+
+        public bool isProjectileAttack => _isProjectileAttack;
+        public GameObject projectilePrefab => _projectilePrefab;
+        public ESpawnPoint spawnPoint => _spawnPoint;
 
         public EAttackType AttackType => _attackType;
         public EDamageType DamageType => _damageType;
@@ -115,6 +123,9 @@ namespace Temporary.Editor
         private SerializedProperty _atk;
         private SerializedProperty _attackTerm;
         private SerializedProperty _attackRange;
+        private SerializedProperty _isProjectileAttack;
+        private SerializedProperty _projectilePrefab;
+        private SerializedProperty _spawnPoint;
         private SerializedProperty _attackType;
         private SerializedProperty _damageType;
         private SerializedProperty _criticalHitChance;
@@ -145,6 +156,9 @@ namespace Temporary.Editor
             _atk = serializedObject.FindProperty("_atk");
             _attackTerm = serializedObject.FindProperty("_attackTerm");
             _attackRange = serializedObject.FindProperty("_attackRange");
+            _isProjectileAttack = serializedObject.FindProperty("_isProjectileAttack");
+            _projectilePrefab = serializedObject.FindProperty("_projectilePrefab");
+            _spawnPoint = serializedObject.FindProperty("_spawnPoint");
             _attackType = serializedObject.FindProperty("_attackType");
             _damageType = serializedObject.FindProperty("_damageType");
             _criticalHitChance = serializedObject.FindProperty("_criticalHitChance");
@@ -226,6 +240,26 @@ namespace Temporary.Editor
             GUILayout.Label("공격 사거리", GUILayout.Width(192));
             EditorGUILayout.PropertyField(_attackRange, GUIContent.none);
             GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("투사체 사용 여부", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_isProjectileAttack, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            if (_isProjectileAttack.boolValue)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("투사체 프리팹", GUILayout.Width(192));
+                EditorGUILayout.PropertyField(_projectilePrefab, GUIContent.none);
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("스폰 위치", GUILayout.Width(192));
+                EditorGUILayout.PropertyField(_spawnPoint, GUIContent.none);
+                GUILayout.EndHorizontal();
+            }
 
             GUILayout.Space(10);
 

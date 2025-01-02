@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -172,6 +173,7 @@ namespace Temporary.Core
 
             foreach (var renderer in _renderers)
             {
+                renderer?.material?.SetTexture("_MainTex", renderer?.sprite?.texture);
                 renderer?.SetPropertyBlock(_propertyBlock);
             }
         }
@@ -182,6 +184,7 @@ namespace Temporary.Core
             {
                 foreach (var renderer in _renderers)
                 {
+                    renderer?.material?.SetTexture("_MainTex", renderer?.sprite?.texture);
                     renderer?.SetPropertyBlock(_propertyBlock);
                 }
                 _isDirty = false;
@@ -213,7 +216,6 @@ namespace Temporary.Core
             _propertyBlock.SetFloat(propertyName, value);
             _isDirty = true;
         }
-        
 
         #region Fade
         public void FadeIn(string propertyName, float duration)

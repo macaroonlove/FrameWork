@@ -22,6 +22,16 @@ namespace Temporary.Core
         internal event UnityAction<int> onChangedMana;
 
         #region Ω∫≈» ∞ËªÍ
+        internal int finalMaxMana
+        {
+            get
+            {
+                int result = _baseMaxMana;
+
+                return result;
+            }
+        }
+
         internal int finalManaRecoveryPerSec
         {
             get

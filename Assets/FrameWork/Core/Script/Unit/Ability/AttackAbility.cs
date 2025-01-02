@@ -11,9 +11,9 @@ namespace Temporary.Core
     /// </summary>
     public class AttackAbility : AlwaysAbility
     {
-        [SerializeField] private bool _isProjectileAttack;
-        [SerializeField, Label("투사체 프리팹"), Condition("_isProjectileAttack", true, true)] private GameObject _projectilePrefab;
-        [SerializeField, Label("투사체 스폰 위치"), Condition("_isProjectileAttack", true, true)] private ESpawnPoint _spawnPoint;
+        private bool _isProjectileAttack;
+        private GameObject _projectilePrefab;
+        private ESpawnPoint _spawnPoint;
 
         private UnitAnimationAbility _unitAnimationAbility;
         private PassiveSkillAbility _passiveSkillAbility;
@@ -179,6 +179,13 @@ namespace Temporary.Core
                 _baseAttackType = agentUnit.template.AttackType;
                 _casterFX = agentUnit.template.casterFX;
                 _targetFX = agentUnit.template.targetFX;
+
+                if (agentUnit.template.isProjectileAttack)
+                {
+                    _isProjectileAttack = true;
+                    _projectilePrefab = agentUnit.template.projectilePrefab;
+                    _spawnPoint = agentUnit.template.spawnPoint;
+                }
             }
             else if (unit is EnemyUnit enemyUnit)
             {
@@ -188,6 +195,13 @@ namespace Temporary.Core
                 _baseAttackType = enemyUnit.template.AttackType;
                 _casterFX = enemyUnit.template.casterFX;
                 _targetFX = enemyUnit.template.targetFX;
+
+                if (enemyUnit.template.isProjectileAttack)
+                {
+                    _isProjectileAttack = true;
+                    _projectilePrefab = enemyUnit.template.projectilePrefab;
+                    _spawnPoint = enemyUnit.template.spawnPoint;
+                }
             }
 
             _attackCooldown = finalAttackTerm;

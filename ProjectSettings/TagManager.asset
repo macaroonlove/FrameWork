@@ -41,3 +41,24 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 1409874277
+    locked: 0
+  - name: Map
+    uniqueID: 3194550325
+    locked: 0
+  - name: BackVFX
+    uniqueID: 2607552237
+    locked: 0
+  - name: GroundCharacter
+    uniqueID: 2235125599
+    locked: 0
+  - name: SkyCharacter
+    uniqueID: 2819324165
+    locked: 0
+  - name: FrontVFX
+    uniqueID: 39920599
+    locked: 0
+  - name: UI
+    uniqueID: 2244526201
+    locked: 0
