@@ -1,3 +1,4 @@
+using DamageNumbersPro;
 using FrameWork.Editor;
 using System.Collections;
 using System.Collections.Generic;
@@ -64,6 +65,13 @@ namespace Temporary.Core
         internal event UnityAction<int> onChangedHealth;
         internal event UnityAction<int> onChangedShield;
         internal event UnityAction onDeath;
+
+        [Header("팝업 텍스트")]
+        [SerializeField, Label("물리 데미지량 팝업")] private DamageNumber _physicalDamagePopup;
+        [SerializeField, Label("마법 데미지량 팝업")] private DamageNumber _magicDamagePopup;
+        [SerializeField, Label("고정 데미지량 팝업")] private DamageNumber _trueDamagePopup;
+        [SerializeField, Label("회복량 팝업")] private DamageNumber _healPopup;
+        [SerializeField, Label("보호막 흡수량 팝업")] private DamageNumber _shieldPopup;
 
         #region 계산 스탯
         // 최대 HP
@@ -242,20 +250,29 @@ namespace Temporary.Core
         }
 
         #region HP 변경
-        internal bool Damaged(int damage, int id)
+        internal bool Damaged(int damage, EDamageType damageType, int id)
         {
-            //죽었으면 무시
+            // 죽었으면 무시
             if (isAlive == false) return false;
 
             // 실드에 막히는 데미지를 제외
             var lostHealth = DamagedShield(damage);
             lostHealth = Mathf.Max(0, lostHealth);
 
-            //잃을 HP 가 있을 때
+            // 실드의 흡수량
+            var absorption = damage - lostHealth;
+            if (absorption > 0)
+            {
+                ShieldPopup(absorption);
+            }
+
+            // 잃을 HP 가 있을 때
             if (lostHealth > 0)
             {
                 SetHP(_currentHP - lostHealth);
                 onDamage?.Invoke(id, lostHealth);
+
+                DamagePopup(lostHealth, damageType);
 
                 return true;
             }
@@ -276,6 +293,8 @@ namespace Temporary.Core
             healingAmount *= healingMultiplier;
 
             var lastHp = Mathf.RoundToInt(_currentHP + healingAmount);
+
+            HealPopup(healingAmount);
 
             SetHP(lastHp);
 
@@ -422,6 +441,51 @@ namespace Temporary.Core
                 }
             }
             UpdateShield();
+        }
+        #endregion
+
+        #region 팝업 텍스트
+        private void DamagePopup(float damage, EDamageType damageType)
+        {
+            if (this == null) return;
+
+            DamageNumber popup;
+
+            switch (damageType)
+            {
+                case EDamageType.PhysicalDamage:
+                    popup = _physicalDamagePopup?.Spawn(transform.position, damage);
+                    break;
+                case EDamageType.MagicDamage:
+                    popup = _magicDamagePopup?.Spawn(transform.position, damage);
+                    break;
+                default:
+                    popup = _trueDamagePopup?.Spawn(transform.position, damage);
+                    break;
+            }
+
+            popup?.SetFollowedTarget(transform);
+            popup?.SetScale(0.5f);
+        }
+
+        private void HealPopup(float heal)
+        {
+            if (this == null) return;
+
+            DamageNumber popup = _healPopup?.Spawn(transform.position, heal);
+
+            popup?.SetFollowedTarget(transform);
+            popup?.SetScale(0.5f);
+        }
+
+        private void ShieldPopup(float absorption)
+        {
+            if (this == null) return;
+
+            DamageNumber popup = _shieldPopup?.Spawn(transform.position, absorption);
+
+            popup?.SetFollowedTarget(transform);
+            popup?.SetScale(0.5f);
         }
         #endregion
     }

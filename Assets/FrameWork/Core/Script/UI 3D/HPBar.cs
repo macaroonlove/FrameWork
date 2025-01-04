@@ -18,7 +18,7 @@ namespace Temporary.Core
 
         private Image _hp;
         private Image _shield;
-        private Vector2 _shieldPos = new Vector2(0, -1.6f);
+        private Vector2 _shieldPos = new Vector2(0, -0.5f);
 
         protected override void Awake()
         {
@@ -63,7 +63,7 @@ namespace Temporary.Core
 
             if ((maxHp - hp) >= shield)
             {
-                _shieldPos.x = per2 * 70.4f;
+                _shieldPos.x = per2 * 96f;
                 _shield.rectTransform.anchoredPosition = _shieldPos;
                 _shield.fillOrigin = 0;
             }

@@ -1028,7 +1028,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 10, y: -10}
-  m_SizeDelta: {x: 300, y: 100}
+  m_SizeDelta: {x: 300, y: 130}
   m_Pivot: {x: 0, y: 1}
 --- !u!225 &2561559946773753675
 CanvasGroup:
@@ -1070,7 +1070,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6018af23c17a24846ab8d8e351799fa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _agentTemplate: {fileID: 11400000, guid: 70f8c7c0ddf90a94c8f3ce1f9fbb0272, type: 2}
   _abnormalStatusList:
   - {fileID: 11400000, guid: ec73610e1c86c3042ab8d1bda04c8472, type: 2}
   - {fileID: 11400000, guid: 61095473c202cbe48871bb33a7ae57d8, type: 2}

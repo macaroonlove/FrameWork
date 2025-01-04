@@ -1,3 +1,4 @@
+using DamageNumbersPro;
 using FrameWork.Editor;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +13,9 @@ namespace Temporary.Core
         private HealthAbility _healthAbility;
         private PassiveSkillAbility _passiveSkillAbility;
         private BuffAbility _buffAbility;
+
+        [Header("팝업 텍스트")]
+        [SerializeField, Label("빗나감 팝업")] private DamageNumber _missPopup;
 
         [Header("FX")]
         [SerializeField, Label("피격시 실행되는 FX")] private FX _hitFX;
@@ -114,7 +118,7 @@ namespace Temporary.Core
 
             if (finalIsAvoidance)
             {
-                // 미스라고 팝업 표시
+                MissPopup();
             }
             else
             {
@@ -126,7 +130,7 @@ namespace Temporary.Core
                 ExecuteHitFX();
 
                 int damage = _damageCalculateAbility.GetDamage(attackedUnit, damageType);
-                _healthAbility.Damaged(damage, attackedUnit.id);
+                _healthAbility.Damaged(damage, damageType, attackedUnit.id);
 
                 onHit?.Invoke();
 
@@ -148,7 +152,7 @@ namespace Temporary.Core
             ExecuteHitFX();
 
             damage = _damageCalculateAbility.GetDamage(damage, damageType);
-            _healthAbility.Damaged(damage, id);
+            _healthAbility.Damaged(damage, damageType, id);
 
             onHit?.Invoke();
 
@@ -168,7 +172,7 @@ namespace Temporary.Core
 
             ExecuteHitFX();
 
-            _healthAbility.Damaged(damage, id);
+            _healthAbility.Damaged(damage, EDamageType.TrueDamage, id);
 
             onHit?.Invoke();
 
@@ -250,6 +254,19 @@ namespace Temporary.Core
         }
         #endregion
 
+        #region 팝업 텍스트
+        private void MissPopup()
+        {
+            if (this == null) return;
+
+            DamageNumber popup = _missPopup?.Spawn(transform.position);
+
+            popup?.SetFollowedTarget(transform);
+            popup?.SetScale(0.5f);
+        }
+        #endregion
+
+        #region FX
         private void ExecuteHitFX()
         {
             if (_hitFX != null)
@@ -257,5 +274,6 @@ namespace Temporary.Core
                 _hitFX.Play(unit);
             }
         }
+        #endregion
     }
 }

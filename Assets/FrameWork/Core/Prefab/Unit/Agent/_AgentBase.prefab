@@ -219,6 +219,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   useUpdate: 0
+  _missPopup: {fileID: 5775782190100741365, guid: b6301d8b19b04cd49818b496b34a64a4,
+    type: 3}
   _hitFX: {fileID: 0}
 --- !u!114 &5253407001774336993
 MonoBehaviour:
@@ -234,6 +236,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   useUpdate: 1
   _shieldFX: {fileID: 0}
+  _physicalDamagePopup: {fileID: 5775782190100741365, guid: aa2e89036dd4fa245b8e5f9698c7ab3c,
+    type: 3}
+  _magicDamagePopup: {fileID: 5775782190100741365, guid: 95ff1d112ab1c154eaaf2182b76e0ce7,
+    type: 3}
+  _trueDamagePopup: {fileID: 5775782190100741365, guid: 1d558d8612a069e4e945621cc07804f2,
+    type: 3}
+  _healPopup: {fileID: 5775782190100741365, guid: 009de25995edd0d4da154f634c13b927,
+    type: 3}
+  _shieldPopup: {fileID: 5775782190100741365, guid: d6f2c24eb422d7c48bded2247634fbe6,
+    type: 3}
 --- !u!114 &573501636076627035
 MonoBehaviour:
   m_ObjectHideFlags: 0
