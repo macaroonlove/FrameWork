@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class AbnormalStatusTestCanvas : UIBase
+    public class BuffTestCanvas : UIBase
     {
         #region ¹ÙÀÎµù
         enum Buttons
@@ -21,10 +21,10 @@ namespace Temporary.Core
         }
         #endregion
 
-        [SerializeField] private List<AbnormalStatusTemplate> _abnormalStatusList = new List<AbnormalStatusTemplate>();
+        [SerializeField] private List<BuffTemplate> _buffList = new List<BuffTemplate>();
 
         private Unit _unit;
-        private AbnormalStatusTemplate _template;
+        private BuffTemplate _template;
         private TextMeshProUGUI _statusNameText;
         private int _index = 0;
 
@@ -43,26 +43,26 @@ namespace Temporary.Core
 
         private void UpdateTemplate()
         {
-            _template = _abnormalStatusList[_index];
+            _template = _buffList[_index];
             _statusNameText.text = _template.displayName;
         }
 
         private void PrevButton()
         {
-            _index = (_index - 1 + _abnormalStatusList.Count) % _abnormalStatusList.Count;
+            _index = (_index - 1 + _buffList.Count) % _buffList.Count;
             UpdateTemplate();
         }
 
         private void NextButton()
         {
-            _index = (_index + 1) % _abnormalStatusList.Count;
+            _index = (_index + 1) % _buffList.Count;
 
             UpdateTemplate();
         }
 
         private void ApplyStatus()
         {
-            _unit.GetAbility<AbnormalStatusAbility>().ApplyAbnormalStatus(_template, 3f);
+            _unit.GetAbility<BuffAbility>().ApplyBuff(_template, 3f);
         }
     }
 }

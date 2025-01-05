@@ -235,9 +235,6 @@ namespace Temporary.Core
 
         internal override void UpdateAbility()
         {
-            // 회복 불가인 상태라면 무시
-            if (finalIsHealAble == false) return;
-
             // 초당 회복 쿨타임 감소
             if (_hpRecoveryCooldown > 0)
             {
@@ -245,8 +242,21 @@ namespace Temporary.Core
                 return;
             }
 
-            SetHP(_currentHP + finalHPRecoveryPerSec);
-            _hpRecoveryCooldown = 1;
+            var hpRecoveryAmount = finalHPRecoveryPerSec;
+            
+            if (hpRecoveryAmount > 0)
+            {
+                // 회복 불가인 상태라면 무시
+                if (finalIsHealAble) return;
+
+                SetHP(_currentHP + hpRecoveryAmount);
+                _hpRecoveryCooldown = 1;
+            }
+            else if (hpRecoveryAmount < 0)
+            {
+                Damaged(-hpRecoveryAmount, EDamageType.TrueDamage, 1000);
+                _hpRecoveryCooldown = 1;
+            }
         }
 
         #region HP 변경

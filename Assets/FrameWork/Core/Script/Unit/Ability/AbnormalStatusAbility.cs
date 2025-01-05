@@ -9,15 +9,28 @@ namespace Temporary.Core
     public class AbnormalStatusAbility : AlwaysAbility
     {
         #region Effect List
-        [NonSerialized] public List<UnableToMoveEffect> UnableToMoveEffects = new List<UnableToMoveEffect>();
-        [NonSerialized] public List<UnableToAttackEffect> UnableToAttackEffects = new List<UnableToAttackEffect>();
-        [NonSerialized] public List<UnableToHealEffect> UnableToHealEffects = new List<UnableToHealEffect>();
-        [NonSerialized] public List<UnableToSkillEffect> UnableToSkillEffects = new List<UnableToSkillEffect>();
-        [NonSerialized] public List<MoveIncreaseDataEffect> MoveIncreaseDataEffects = new List<MoveIncreaseDataEffect>();
-        [NonSerialized] public List<PhysicalResistanceIncreaseDataEffect> PhysicalResistanceIncreaseDataEffects = new List<PhysicalResistanceIncreaseDataEffect>();
-        [NonSerialized] public List<MagicResistanceIncreaseDataEffect> MagicResistanceIncreaseDataEffects = new List<MagicResistanceIncreaseDataEffect>();
-        [NonSerialized] public List<ReceiveDamageIncreaseDataEffect> ReceiveDamageIncreaseDataEffects = new List<ReceiveDamageIncreaseDataEffect>();
-        [NonSerialized] public List<HPRecoveryPerSecByMaxHPIncreaseDataEffect> HPRecoveryPerSecByMaxHPIncreaseDataEffects = new List<HPRecoveryPerSecByMaxHPIncreaseDataEffect>();
+        [NonSerialized] private List<UnableToMoveEffect> _unableToMoveEffects = new List<UnableToMoveEffect>();
+        [NonSerialized] private List<UnableToAttackEffect> _unableToAttackEffects = new List<UnableToAttackEffect>();
+        [NonSerialized] private List<UnableToHealEffect> _unableToHealEffects = new List<UnableToHealEffect>();
+        [NonSerialized] private List<UnableToSkillEffect> _unableToSkillEffects = new List<UnableToSkillEffect>();
+        [NonSerialized] private List<MoveIncreaseDataEffect> _moveIncreaseDataEffects = new List<MoveIncreaseDataEffect>();
+        [NonSerialized] private List<PhysicalResistanceIncreaseDataEffect> _physicalResistanceIncreaseDataEffects = new List<PhysicalResistanceIncreaseDataEffect>();
+        [NonSerialized] private List<MagicResistanceIncreaseDataEffect> _magicResistanceIncreaseDataEffects = new List<MagicResistanceIncreaseDataEffect>();
+        [NonSerialized] private List<ReceiveDamageIncreaseDataEffect> _receiveDamageIncreaseDataEffects = new List<ReceiveDamageIncreaseDataEffect>();
+        [NonSerialized] private List<HPRecoveryPerSecByMaxHPIncreaseDataEffect> _hpRecoveryPerSecByMaxHPIncreaseDataEffects = new List<HPRecoveryPerSecByMaxHPIncreaseDataEffect>();
+
+        #region 프로퍼티
+        internal IReadOnlyList<UnableToMoveEffect> UnableToMoveEffects => _unableToMoveEffects;
+        internal IReadOnlyList<UnableToAttackEffect> UnableToAttackEffects => _unableToAttackEffects;
+        internal IReadOnlyList<UnableToHealEffect> UnableToHealEffects => _unableToHealEffects;
+        internal IReadOnlyList<UnableToSkillEffect> UnableToSkillEffects => _unableToSkillEffects;
+        internal IReadOnlyList<MoveIncreaseDataEffect> MoveIncreaseDataEffects => _moveIncreaseDataEffects;
+        internal IReadOnlyList<PhysicalResistanceIncreaseDataEffect> PhysicalResistanceIncreaseDataEffects => _physicalResistanceIncreaseDataEffects;
+        internal IReadOnlyList<MagicResistanceIncreaseDataEffect> MagicResistanceIncreaseDataEffects => _magicResistanceIncreaseDataEffects;
+        internal IReadOnlyList<ReceiveDamageIncreaseDataEffect> ReceiveDamageIncreaseDataEffects => _receiveDamageIncreaseDataEffects;
+        internal IReadOnlyList<HPRecoveryPerSecByMaxHPIncreaseDataEffect> HPRecoveryPerSecByMaxHPIncreaseDataEffects => _hpRecoveryPerSecByMaxHPIncreaseDataEffects;
+        #endregion
+
         #endregion
 
         private Dictionary<AbnormalStatusTemplate, StatusInstance> statusDic = new Dictionary<AbnormalStatusTemplate, StatusInstance>();
@@ -121,39 +134,39 @@ namespace Temporary.Core
                 {
                     if (effect is UnableToMoveEffect unableToMoveEffect)
                     {
-                        UnableToMoveEffects.Add(unableToMoveEffect);
+                        _unableToMoveEffects.Add(unableToMoveEffect);
                     }
                     else if (effect is UnableToAttackEffect unableToAttackEffect)
                     {
-                        UnableToAttackEffects.Add(unableToAttackEffect);
+                        _unableToAttackEffects.Add(unableToAttackEffect);
                     }
                     else if (effect is UnableToHealEffect unableToHealEffects)
                     {
-                        UnableToHealEffects.Add(unableToHealEffects);
+                        _unableToHealEffects.Add(unableToHealEffects);
                     }
                     else if (effect is UnableToSkillEffect unableToSkillEffect)
                     {
-                        UnableToSkillEffects.Add(unableToSkillEffect);
+                        _unableToSkillEffects.Add(unableToSkillEffect);
                     }
                     else if (effect is MoveIncreaseDataEffect moveIncreaseDataEffect)
                     {
-                        MoveIncreaseDataEffects.Add(moveIncreaseDataEffect);
+                        _moveIncreaseDataEffects.Add(moveIncreaseDataEffect);
                     }
                     else if (effect is PhysicalResistanceIncreaseDataEffect physicalResistanceIncreaseDataEffect)
                     {
-                        PhysicalResistanceIncreaseDataEffects.Add(physicalResistanceIncreaseDataEffect);
+                        _physicalResistanceIncreaseDataEffects.Add(physicalResistanceIncreaseDataEffect);
                     }
                     else if (effect is MagicResistanceIncreaseDataEffect magicResistanceIncreaseDataEffect)
                     {
-                        MagicResistanceIncreaseDataEffects.Add(magicResistanceIncreaseDataEffect);
+                        _magicResistanceIncreaseDataEffects.Add(magicResistanceIncreaseDataEffect);
                     }
                     else if (effect is ReceiveDamageIncreaseDataEffect receiveDamageIncreaseDataEffect)
                     {
-                        ReceiveDamageIncreaseDataEffects.Add(receiveDamageIncreaseDataEffect);
+                        _receiveDamageIncreaseDataEffects.Add(receiveDamageIncreaseDataEffect);
                     }
                     else if (effect is HPRecoveryPerSecByMaxHPIncreaseDataEffect hpRecoveryPerSecByMaxHPIncreaseDataEffect)
                     {
-                        HPRecoveryPerSecByMaxHPIncreaseDataEffects.Add(hpRecoveryPerSecByMaxHPIncreaseDataEffect);
+                        _hpRecoveryPerSecByMaxHPIncreaseDataEffects.Add(hpRecoveryPerSecByMaxHPIncreaseDataEffect);
                     }
                 }
             }
@@ -256,39 +269,39 @@ namespace Temporary.Core
             {
                 if (effect is UnableToMoveEffect unableToMoveEffect)
                 {
-                    UnableToMoveEffects.Remove(unableToMoveEffect);
+                    _unableToMoveEffects.Remove(unableToMoveEffect);
                 }
                 else if (effect is UnableToAttackEffect unableToAttackEffect)
                 {
-                    UnableToAttackEffects.Remove(unableToAttackEffect);
+                    _unableToAttackEffects.Remove(unableToAttackEffect);
                 }
                 else if (effect is UnableToHealEffect unableToHealEffects)
                 {
-                    UnableToHealEffects.Remove(unableToHealEffects);
+                    _unableToHealEffects.Remove(unableToHealEffects);
                 }
                 else if (effect is UnableToSkillEffect unableToSkillEffect)
                 {
-                    UnableToSkillEffects.Remove(unableToSkillEffect);
+                    _unableToSkillEffects.Remove(unableToSkillEffect);
                 }
                 else if (effect is MoveIncreaseDataEffect moveIncreaseDataEffect)
                 {
-                    MoveIncreaseDataEffects.Remove(moveIncreaseDataEffect);
+                    _moveIncreaseDataEffects.Remove(moveIncreaseDataEffect);
                 }
                 else if (effect is PhysicalResistanceIncreaseDataEffect physicalResistanceIncreaseDataEffect)
                 {
-                    PhysicalResistanceIncreaseDataEffects.Remove(physicalResistanceIncreaseDataEffect);
+                    _physicalResistanceIncreaseDataEffects.Remove(physicalResistanceIncreaseDataEffect);
                 }
                 else if (effect is MagicResistanceIncreaseDataEffect magicResistanceIncreaseDataEffect)
                 {
-                    MagicResistanceIncreaseDataEffects.Remove(magicResistanceIncreaseDataEffect);
+                    _magicResistanceIncreaseDataEffects.Remove(magicResistanceIncreaseDataEffect);
                 }
                 else if (effect is ReceiveDamageIncreaseDataEffect receiveDamageIncreaseDataEffect)
                 {
-                    ReceiveDamageIncreaseDataEffects.Remove(receiveDamageIncreaseDataEffect);
+                    _receiveDamageIncreaseDataEffects.Remove(receiveDamageIncreaseDataEffect);
                 }
                 else if (effect is HPRecoveryPerSecByMaxHPIncreaseDataEffect hpRecoveryPerSecByMaxHPIncreaseDataEffect)
                 {
-                    HPRecoveryPerSecByMaxHPIncreaseDataEffects.Remove(hpRecoveryPerSecByMaxHPIncreaseDataEffect);
+                    _hpRecoveryPerSecByMaxHPIncreaseDataEffects.Remove(hpRecoveryPerSecByMaxHPIncreaseDataEffect);
                 }
             }
         }

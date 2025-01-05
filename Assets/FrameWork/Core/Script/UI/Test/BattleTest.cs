@@ -11,6 +11,7 @@ namespace Temporary.Core
         {
             var damage = GetComponentInChildren<DamageTestCanvas>();
             var health = GetComponentInChildren<HealthTestCanvas>();
+            var buff = GetComponentInChildren<BuffTestCanvas>();
             var abnormalStatus = GetComponentInChildren<AbnormalStatusTestCanvas>();
 
             BattleManager.Instance.InitializeBattle();
@@ -18,6 +19,7 @@ namespace Temporary.Core
             {
                 damage?.Initialize(unit);
                 health?.Initialize(unit);
+                buff?.Initialize(unit);
                 abnormalStatus?.Initialize(unit);
             };
             BattleManager.Instance.GetSubSystem<AgentCreateSystem>().CreateUnit(_agentTemplate);
