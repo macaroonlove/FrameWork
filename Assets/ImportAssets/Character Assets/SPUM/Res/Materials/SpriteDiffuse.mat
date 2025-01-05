@@ -18,6 +18,7 @@ Material:
   - _TEXTURELAYER2SHEETTOGGLE_ON
   m_InvalidKeywords:
   - ETC1_EXTERNAL_ALPHA
+  - _DIRECTIONALALPHAFADEINVERT_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -207,11 +208,11 @@ Material:
     - _CustomFadeSmoothness: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DirectionalAlphaFadeFade: 0
-    - _DirectionalAlphaFadeInvert: 0
+    - _DirectionalAlphaFadeFade: 1.14
+    - _DirectionalAlphaFadeInvert: 1
     - _DirectionalAlphaFadeNoiseFactor: 0.2
     - _DirectionalAlphaFadeRotation: 0
-    - _DirectionalAlphaFadeWidth: 0.2
+    - _DirectionalAlphaFadeWidth: 2
     - _DirectionalDistortionFade: 0
     - _DirectionalDistortionInvert: 0
     - _DirectionalDistortionNoiseFactor: 0.2

@@ -24,7 +24,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54ff969717c88e3468a2f6b0795972a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dataTarget: 0
   _value: 0
 --- !u!114 &11400000
 MonoBehaviour:
@@ -46,3 +45,5 @@ MonoBehaviour:
   _attackCount: 1
   effects:
   - {fileID: -3937186072873048280}
+  _applyFX: {fileID: 11400000, guid: 5843f534ed191cd4f867c4d619b21042, type: 2}
+  _removeFX: {fileID: 11400000, guid: effa32dbe5a0b6546ae75e959725f349, type: 2}
