@@ -15,9 +15,9 @@ namespace Temporary.Core
         private List<MoveIncreaseDataEffect> _moveIncreaseDataEffects = new List<MoveIncreaseDataEffect>();
         private List<MoveMultiplierDataEffect> _moveMultiplierDataEffects = new List<MoveMultiplierDataEffect>();
 
-        private List<ATKAdditionalDataEffect> _atkAdditionalDataEffects = new List<ATKAdditionalDataEffect>();
-        private List<ATKIncreaseDataEffect> _atkIncreaseDataEffects = new List<ATKIncreaseDataEffect>();
-        private List<ATKMultiplierDataEffect> _atkMultiplierDataEffects = new List<ATKMultiplierDataEffect>();
+        private Dictionary<ATKAdditionalDataEffect, string> _atkAdditionalDataEffects = new Dictionary<ATKAdditionalDataEffect, string>();
+        private Dictionary<ATKIncreaseDataEffect, string> _atkIncreaseDataEffects = new Dictionary<ATKIncreaseDataEffect, string>();
+        private Dictionary<ATKMultiplierDataEffect, string> _atkMultiplierDataEffects = new Dictionary<ATKMultiplierDataEffect, string>();
 
         private List<AttackCountAdditionalDataEffect> _attackCountAdditionalDataEffects = new List<AttackCountAdditionalDataEffect>();
 
@@ -30,17 +30,17 @@ namespace Temporary.Core
         private List<PhysicalPenetrationIncreaseDataEffect> _physicalPenetrationIncreaseDataEffects = new List<PhysicalPenetrationIncreaseDataEffect>();
         private List<PhysicalPenetrationMultiplierDataEffect> _physicalPenetrationMultiplierDataEffects = new List<PhysicalPenetrationMultiplierDataEffect>();
 
-        private List<PhysicalResistanceAdditionalDataEffect> _physicalResistanceAdditionalDataEffects = new List<PhysicalResistanceAdditionalDataEffect>();
-        private List<PhysicalResistanceIncreaseDataEffect> _physicalResistanceIncreaseDataEffects = new List<PhysicalResistanceIncreaseDataEffect>();
-        private List<PhysicalResistanceMultiplierDataEffect> _physicalResistanceMultiplierDataEffects = new List<PhysicalResistanceMultiplierDataEffect>();
+        private Dictionary<PhysicalResistanceAdditionalDataEffect, string> _physicalResistanceAdditionalDataEffects = new Dictionary<PhysicalResistanceAdditionalDataEffect, string>();
+        private Dictionary<PhysicalResistanceIncreaseDataEffect, string> _physicalResistanceIncreaseDataEffects = new Dictionary<PhysicalResistanceIncreaseDataEffect, string>();
+        private Dictionary<PhysicalResistanceMultiplierDataEffect, string> _physicalResistanceMultiplierDataEffects = new Dictionary<PhysicalResistanceMultiplierDataEffect, string>();
 
         private List<MagicPenetrationAdditionalDataEffect> _magicPenetrationAdditionalDataEffects = new List<MagicPenetrationAdditionalDataEffect>();
         private List<MagicPenetrationIncreaseDataEffect> _magicPenetrationIncreaseDataEffects = new List<MagicPenetrationIncreaseDataEffect>();
         private List<MagicPenetrationMultiplierDataEffect> _magicPenetrationMultiplierDataEffects = new List<MagicPenetrationMultiplierDataEffect>();
 
-        private List<MagicResistanceAdditionalDataEffect> _magicResistanceAdditionalDataEffects = new List<MagicResistanceAdditionalDataEffect>();
-        private List<MagicResistanceIncreaseDataEffect> _magicResistanceIncreaseDataEffects = new List<MagicResistanceIncreaseDataEffect>();
-        private List<MagicResistanceMultiplierDataEffect> _magicResistanceMultiplierDataEffects = new List<MagicResistanceMultiplierDataEffect>();
+        private Dictionary<MagicResistanceAdditionalDataEffect, string> _magicResistanceAdditionalDataEffects = new Dictionary<MagicResistanceAdditionalDataEffect, string>();
+        private Dictionary<MagicResistanceIncreaseDataEffect, string> _magicResistanceIncreaseDataEffects = new Dictionary<MagicResistanceIncreaseDataEffect, string>();
+        private Dictionary<MagicResistanceMultiplierDataEffect, string> _magicResistanceMultiplierDataEffects = new Dictionary<MagicResistanceMultiplierDataEffect, string>();
 
         private List<DamageAdditionalDataEffect> _damageAdditionalDataEffects = new List<DamageAdditionalDataEffect>();
         private List<DamageIncreaseDataEffect> _damageIncreaseDataEffects = new List<DamageIncreaseDataEffect>();
@@ -77,9 +77,9 @@ namespace Temporary.Core
         internal IReadOnlyList<MoveIncreaseDataEffect> MoveIncreaseDataEffects => _moveIncreaseDataEffects;
         internal IReadOnlyList<MoveMultiplierDataEffect> MoveMultiplierDataEffects => _moveMultiplierDataEffects;
 
-        internal IReadOnlyList<ATKAdditionalDataEffect> ATKAdditionalDataEffects => _atkAdditionalDataEffects;
-        internal IReadOnlyList<ATKIncreaseDataEffect> ATKIncreaseDataEffects => _atkIncreaseDataEffects;
-        internal IReadOnlyList<ATKMultiplierDataEffect> ATKMultiplierDataEffects => _atkMultiplierDataEffects;
+        internal IReadOnlyDictionary<ATKAdditionalDataEffect, string> ATKAdditionalDataEffects => _atkAdditionalDataEffects;
+        internal IReadOnlyDictionary<ATKIncreaseDataEffect, string> ATKIncreaseDataEffects => _atkIncreaseDataEffects;
+        internal IReadOnlyDictionary<ATKMultiplierDataEffect, string> ATKMultiplierDataEffects => _atkMultiplierDataEffects;
 
         internal IReadOnlyList<AttackCountAdditionalDataEffect> AttackCountAdditionalDataEffects => _attackCountAdditionalDataEffects;
 
@@ -92,17 +92,17 @@ namespace Temporary.Core
         internal IReadOnlyList<PhysicalPenetrationIncreaseDataEffect> PhysicalPenetrationIncreaseDataEffects => _physicalPenetrationIncreaseDataEffects;
         internal IReadOnlyList<PhysicalPenetrationMultiplierDataEffect> PhysicalPenetrationMultiplierDataEffects => _physicalPenetrationMultiplierDataEffects;
 
-        internal IReadOnlyList<PhysicalResistanceAdditionalDataEffect> PhysicalResistanceAdditionalDataEffects => _physicalResistanceAdditionalDataEffects;
-        internal IReadOnlyList<PhysicalResistanceIncreaseDataEffect> PhysicalResistanceIncreaseDataEffects => _physicalResistanceIncreaseDataEffects;
-        internal IReadOnlyList<PhysicalResistanceMultiplierDataEffect> PhysicalResistanceMultiplierDataEffects => _physicalResistanceMultiplierDataEffects;
+        internal IReadOnlyDictionary<PhysicalResistanceAdditionalDataEffect, string> PhysicalResistanceAdditionalDataEffects => _physicalResistanceAdditionalDataEffects;
+        internal IReadOnlyDictionary<PhysicalResistanceIncreaseDataEffect, string> PhysicalResistanceIncreaseDataEffects => _physicalResistanceIncreaseDataEffects;
+        internal IReadOnlyDictionary<PhysicalResistanceMultiplierDataEffect, string> PhysicalResistanceMultiplierDataEffects => _physicalResistanceMultiplierDataEffects;
 
         internal IReadOnlyList<MagicPenetrationAdditionalDataEffect> MagicPenetrationAdditionalDataEffects => _magicPenetrationAdditionalDataEffects;
         internal IReadOnlyList<MagicPenetrationIncreaseDataEffect> MagicPenetrationIncreaseDataEffects => _magicPenetrationIncreaseDataEffects;
         internal IReadOnlyList<MagicPenetrationMultiplierDataEffect> MagicPenetrationMultiplierDataEffects => _magicPenetrationMultiplierDataEffects;
 
-        internal IReadOnlyList<MagicResistanceAdditionalDataEffect> MagicResistanceAdditionalDataEffects => _magicResistanceAdditionalDataEffects;
-        internal IReadOnlyList<MagicResistanceIncreaseDataEffect> MagicResistanceIncreaseDataEffects => _magicResistanceIncreaseDataEffects;
-        internal IReadOnlyList<MagicResistanceMultiplierDataEffect> MagicResistanceMultiplierDataEffects => _magicResistanceMultiplierDataEffects;
+        internal IReadOnlyDictionary<MagicResistanceAdditionalDataEffect, string> MagicResistanceAdditionalDataEffects => _magicResistanceAdditionalDataEffects;
+        internal IReadOnlyDictionary<MagicResistanceIncreaseDataEffect, string> MagicResistanceIncreaseDataEffects => _magicResistanceIncreaseDataEffects;
+        internal IReadOnlyDictionary<MagicResistanceMultiplierDataEffect, string> MagicResistanceMultiplierDataEffects => _magicResistanceMultiplierDataEffects;
 
         internal IReadOnlyList<DamageAdditionalDataEffect> DamageAdditionalDataEffects => _damageAdditionalDataEffects;
         internal IReadOnlyList<DamageIncreaseDataEffect> DamageIncreaseDataEffects => _damageIncreaseDataEffects;
@@ -247,15 +247,15 @@ namespace Temporary.Core
 
                     else if (effect is ATKAdditionalDataEffect atkAdditionalDataEffects)
                     {
-                        _atkAdditionalDataEffects.Add(atkAdditionalDataEffects);
+                        _atkAdditionalDataEffects.Add(atkAdditionalDataEffects, template.displayName);
                     }
                     else if (effect is ATKIncreaseDataEffect atkIncreaseDataEffect)
                     {
-                        _atkIncreaseDataEffects.Add(atkIncreaseDataEffect);
+                        _atkIncreaseDataEffects.Add(atkIncreaseDataEffect, template.displayName);
                     }
                     else if (effect is ATKMultiplierDataEffect atkMultiplierDataEffect)
                     {
-                        _atkMultiplierDataEffects.Add(atkMultiplierDataEffect);
+                        _atkMultiplierDataEffects.Add(atkMultiplierDataEffect, template.displayName);
                     }
 
                     else if (effect is AttackCountAdditionalDataEffect attackCountAdditionalDataEffect)
@@ -292,15 +292,15 @@ namespace Temporary.Core
 
                     else if (effect is PhysicalResistanceAdditionalDataEffect physicalResistanceAdditionalDataEffect)
                     {
-                        _physicalResistanceAdditionalDataEffects.Add(physicalResistanceAdditionalDataEffect);
+                        _physicalResistanceAdditionalDataEffects.Add(physicalResistanceAdditionalDataEffect, template.displayName);
                     }
                     else if (effect is PhysicalResistanceIncreaseDataEffect physicalResistanceIncreaseDataEffect)
                     {
-                        _physicalResistanceIncreaseDataEffects.Add(physicalResistanceIncreaseDataEffect);
+                        _physicalResistanceIncreaseDataEffects.Add(physicalResistanceIncreaseDataEffect, template.displayName);
                     }
                     else if (effect is PhysicalResistanceMultiplierDataEffect physicalResistanceMultiplierDataEffect)
                     {
-                        _physicalResistanceMultiplierDataEffects.Add(physicalResistanceMultiplierDataEffect);
+                        _physicalResistanceMultiplierDataEffects.Add(physicalResistanceMultiplierDataEffect, template.displayName);
                     }
 
                     else if (effect is MagicPenetrationAdditionalDataEffect magicPenetrationAdditionalDataEffect)
@@ -318,15 +318,15 @@ namespace Temporary.Core
 
                     else if (effect is MagicResistanceAdditionalDataEffect magicResistanceAdditionalDataEffect)
                     {
-                        _magicResistanceAdditionalDataEffects.Add(magicResistanceAdditionalDataEffect);
+                        _magicResistanceAdditionalDataEffects.Add(magicResistanceAdditionalDataEffect, template.displayName);
                     }
                     else if (effect is MagicResistanceIncreaseDataEffect magicResistanceIncreaseDataEffect)
                     {
-                        _magicResistanceIncreaseDataEffects.Add(magicResistanceIncreaseDataEffect);
+                        _magicResistanceIncreaseDataEffects.Add(magicResistanceIncreaseDataEffect, template.displayName);
                     }
                     else if (effect is MagicResistanceMultiplierDataEffect magicResistanceMultiplierDataEffect)
                     {
-                        _magicResistanceMultiplierDataEffects.Add(magicResistanceMultiplierDataEffect);
+                        _magicResistanceMultiplierDataEffects.Add(magicResistanceMultiplierDataEffect, template.displayName);
                     }
 
                     else if (effect is DamageAdditionalDataEffect damageAdditionalDataEffect)

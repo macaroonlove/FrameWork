@@ -14,8 +14,8 @@ namespace Temporary.Core
         [NonSerialized] private List<UnableToHealEffect> _unableToHealEffects = new List<UnableToHealEffect>();
         [NonSerialized] private List<UnableToSkillEffect> _unableToSkillEffects = new List<UnableToSkillEffect>();
         [NonSerialized] private List<MoveIncreaseDataEffect> _moveIncreaseDataEffects = new List<MoveIncreaseDataEffect>();
-        [NonSerialized] private List<PhysicalResistanceIncreaseDataEffect> _physicalResistanceIncreaseDataEffects = new List<PhysicalResistanceIncreaseDataEffect>();
-        [NonSerialized] private List<MagicResistanceIncreaseDataEffect> _magicResistanceIncreaseDataEffects = new List<MagicResistanceIncreaseDataEffect>();
+        [NonSerialized] private Dictionary<PhysicalResistanceIncreaseDataEffect, string> _physicalResistanceIncreaseDataEffects = new Dictionary<PhysicalResistanceIncreaseDataEffect, string>();
+        [NonSerialized] private Dictionary<MagicResistanceIncreaseDataEffect, string> _magicResistanceIncreaseDataEffects = new Dictionary<MagicResistanceIncreaseDataEffect, string>();
         [NonSerialized] private List<ReceiveDamageIncreaseDataEffect> _receiveDamageIncreaseDataEffects = new List<ReceiveDamageIncreaseDataEffect>();
         [NonSerialized] private List<HPRecoveryPerSecByMaxHPIncreaseDataEffect> _hpRecoveryPerSecByMaxHPIncreaseDataEffects = new List<HPRecoveryPerSecByMaxHPIncreaseDataEffect>();
 
@@ -25,8 +25,8 @@ namespace Temporary.Core
         internal IReadOnlyList<UnableToHealEffect> UnableToHealEffects => _unableToHealEffects;
         internal IReadOnlyList<UnableToSkillEffect> UnableToSkillEffects => _unableToSkillEffects;
         internal IReadOnlyList<MoveIncreaseDataEffect> MoveIncreaseDataEffects => _moveIncreaseDataEffects;
-        internal IReadOnlyList<PhysicalResistanceIncreaseDataEffect> PhysicalResistanceIncreaseDataEffects => _physicalResistanceIncreaseDataEffects;
-        internal IReadOnlyList<MagicResistanceIncreaseDataEffect> MagicResistanceIncreaseDataEffects => _magicResistanceIncreaseDataEffects;
+        internal IReadOnlyDictionary<PhysicalResistanceIncreaseDataEffect, string> PhysicalResistanceIncreaseDataEffects => _physicalResistanceIncreaseDataEffects;
+        internal IReadOnlyDictionary<MagicResistanceIncreaseDataEffect, string> MagicResistanceIncreaseDataEffects => _magicResistanceIncreaseDataEffects;
         internal IReadOnlyList<ReceiveDamageIncreaseDataEffect> ReceiveDamageIncreaseDataEffects => _receiveDamageIncreaseDataEffects;
         internal IReadOnlyList<HPRecoveryPerSecByMaxHPIncreaseDataEffect> HPRecoveryPerSecByMaxHPIncreaseDataEffects => _hpRecoveryPerSecByMaxHPIncreaseDataEffects;
         #endregion
@@ -154,11 +154,11 @@ namespace Temporary.Core
                     }
                     else if (effect is PhysicalResistanceIncreaseDataEffect physicalResistanceIncreaseDataEffect)
                     {
-                        _physicalResistanceIncreaseDataEffects.Add(physicalResistanceIncreaseDataEffect);
+                        _physicalResistanceIncreaseDataEffects.Add(physicalResistanceIncreaseDataEffect, template.displayName);
                     }
                     else if (effect is MagicResistanceIncreaseDataEffect magicResistanceIncreaseDataEffect)
                     {
-                        _magicResistanceIncreaseDataEffects.Add(magicResistanceIncreaseDataEffect);
+                        _magicResistanceIncreaseDataEffects.Add(magicResistanceIncreaseDataEffect, template.displayName);
                     }
                     else if (effect is ReceiveDamageIncreaseDataEffect receiveDamageIncreaseDataEffect)
                     {

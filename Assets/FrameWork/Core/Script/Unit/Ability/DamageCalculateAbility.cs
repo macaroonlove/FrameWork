@@ -132,14 +132,14 @@ namespace Temporary.Core
         #endregion
 
         #region 저항력
-        private int finalPhysicalResistance
+        internal int finalPhysicalResistance
         {
             get
             {
                 float result = _basePhysicalResistance;
 
                 #region 추가·차감
-                foreach (var effect in _buffAbility.PhysicalResistanceAdditionalDataEffects)
+                foreach (var effect in _buffAbility.PhysicalResistanceAdditionalDataEffects.Keys)
                 {
                     result += effect.value;
                 }
@@ -148,11 +148,11 @@ namespace Temporary.Core
                 #region 증가·감소
                 float increase = 1;
 
-                foreach (var effect in _buffAbility.PhysicalResistanceIncreaseDataEffects)
+                foreach (var effect in _buffAbility.PhysicalResistanceIncreaseDataEffects.Keys)
                 {
                     increase += effect.value;
                 }
-                foreach (var effect in _abnormalStatusAbility.PhysicalResistanceIncreaseDataEffects)
+                foreach (var effect in _abnormalStatusAbility.PhysicalResistanceIncreaseDataEffects.Keys)
                 {
                     increase += effect.value;
                 }
@@ -161,7 +161,7 @@ namespace Temporary.Core
                 #endregion
 
                 #region 상승·하락
-                foreach (var effect in _buffAbility.PhysicalResistanceMultiplierDataEffects)
+                foreach (var effect in _buffAbility.PhysicalResistanceMultiplierDataEffects.Keys)
                 {
                     result *= effect.value;
                 }
@@ -171,14 +171,14 @@ namespace Temporary.Core
             }
         }
 
-        private int finalMagicResistance
+        internal int finalMagicResistance
         {
             get
             {
                 float result = _baseMagicResistance;
 
                 #region 추가·차감
-                foreach (var effect in _buffAbility.MagicResistanceAdditionalDataEffects)
+                foreach (var effect in _buffAbility.MagicResistanceAdditionalDataEffects.Keys)
                 {
                     result += effect.value;
                 }
@@ -187,11 +187,11 @@ namespace Temporary.Core
                 #region 증가·감소
                 float increase = 1;
 
-                foreach (var effect in _buffAbility.MagicResistanceIncreaseDataEffects)
+                foreach (var effect in _buffAbility.MagicResistanceIncreaseDataEffects.Keys)
                 {
                     increase += effect.value;
                 }
-                foreach (var effect in _abnormalStatusAbility.MagicResistanceIncreaseDataEffects)
+                foreach (var effect in _abnormalStatusAbility.MagicResistanceIncreaseDataEffects.Keys)
                 {
                     increase += effect.value;
                 }
@@ -200,7 +200,7 @@ namespace Temporary.Core
                 #endregion
 
                 #region 상승·하락
-                foreach (var effect in _buffAbility.MagicResistanceMultiplierDataEffects)
+                foreach (var effect in _buffAbility.MagicResistanceMultiplierDataEffects.Keys)
                 {
                     result *= effect.value;
                 }

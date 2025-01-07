@@ -1000,7 +1000,7 @@ GameObject:
   - component: {fileID: 7060898513541503647}
   - component: {fileID: 2162770967634147447}
   m_Layer: 0
-  m_Name: StatusTest
+  m_Name: AbnormalStatusTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

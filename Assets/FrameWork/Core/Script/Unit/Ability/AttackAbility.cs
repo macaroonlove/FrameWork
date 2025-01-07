@@ -49,7 +49,7 @@ namespace Temporary.Core
                 float result = _baseATK;
 
                 #region 추가·차감
-                foreach (var effect in _buffAbility.ATKAdditionalDataEffects)
+                foreach (var effect in _buffAbility.ATKAdditionalDataEffects.Keys)
                 {
                     result += effect.value;
                 }
@@ -58,7 +58,7 @@ namespace Temporary.Core
                 #region 증가·감소
                 float increase = 1;
 
-                foreach (var effect in _buffAbility.ATKIncreaseDataEffects)
+                foreach (var effect in _buffAbility.ATKIncreaseDataEffects.Keys)
                 {
                     increase += effect.value;
                 }
@@ -67,7 +67,7 @@ namespace Temporary.Core
                 #endregion
 
                 #region 상승·하락
-                foreach (var effect in _buffAbility.ATKMultiplierDataEffects)
+                foreach (var effect in _buffAbility.ATKMultiplierDataEffects.Keys)
                 {
                     result *= effect.value;
                 }
