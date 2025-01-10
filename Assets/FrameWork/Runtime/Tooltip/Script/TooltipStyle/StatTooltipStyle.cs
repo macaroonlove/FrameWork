@@ -1,4 +1,5 @@
 using TMPro;
+using UnityEngine;
 
 namespace FrameWork.Tooltip
 {
@@ -29,10 +30,18 @@ namespace FrameWork.Tooltip
         {
             _baseStatText.text = data.GetString("BaseStat");
             _detailStatText.text = data.GetString("DetailStat");
+            _detailStatText.ForceMeshUpdate();
+            
+            var newHeight = _detailStatText.textInfo.lineCount * 50;
+            Vector2 sizeDelta = _detailStatText.rectTransform.sizeDelta;
+            sizeDelta.y = newHeight;
+            _detailStatText.rectTransform.sizeDelta = sizeDelta;
         }
 
         protected override void Initialize()
         {
+            base.Initialize();
+
             BindText(typeof(Texts));
 
             _baseStatText = GetText((int)Texts.BaseStat);

@@ -7,6 +7,7 @@ namespace FrameWork.Tooltip
     {
         private Dictionary<GameObject, TooltipStyle> _tooltip = new Dictionary<GameObject, TooltipStyle>();
         private Transform _parent;
+        private TooltipTrigger _showTrigger;
 
         protected override void Initialize()
         {
@@ -15,12 +16,14 @@ namespace FrameWork.Tooltip
 
         internal void Show(TooltipTrigger trigger)
         {
+            _showTrigger = trigger;
+
             var prefab = trigger.tooltipStyle.gameObject;
             TooltipStyle style;
 
             if (_tooltip.TryGetValue(prefab, out style))
             {
-                style.Show();
+                style.Show(true);
             }
             else
             {
@@ -31,11 +34,17 @@ namespace FrameWork.Tooltip
             }
 
             style.ApplyData(trigger.tooltipData);
+
+            var rect = style.transform as RectTransform;
+            SetRectTransform(rect, trigger.tooltipPosition);
             style.transform.position = trigger.transform.position;
+            rect.anchoredPosition += trigger.tooltipOffset;
         }
 
         internal void Hide(TooltipTrigger trigger)
         {
+            _showTrigger = null;
+
             var tooltipPrefab = trigger.tooltipStyle.gameObject;
             TooltipStyle style;
 
@@ -45,18 +54,11 @@ namespace FrameWork.Tooltip
             }
         }
 
-        internal TooltipStyle GetTooltipStyle(TooltipTrigger trigger)
+        internal void ReShow(TooltipTrigger trigger)
         {
-            var tooltipPrefab = trigger.tooltipStyle.gameObject;
-            TooltipStyle style;
-
-            if (_tooltip.TryGetValue(tooltipPrefab, out style))
+            if (_showTrigger != null && _showTrigger == trigger)
             {
-                return style;
-            }
-            else
-            {
-                return null;
+                Show(trigger);
             }
         }
 
@@ -67,5 +69,58 @@ namespace FrameWork.Tooltip
 
             return instance;
         }
+
+        private void SetRectTransform(RectTransform rectTransform, TipPosition tipPosition)
+        {
+            Vector2 anchorPosition = Vector2.zero;
+
+            switch (tipPosition)
+            {
+                case TipPosition.TopLeft:
+                    anchorPosition = new Vector2(1, 0);
+                    break;
+                case TipPosition.TopCenter:
+                    anchorPosition = new Vector2(0.5f, 0);
+                    break;
+                case TipPosition.TopRight:
+                    anchorPosition = new Vector2(0, 0);
+                    break;
+                case TipPosition.MiddleLeft:
+                    anchorPosition = new Vector2(1, 0.5f);
+                    break;
+                case TipPosition.MiddleCenter:
+                    anchorPosition = new Vector2(0.5f, 0.5f);
+                    break;
+                case TipPosition.MiddleRight:
+                    anchorPosition = new Vector2(0, 0.5f);
+                    break;
+                case TipPosition.BottomLeft:
+                    anchorPosition = new Vector2(1, 1);
+                    break;
+                case TipPosition.BottomCenter:
+                    anchorPosition = new Vector2(0.5f, 1);
+                    break;
+                case TipPosition.BottomRight:
+                    anchorPosition = new Vector2(0, 1);
+                    break;
+            }
+
+            rectTransform.anchorMin = anchorPosition;
+            rectTransform.anchorMax = anchorPosition;
+            rectTransform.pivot = anchorPosition;
+        }
+    }
+
+    internal enum TipPosition
+    {
+        TopLeft,
+        TopCenter,
+        TopRight,
+        MiddleLeft,
+        MiddleCenter,
+        MiddleRight,
+        BottomLeft,
+        BottomCenter,
+        BottomRight
     }
 }

@@ -232,6 +232,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tooltipStyle: {fileID: 6437568451963178779, guid: 166686a77af7c4249b38bb389c6893f0,
     type: 3}
+  _tooltipPosition: 8
+  _tooltipOffset: {x: -50, y: -50}
+  tooltipData:
+    _keys:
+    - BaseStat
+    - DetailStat
+    _stringValues:
+    - 
+    - 
+    _textureValues: []
 --- !u!1 &7280799852143131224
 GameObject:
   m_ObjectHideFlags: 0

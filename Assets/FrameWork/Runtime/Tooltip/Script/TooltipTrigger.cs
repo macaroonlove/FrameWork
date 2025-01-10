@@ -6,13 +6,18 @@ namespace FrameWork.Tooltip
     public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] private TooltipStyle _tooltipStyle;
+        [SerializeField] private TipPosition _tooltipPosition;
+        [SerializeField] private Vector2 _tooltipOffset;
+
         [HideInInspector] public TooltipData tooltipData;
 
         internal TooltipStyle tooltipStyle => _tooltipStyle;
+        internal TipPosition tooltipPosition => _tooltipPosition;
+        internal Vector2 tooltipOffset => _tooltipOffset;
 
         private void Awake()
         {
-            tooltipData.Initialize();
+            tooltipData.InitializeData();
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -46,6 +51,7 @@ namespace FrameWork.Tooltip
             }
 
             tooltipData.SetString(parameterName, text);
+            TooltipManager.Instance.ReShow(this);
         }
     }
 }
@@ -77,7 +83,7 @@ namespace FrameWork.Tooltip.Editor
 
                 if (trigger.tooltipData.IsInitializeData() == false)
                 {
-                    trigger.tooltipData.Initialize();
+                    trigger.tooltipData.InitializeData();
                 }
 
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
@@ -116,7 +122,7 @@ namespace FrameWork.Tooltip.Editor
 
                 if (GUI.changed)
                 {
-                    trigger.tooltipData.Initialize();
+                    trigger.tooltipData.InitializeData();
                     EditorUtility.SetDirty(trigger);
                 }
             }

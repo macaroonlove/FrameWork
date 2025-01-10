@@ -17,7 +17,7 @@ namespace FrameWork.Tooltip
         internal Dictionary<string, string> getAllString => _stringData;
         internal Dictionary<string, Texture> getAllTexture => _textureData;
 
-        public void Initialize()
+        public void InitializeData()
         {
             _stringData = _keys.Zip(_stringValues, (key, value) => new { key, value })
                              .ToDictionary(x => x.key, x => x.value);
