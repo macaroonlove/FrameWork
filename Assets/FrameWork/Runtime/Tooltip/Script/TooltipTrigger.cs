@@ -1,0 +1,130 @@
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+namespace FrameWork.Tooltip
+{
+    public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    {
+        [SerializeField] private TooltipStyle _tooltipStyle;
+        [HideInInspector] public TooltipData tooltipData;
+
+        internal TooltipStyle tooltipStyle => _tooltipStyle;
+
+        private void Awake()
+        {
+            tooltipData.Initialize();
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            StartHover();
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            StopHover();
+        }
+
+        private void StartHover()
+        {
+            TooltipManager.Instance.Show(this);
+        }
+
+        private void StopHover()
+        {
+            TooltipManager.Instance.Hide(this);
+        }
+
+        public void SetText(string parameterName, string text)
+        {
+            if (tooltipData == null)
+            {
+#if UNITY_EDITOR
+                Debug.LogError("TooltipData가 초기화되지 않았습니다.");
+#endif
+                return;
+            }
+
+            tooltipData.SetString(parameterName, text);
+        }
+    }
+}
+
+#if UNITY_EDITOR
+namespace FrameWork.Tooltip.Editor
+{
+    using System.Linq;
+    using UnityEditor;
+    using UnityEngine;
+
+    [CustomEditor(typeof(TooltipTrigger))]
+    public class TooltipTriggerEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            TooltipTrigger trigger = (TooltipTrigger)target;
+
+            base.OnInspectorGUI();
+
+            EditorGUILayout.Space(10);
+
+            if (trigger.tooltipStyle != null)
+            {
+                if (trigger.tooltipData.IsInitialize() == false)
+                {
+                    trigger.tooltipData = trigger.tooltipStyle.CreateField();
+                }
+
+                if (trigger.tooltipData.IsInitializeData() == false)
+                {
+                    trigger.tooltipData.Initialize();
+                }
+
+                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                EditorGUILayout.LabelField("툴팁 데이터 설정", EditorStyles.boldLabel);
+
+                // 문자열 데이터 처리
+                var stringData = trigger.tooltipData.getAllString;
+                foreach (var key in stringData.Keys.ToList())
+                {
+                    EditorGUILayout.LabelField(key);
+                    string newValue = EditorGUILayout.TextArea(
+                        stringData[key],
+                        GUILayout.Height(50),
+                        GUILayout.ExpandHeight(true)
+                    );
+                    if (newValue != stringData[key])
+                    {
+                        trigger.tooltipData.SetString(key, newValue);
+                        GUI.changed = true;
+                    }
+                }
+
+                // 텍스처 데이터 처리
+                var textureData = trigger.tooltipData.getAllTexture;
+                foreach (var key in textureData.Keys.ToList())
+                {
+                    Texture newValue = (Texture)EditorGUILayout.ObjectField(key, textureData[key], typeof(Texture), allowSceneObjects: false);
+                    if (newValue != textureData[key])
+                    {
+                        trigger.tooltipData.SetTexture(key, newValue);
+                        GUI.changed = true;
+                    }
+                }
+
+                EditorGUILayout.EndVertical();
+
+                if (GUI.changed)
+                {
+                    trigger.tooltipData.Initialize();
+                    EditorUtility.SetDirty(trigger);
+                }
+            }
+            else
+            {
+                EditorGUILayout.HelpBox("툴팁 스타일을 등록해주세요.", MessageType.Info);
+            }
+        }
+    }
+}
+#endif

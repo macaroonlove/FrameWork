@@ -31,6 +31,11 @@ namespace Temporary.Core
             return _damageCalculateAbility.finalMagicResistance;
         }
 
+        protected override string GetBaseValue()
+        {
+            return $"기본 마법 저항력: {_damageCalculateAbility.baseMagicResistance}";
+        }
+
         protected override string GetValueText()
         {
             return GetValue().ToString("N0");

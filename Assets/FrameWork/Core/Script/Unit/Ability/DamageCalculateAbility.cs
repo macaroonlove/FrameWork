@@ -15,6 +15,11 @@ namespace Temporary.Core
         private BuffAbility _buffAbility;
         private AbnormalStatusAbility _abnormalStatusAbility;
 
+        #region 프로퍼티
+        internal int basePhysicalResistance => _basePhysicalResistance;
+        internal int baseMagicResistance => _baseMagicResistance;
+        #endregion
+
         #region 계산 스탯
         #region 데미지 타입
         internal EDamageType finalDamageType

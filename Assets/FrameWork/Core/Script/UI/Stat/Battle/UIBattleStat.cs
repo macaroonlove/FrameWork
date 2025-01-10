@@ -1,9 +1,11 @@
+using FrameWork.Tooltip;
 using FrameWork.UIBinding;
 using TMPro;
 using UnityEngine;
 
 namespace Temporary.Core
 {
+    [RequireComponent(typeof(TooltipTrigger))]
     public abstract class UIBattleStat<T> : UIBase where T : struct
     {
         #region ¹ÙÀÎµù
@@ -20,6 +22,7 @@ namespace Temporary.Core
             Multiplier,
         }
 
+        protected TooltipTrigger _tooltip;
         protected Unit _unit;
         protected T _prevValue;
 
@@ -29,8 +32,15 @@ namespace Temporary.Core
         {
             base.Awake();
 
+            _tooltip = GetComponent<TooltipTrigger>();
+
             BindText(typeof(Texts));
             _valueText = GetText((int)Texts.Value);
+        }
+
+        private void OnDestroy()
+        {
+            _tooltip = null;
         }
 
         public virtual void Initialize(Unit unit)
@@ -51,12 +61,22 @@ namespace Temporary.Core
             if (newValue.Equals(_prevValue) == false)
             {
                 _valueText.text = GetValueText();
+                ApplyTooltip();
 
                 _prevValue = newValue;
             }
         }
 
+        private void ApplyTooltip()
+        {
+            if (_unit == null) return;
+
+            _tooltip.SetText("BaseStat", GetBaseValue());
+            _tooltip.SetText("DetailStat", GetTooltip());
+        }
+
         protected abstract T GetValue();
+        protected abstract string GetBaseValue();
         protected abstract string GetValueText();
         protected abstract string GetTooltip();
 

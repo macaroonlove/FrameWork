@@ -28,6 +28,11 @@ namespace Temporary.Core
             return _attackAbility.finalATK;
         }
 
+        protected override string GetBaseValue()
+        {
+            return $"기본 공격력: {_attackAbility.baseATK}";
+        }
+
         protected override string GetValueText()
         {
             return GetValue().ToString("N0");

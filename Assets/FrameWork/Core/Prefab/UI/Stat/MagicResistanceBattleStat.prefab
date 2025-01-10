@@ -148,6 +148,7 @@ GameObject:
   - component: {fileID: 4790847339943725867}
   - component: {fileID: 2852424395151848985}
   - component: {fileID: 7332173797312559439}
+  - component: {fileID: 6707681278099506188}
   m_Layer: 0
   m_Name: MagicResistanceBattleStat
   m_TagString: Untagged
@@ -217,6 +218,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0ceaa641ced03a49b3f1c0fb513e783, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6707681278099506188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6966503734396169266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b47eb08c5e798734285f019b5cf6e202, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _tooltipStyle: {fileID: 6437568451963178779, guid: 166686a77af7c4249b38bb389c6893f0,
+    type: 3}
 --- !u!1 &7280799852143131224
 GameObject:
   m_ObjectHideFlags: 0

@@ -31,6 +31,11 @@ namespace Temporary.Core
             return _damageCalculateAbility.finalPhysicalResistance;
         }
 
+        protected override string GetBaseValue()
+        {
+            return $"기본 방어력: {_damageCalculateAbility.basePhysicalResistance}";
+        }
+
         protected override string GetValueText()
         {
             return GetValue().ToString("N0");
