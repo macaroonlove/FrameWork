@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Temporary.Core
 {
@@ -12,11 +9,10 @@ namespace Temporary.Core
     {
         private UnitAnimationAbility _unitAnimationAbility;
         private ManaAbility _manaAbility;
-        private BuffAbility _buffAbility;
         private AbnormalStatusAbility _abnormalStatusAbility;
 
         private ActiveSkillTemplate _template;
-        
+
         private bool _isSkillActive;
         private Unit _targetUnit;
         private Vector3 _targetVector;
@@ -46,7 +42,6 @@ namespace Temporary.Core
 
             _unitAnimationAbility = unit.GetAbility<UnitAnimationAbility>();
             _manaAbility = unit.GetAbility<ManaAbility>();
-            _buffAbility = unit.GetAbility<BuffAbility>();
             _abnormalStatusAbility = unit.GetAbility<AbnormalStatusAbility>();
 
             _skillEventHandler = GetComponentInChildren<SkillEventHandler>();
@@ -99,7 +94,7 @@ namespace Temporary.Core
         #region 스킬 발동 방식 별 시도 로직
         private bool TryExecuteInstantSkill(ActiveSkillTemplate template)
         {
-            foreach (var effect in _template.effects)
+            foreach (var effect in template.effects)
             {
                 if (effect is IGetTarget targetEffect)
                 {
@@ -162,12 +157,16 @@ namespace Temporary.Core
 
         private bool SkillAnimation(ActiveSkillTemplate template)
         {
-            if (_unitAnimationAbility.TrySetTrigger(template.parameterHash) == false) return false;
-
             _template = template;
-            _isSkillActive = true;
 
-            if (!_isEventSkill)
+            bool isSuccess = false;
+            if (template.parameterHash != 0 && _isEventSkill)
+            {
+                isSuccess = _unitAnimationAbility.TrySetTrigger(template.parameterHash);
+                _isSkillActive = true;
+            }
+            
+            if (isSuccess == false)
             {
                 ExecuteSkill();
             }

@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 315827f885b2bdb4db10ec962e833c34, type: 3}
+  m_Name: "Agent_\uC804\uC0AC"
+  m_EditorClassIdentifier: 
+  _id: 1
+  _displayName: "\uC804\uC0AC"
+  _description: 
+  _sprite: {fileID: 21300000, guid: 53ff554aa2478c34895f022e24b24a3d, type: 3}
+  _prefab: {fileID: 8424214445108489197, guid: b0e4d36cfada8564cbddb4b918788da4, type: 3}
+  _moveSpeed: 0.5
+  _chaseRange: 6
+  _chaseFailRange: 10
+  _moveType: 0
+  _atk: 10
+  _attackTerm: 1.2
+  _attackRange: 2
+  _isProjectileAttack: 0
+  _projectilePrefab: {fileID: 0}
+  _spawnPoint: 0
+  _attackType: 0
+  _damageType: 0
+  _criticalHitChance: 0
+  _criticalHitDamage: 0
+  _physicalPenetration: 0
+  _magicPenetration: 0
+  _maxHP: 2000
+  _physicalResistance: 10
+  _magicResistance: 0
+  _maxMana: 0
+  _startMana: 0
+  _hpRecoveryPerSec: 0
+  _manaRecoveryPerSec: 0
+  _manaRecoveryType: 0
+  _skillTreeGraph: {fileID: 11400000, guid: ae7ffe8926b3dbf459ba68fd44adafe1, type: 2}
+  _casterFX: {fileID: 0}
+  _targetFX: {fileID: 0}
+  isOwned: 0

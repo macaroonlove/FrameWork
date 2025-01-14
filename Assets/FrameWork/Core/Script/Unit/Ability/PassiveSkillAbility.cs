@@ -16,19 +16,33 @@ namespace Temporary.Core
         private List<UnitEffect> _hitEventEffects = new List<UnitEffect>();
         private List<UnitEffect> _healEventEffects = new List<UnitEffect>();
         private List<UnitEffect> _destroyShieldEventEffects = new List<UnitEffect>();
-        
 
         #region 프로퍼티
         internal IReadOnlyList<UnitEffect> attackEventEffects => _attackEventEffects;
         internal IReadOnlyList<UnitEffect> hitEventEffects => _hitEventEffects;
         internal IReadOnlyList<UnitEffect> healEventEffects => _healEventEffects;
         internal IReadOnlyList<UnitEffect> destroyShieldEventEffects => _destroyShieldEventEffects;
-        
         #endregion
         #endregion
 
-        internal void InitializePassiveSkill(SkillTreeGraph skillTree)
+        internal override void Initialize(Unit unit)
         {
+            base.Initialize(unit);
+
+            if (unit is AgentUnit agentUnit)
+            {
+                InitializePassiveSkill(agentUnit.template.skillTreeGraph);
+            }
+            else if (unit is EnemyUnit enemyUnit)
+            {
+                InitializePassiveSkill(enemyUnit.template.skillTreeGraph);
+            }
+        }
+
+        private void InitializePassiveSkill(SkillTreeGraph skillTree)
+        {
+            if (skillTree == null) return;
+
             foreach (var node in skillTree.nodes)
             {
                 if (node is PassiveSkillNode skill)

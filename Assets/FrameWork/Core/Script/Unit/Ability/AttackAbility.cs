@@ -9,7 +9,7 @@ namespace Temporary.Core
     /// 근접, 투사체 공격을 실행하는 어빌리티
     /// 공격력, 공격속도, 공격 사거리, 동시 공격 수, 공격 방식을 계산합니다.
     /// </summary>
-    public class AttackAbility : AlwaysAbility
+    public class AttackAbility : ConditionAbility
     {
         private bool _isProjectileAttack;
         private GameObject _projectilePrefab;
@@ -223,19 +223,32 @@ namespace Temporary.Core
             }
         }
 
+        internal override bool IsExecute()
+        {
+            return IsAction();
+        }
+
         internal override void UpdateAbility()
         {
-            // 공격 불가 상태라면 메서드 끝내기
-            if (finalIsAttackAble == false || finalAttackType == EAttackType.None) return;
+            if (IsAction() == false)
+            {
+                unit.ReleaseCurrentAbility();
+            }
+        }
 
-            _currentAttackType = finalAttackType;
-
+        private bool IsAction()
+        {
             // 공격 쿨타임 감소
             if (_attackCooldown > 0)
             {
                 _attackCooldown -= Time.deltaTime;
-                return;
+                return false;
             }
+
+            // 공격 불가 상태라면 메서드 끝내기
+            if (finalIsAttackAble == false || finalAttackType == EAttackType.None) return false;
+            
+            _currentAttackType = finalAttackType;
 
             // 공격의 성공여부를 반환
             bool isAction = Action();
@@ -246,6 +259,8 @@ namespace Temporary.Core
                 // 쿨타임 재생
                 _attackCooldown = finalAttackTerm;
             }
+
+            return isAction;
         }
 
         private bool Action()
@@ -359,7 +374,7 @@ namespace Temporary.Core
         private void ApplyAttack(Unit attackTarget)
         {
             ExecuteTargetFX(attackTarget);
-
+            
             attackTarget.GetAbility<HitAbility>().Hit(unit);
 
             onAttack?.Invoke();

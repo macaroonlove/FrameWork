@@ -204,6 +204,7 @@ GameObject:
   - component: {fileID: 7926993913968426360}
   - component: {fileID: 1568172049601641840}
   - component: {fileID: 6202978478221049075}
+  - component: {fileID: -2258892940850300582}
   m_Layer: 6
   m_Name: _AgentBase
   m_TagString: Untagged
@@ -259,7 +260,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56d59764afdacfb4189195b6d55cd485, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useUpdate: 1
+  _priority: 1
 --- !u!114 &6735737040812538881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -418,7 +419,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d7de6ed1f89b284a9b802b194c78c15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _priorty: 0
+  _priority: 2
 --- !u!114 &6202978478221049075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -432,6 +433,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   useUpdate: 0
+--- !u!114 &-2258892940850300582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7116394714028806410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8deafc562d3a81940bc604a894188b2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _priority: 0
+  _baseMoveSpeed: 0
+  _chaseRange: 0
+  _targetPosition: {fileID: 0}
 --- !u!1 &8806907120543262263
 GameObject:
   m_ObjectHideFlags: 0

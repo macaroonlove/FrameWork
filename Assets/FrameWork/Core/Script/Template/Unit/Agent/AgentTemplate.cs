@@ -1,5 +1,4 @@
 using FrameWork.Editor;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Temporary.Core
@@ -15,6 +14,8 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private GameObject _prefab;
 
         [HideInInspector, SerializeField] private float _moveSpeed;
+        [HideInInspector, SerializeField] private float _chaseRange;
+        [HideInInspector, SerializeField] private float _chaseFailRange;
         [HideInInspector, SerializeField] private EMoveType _moveType;
 
         [HideInInspector, SerializeField] private int _atk;
@@ -43,6 +44,7 @@ namespace Temporary.Core
 
         [HideInInspector, SerializeField] private int _hpRecoveryPerSec;
         [HideInInspector, SerializeField] private int _manaRecoveryPerSec;
+        [HideInInspector, SerializeField] private EManaRecoveryType _manaRecoveryType;
 
         [HideInInspector, SerializeField] private SkillTreeGraph _skillTreeGraph;
 
@@ -60,6 +62,8 @@ namespace Temporary.Core
         public GameObject prefab => _prefab;
 
         public float MoveSpeed => _moveSpeed;
+        public float ChaseRange => _chaseRange;
+        public float ChaseFailRange => _chaseFailRange;
         public EMoveType MoveType => _moveType;
 
         public int ATK => _atk;
@@ -88,6 +92,7 @@ namespace Temporary.Core
 
         public int HPRecoveryPerSec => _hpRecoveryPerSec;
         public int ManaRecoveryPerSec => _manaRecoveryPerSec;
+        public EManaRecoveryType ManaRecoveryType => _manaRecoveryType;
 
         public SkillTreeGraph skillTreeGraph => _skillTreeGraph;
 
@@ -119,6 +124,8 @@ namespace Temporary.Editor
         private SerializedProperty _sprite;
         private SerializedProperty _prefab;
         private SerializedProperty _moveSpeed;
+        private SerializedProperty _chaseRange;
+        private SerializedProperty _chaseFailRange;
         private SerializedProperty _moveType;
         private SerializedProperty _atk;
         private SerializedProperty _attackTerm;
@@ -139,6 +146,7 @@ namespace Temporary.Editor
         private SerializedProperty _startMana;
         private SerializedProperty _hpRecoveryPerSec;
         private SerializedProperty _manaRecoveryPerSec;
+        private SerializedProperty _manaRecoveryType;
         private SerializedProperty _skillTreeGraph;
         private SerializedProperty _casterFX;
         private SerializedProperty _targetFX;
@@ -152,6 +160,8 @@ namespace Temporary.Editor
             _sprite = serializedObject.FindProperty("_sprite");
             _prefab = serializedObject.FindProperty("_prefab");
             _moveSpeed = serializedObject.FindProperty("_moveSpeed");
+            _chaseRange = serializedObject.FindProperty("_chaseRange");
+            _chaseFailRange = serializedObject.FindProperty("_chaseFailRange");
             _moveType = serializedObject.FindProperty("_moveType");
             _atk = serializedObject.FindProperty("_atk");
             _attackTerm = serializedObject.FindProperty("_attackTerm");
@@ -172,6 +182,7 @@ namespace Temporary.Editor
             _startMana = serializedObject.FindProperty("_startMana");
             _hpRecoveryPerSec = serializedObject.FindProperty("_hpRecoveryPerSec");
             _manaRecoveryPerSec = serializedObject.FindProperty("_manaRecoveryPerSec");
+            _manaRecoveryType = serializedObject.FindProperty("_manaRecoveryType");
             _skillTreeGraph = serializedObject.FindProperty("_skillTreeGraph");
             _casterFX = serializedObject.FindProperty("_casterFX");
             _targetFX = serializedObject.FindProperty("_targetFX");
@@ -218,6 +229,18 @@ namespace Temporary.Editor
             GUILayout.Label("이동 속도", GUILayout.Width(192));
             EditorGUILayout.PropertyField(_moveSpeed, GUIContent.none);
             GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("추적 거리", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_chaseRange, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("추적 실패 거리", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_chaseFailRange, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            _chaseFailRange.floatValue = Mathf.Max(_chaseRange.floatValue, _chaseFailRange.floatValue);
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("이동 방식", GUILayout.Width(192));
@@ -334,9 +357,24 @@ namespace Temporary.Editor
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("초당 마나 회복량", GUILayout.Width(192));
-            EditorGUILayout.PropertyField(_manaRecoveryPerSec, GUIContent.none);
+            GUILayout.Label("마나 회복 방식", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_manaRecoveryType, GUIContent.none);
             GUILayout.EndHorizontal();
+
+            if (_manaRecoveryType.enumValueIndex != (int)EManaRecoveryType.None)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("초당 마나 회복량", GUILayout.Width(192));
+                EditorGUILayout.PropertyField(_manaRecoveryPerSec, GUIContent.none);
+                GUILayout.EndHorizontal();
+            }
+            else if (_manaRecoveryType.enumValueIndex == (int)EManaRecoveryType.Attack || _manaRecoveryType.enumValueIndex == (int)EManaRecoveryType.Hit)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("마나 회복량", GUILayout.Width(192));
+                EditorGUILayout.PropertyField(_manaRecoveryPerSec, GUIContent.none);
+                GUILayout.EndHorizontal();
+            }
 
             GUILayout.Space(10);
 

@@ -54,6 +54,20 @@ MonoBehaviour:
   _tickCycle: 0
   _tickCount: 0
   _applyTypeByAmountDatas: []
+--- !u!114 &-4340009676493502267
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a48a428d7c3dce54ebdbf0ecfd0cf521, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _unitType: 1
+  _buff: {fileID: 11400000, guid: f7835e92d6de3a44e9d93ad829d478a6, type: 2}
 --- !u!114 &-2784362375869666083
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -244,14 +258,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c07506fdbaa7fc45875ac46e8746973, type: 3}
   m_Name: "PassiveItem_\uC0AC\uAE30 \uC99D\uC9C4"
   m_EditorClassIdentifier: 
-  _sprite: {fileID: 0}
+  _sprite: {fileID: 21300000, guid: a2563f2b8dbc4044b9a50537d3a29962, type: 3}
   _id: 0
   _displayName: "\uC0AC\uAE30 \uC99D\uC9C4"
   _description: 
   _rarity: {fileID: 11400000, guid: fa45f24bb474d5b4290abb85fc24fc02, type: 2}
   _price: 0
   _casterFX: {fileID: 0}
-  triggers: []
+  triggers:
+  - {fileID: 7050040880960725874}
 --- !u!114 &356380309366351327
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -287,6 +302,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effects: []
   _globalEvent: {fileID: 11400000, guid: 584375c8e29c6c643813b0b87d06de1e, type: 2}
+--- !u!114 &2586288878100764724
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a48a428d7c3dce54ebdbf0ecfd0cf521, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _unitType: 0
+  _buff: {fileID: 0}
 --- !u!114 &3684226687144695334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -334,6 +363,20 @@ MonoBehaviour:
   _isInfinity: 0
   _duration: 0
   _abnormalStatus: {fileID: 0}
+--- !u!114 &7050040880960725874
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d9f1ec5f79b9e14997e30dd13e21a04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effects:
+  - {fileID: -4340009676493502267}
 --- !u!114 &7453294788118668667
 MonoBehaviour:
   m_ObjectHideFlags: 1

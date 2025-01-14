@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.Events;
 
 namespace Temporary.Core
 {
@@ -38,6 +39,9 @@ namespace Temporary.Core
 
         internal ConditionAbility currentAbility { get; private set; }
 
+        internal event UnityAction onAbilityInitialize;
+        internal event UnityAction onAbilityDeinitialize;
+
         internal void Initialize(Unit unit)
         {
             _healthAbility = GetComponent<HealthAbility>();
@@ -64,6 +68,8 @@ namespace Temporary.Core
             {
                 ability.Initialize(unit);
             }
+
+            onAbilityInitialize?.Invoke();
         }
 
         internal void Deinitialize()
@@ -76,6 +82,8 @@ namespace Temporary.Core
             {
                 ability.Deinitialize();
             }
+
+            onAbilityDeinitialize?.Invoke();
         }
 
         private void Update()
@@ -111,7 +119,7 @@ namespace Temporary.Core
                 if (ability.IsExecute())
                 {
                     // 기존 능력의 우선순위보다, 실행 가능한 능력의 우선순위가 높다면
-                    if (newAbility == null || ability.priorty > newAbility.priorty)
+                    if (newAbility == null || ability.priority > newAbility.priority)
                     {
                         newAbility = ability;
                     }
@@ -206,7 +214,7 @@ namespace Temporary.Editor
             }
 
             EditorGUILayout.Space();
-
+            
             if (_unit != null && _unit.currentAbility != null)
             {
                 EditorGUILayout.BeginVertical(GUI.skin.box);
@@ -375,7 +383,7 @@ namespace Temporary.Editor
             }
 
             // 정렬 및 이름 목록 갱신
-            _conditionAbilities.Sort((x, y) => x.priorty.CompareTo(y.priorty));
+            _conditionAbilities.Sort((x, y) => x.priority.CompareTo(y.priority));
 
             _abilityNames.AddRange(_conditionAbilities.Select(element => element.GetType().Name));
             _abilityNames.AddRange(_alwaysAbilities.Select(element => element.GetType().Name));

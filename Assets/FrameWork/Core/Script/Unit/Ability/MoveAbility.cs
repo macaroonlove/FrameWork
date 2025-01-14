@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 namespace Temporary.Core
 {
-    public class MoveAbility : AlwaysAbility
+    public class MoveAbility : ConditionAbility
     {
         [SerializeField, ReadOnly] private float _baseMoveSpeed;
 
@@ -81,6 +81,11 @@ namespace Temporary.Core
             }
         }
 
+        internal override bool IsExecute()
+        {
+            return true;
+        }
+
         #region 회전
         #region 2D 회전
         private bool IsUnitLeft(Vector3 direction)
@@ -96,7 +101,7 @@ namespace Temporary.Core
             bool isLeft = IsUnitLeft(direction);
 
             float scaleX = isLeft ? 1f : -1f;
-            transform.GetChild(1).DOScaleX(scaleX, 0.1f);
+            transform.GetChild(3).DOScaleX(scaleX, 0.1f);
         }
         #endregion
 

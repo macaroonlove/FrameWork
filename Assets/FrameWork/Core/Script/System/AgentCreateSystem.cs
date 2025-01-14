@@ -18,7 +18,7 @@ namespace Temporary.Core
 
         }
 
-        internal bool CreateUnit(AgentTemplate template)
+        internal bool CreateUnit(AgentTemplate template, Vector3 pos)
         {
             // 생성할 유닛 불러오기 (선택의 경우 매개변수로 아이디 등을 받음)
             //var templates = GameDataManager.Instance.ownedAgentTemplate;
@@ -26,7 +26,7 @@ namespace Temporary.Core
             //var template = templates[index];
 
             // 생성할 위치 찾기 (선택의 경우 매개변수로 위치를 받음)
-            Vector3 pos = new Vector3(0, 0, 0);
+            //Vector3 pos = new Vector3(0, 0, 0);
 
             // 유닛 생성하기
             var obj = _poolSystem.Spawn(template.prefab, transform);

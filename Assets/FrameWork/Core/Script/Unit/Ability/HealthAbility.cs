@@ -428,6 +428,8 @@ namespace Temporary.Core
         {
             onChangedShield?.Invoke(shieldAmount);
 
+            if (_shieldFX == null) return;
+
             if (shieldCount > 0)
             {
                 _shieldObject = _poolSystem.Spawn(_shieldFX, this.transform);

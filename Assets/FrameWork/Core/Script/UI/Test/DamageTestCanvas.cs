@@ -16,14 +16,19 @@ namespace Temporary.Core
 
         private Unit _unit;
 
-        internal void Initialize(Unit unit)
+        protected override void Awake()
         {
-            _unit = unit;
+            base.Awake();
 
             BindButton(typeof(Buttons));
             GetButton((int)Buttons.PhysicalDamageButton).onClick.AddListener(PhysicalDamage);
             GetButton((int)Buttons.MagicDamageButton).onClick.AddListener(MagicDamage);
             GetButton((int)Buttons.TrueDamageButton).onClick.AddListener(TrueDamage);
+        }
+
+        internal void Initialize(Unit unit)
+        {
+            _unit = unit;
         }
 
         private void PhysicalDamage()

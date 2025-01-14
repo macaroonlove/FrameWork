@@ -12,6 +12,7 @@ namespace Temporary.Core
         }
         #endregion
 
+        private Unit _unit;
         private ManaAbility _manaAbility;
 
         private Image _mana;
@@ -23,8 +24,22 @@ namespace Temporary.Core
             BindImage(typeof(Images));
             _mana = GetImage((int)Images.Mana_Fill);
 
-            _manaAbility = GetComponentInParent<ManaAbility>();
-            if (_manaAbility.finalMaxMana <= 0)
+            _unit = GetComponentInParent<Unit>();
+            _unit.onAbilityInitialize += OnAbilityInitialize;
+            _unit.onAbilityDeinitialize += OnAbilityDeinitialize;
+        }
+
+        private void OnDestroy()
+        {
+            _unit.onAbilityInitialize -= OnAbilityInitialize;
+            _unit.onAbilityDeinitialize -= OnAbilityDeinitialize;
+        }
+
+        private void OnAbilityInitialize()
+        {
+            _manaAbility = _unit.GetAbility<ManaAbility>();
+            
+            if (_manaAbility == null || _manaAbility.finalMaxMana <= 0)
             {
                 Hide();
             }
@@ -35,9 +50,14 @@ namespace Temporary.Core
             }
         }
 
-        private void OnDestroy()
+        private void OnAbilityDeinitialize()
         {
-            _manaAbility.onChangedMana -= OnChangedMana;
+            Hide();
+
+            if (_manaAbility.finalMaxMana > 0)
+            {
+                _manaAbility.onChangedMana -= OnChangedMana;
+            }
         }
 
         private void OnChangedMana(int mana)

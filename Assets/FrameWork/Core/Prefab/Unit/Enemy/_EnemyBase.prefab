@@ -78,7 +78,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56d59764afdacfb4189195b6d55cd485, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useUpdate: 1
+  _priority: 1
 --- !u!114 &1201786375016263730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,7 +92,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   useUpdate: 0
-  _missPopup: {fileID: 0}
+  _missPopup: {fileID: 5775782190100741365, guid: b6301d8b19b04cd49818b496b34a64a4,
+    type: 3}
   _hitFX: {fileID: 0}
 --- !u!114 &5233817599695414182
 MonoBehaviour:
@@ -108,11 +109,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   useUpdate: 1
   _shieldFX: {fileID: 0}
-  _physicalDamagePopup: {fileID: 0}
-  _magicDamagePopup: {fileID: 0}
-  _trueDamagePopup: {fileID: 0}
-  _healPopup: {fileID: 0}
-  _shieldPopup: {fileID: 0}
+  _physicalDamagePopup: {fileID: 5775782190100741365, guid: aa2e89036dd4fa245b8e5f9698c7ab3c,
+    type: 3}
+  _magicDamagePopup: {fileID: 5775782190100741365, guid: 95ff1d112ab1c154eaaf2182b76e0ce7,
+    type: 3}
+  _trueDamagePopup: {fileID: 5775782190100741365, guid: 1d558d8612a069e4e945621cc07804f2,
+    type: 3}
+  _healPopup: {fileID: 5775782190100741365, guid: 009de25995edd0d4da154f634c13b927,
+    type: 3}
+  _shieldPopup: {fileID: 5775782190100741365, guid: d6f2c24eb422d7c48bded2247634fbe6,
+    type: 3}
 --- !u!114 &3722239196496356631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,7 +237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d7de6ed1f89b284a9b802b194c78c15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _priorty: 0
+  _priority: 2
 --- !u!114 &7415324553390672476
 MonoBehaviour:
   m_ObjectHideFlags: 0

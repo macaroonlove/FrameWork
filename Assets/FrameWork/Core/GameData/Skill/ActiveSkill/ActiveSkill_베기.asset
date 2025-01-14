@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5093661109052b9438d278789d9e23d4, type: 3}
+  m_Name: "ActiveSkill_\uBCA0\uAE30"
+  m_EditorClassIdentifier: 
+  _sprite: {fileID: 21300000, guid: 2a5c892bdd014164da633b8c6fd0f246, type: 3}
+  _id: 0
+  _displayName: "\uBCA0\uAE30"
+  _description: "\uC801\uC744 \uBCA0\uC5B4 \uBB3C\uB9AC \uD53C\uD574(50 + <color=red>\uACF5\uACA9\uB825\uC758
+    100%</color> + <color=yellow>\uCD5C\uB300HP\uC758 10%</color>)\uB97C \uC785\uD799\uB2C8\uB2E4."
+  _needMana: 5
+  _cooldownTime: 5
+  _skillType: 0
+  _unitType: 0
+  _skillRange: 0
+  _parameterName: 
+  _parameterHash: 0
+  _casterFX: {fileID: 0}
+  _targetFX: {fileID: 0}
+  effects:
+  - {fileID: 7610122780046898410}
+--- !u!114 &7610122780046898410
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2468a6a634185654c8ce0ab02e8208f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _damageType: 1
+  _applyTypeByAmountDatas:
+  - applyType: 0
+    amount: 50
+  - applyType: 2
+    amount: 0.1
+  - applyType: 4
+    amount: 0.01
+  _attackType: 0
+  _target: 1
+  _radius: 3
+  _numberOfTarget: 0

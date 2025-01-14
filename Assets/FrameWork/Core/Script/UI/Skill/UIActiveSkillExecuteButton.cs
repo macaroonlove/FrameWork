@@ -92,6 +92,8 @@ namespace Temporary.Core
             _unit = unit;
             _template = template;
 
+            GetImage((int)Images.Icon).sprite = template.sprite;
+
             _inputSystem = BattleManager.Instance.GetSubSystem<InputSystem>();
             _manaAbility = _unit.GetAbility<ManaAbility>();
             _manaAbility.onChangedMana += OnChangeMana;
@@ -224,7 +226,7 @@ namespace Temporary.Core
         internal void ExecuteSkill()
         {
             if (IsInteractable == false) return;
-
+            
             if (_unit.GetAbility<ActiveSkillAbility>().TryExecuteSkill(_template))
             {
                 // 쿨타임 적용

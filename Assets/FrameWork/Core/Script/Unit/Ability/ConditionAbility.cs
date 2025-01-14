@@ -7,9 +7,9 @@ namespace Temporary.Core
     /// </summary>
     public abstract class ConditionAbility : Ability
     {
-        [SerializeField] private int _priorty;
+        [SerializeField] private int _priority;
 
-        public int priorty => _priorty;
+        public int priority => _priority;
 
         /// <summary>
         /// 실행가능 여부를 반환하는 추상 메서드

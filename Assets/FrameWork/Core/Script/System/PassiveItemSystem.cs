@@ -16,8 +16,20 @@ namespace Temporary.Core
         private List<GlobalEvent> _globalEvents = new List<GlobalEvent>();
         private List<UnitEvent> _unitEvents = new List<UnitEvent>();
 
+#if UNITY_EDITOR
+        [Header("Debug")]
+        [SerializeField] private List<PassiveItemTemplate> _debugItems = new List<PassiveItemTemplate>();
+#endif
+
         public void Initialize()
         {
+#if UNITY_EDITOR
+            foreach (var debugItem in _debugItems)
+            {
+                AddItem(debugItem, true);
+            }
+#endif
+
             BattleManager.Instance.GetSubSystem<AgentSystem>().onRegist += ApplyAlwaysEvent;
             BattleManager.Instance.GetSubSystem<EnemySystem>().onRegist += ApplyAlwaysEvent;
         }
@@ -30,7 +42,7 @@ namespace Temporary.Core
 
         private void ApplyAlwaysEvent(Unit unit)
         {
-            foreach(var effect in _alwaysEffects)
+            foreach (var effect in _alwaysEffects)
             {
                 effect.Execute(unit);
             }
@@ -132,7 +144,7 @@ namespace Temporary.Core
                 item.RemoveAll();
             }
             _unitEvents.Clear();
-            
+
             _items.Clear();
         }
 

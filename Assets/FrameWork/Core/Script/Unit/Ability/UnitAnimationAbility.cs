@@ -13,7 +13,7 @@ namespace Temporary.Core
         {
             _animator = GetComponentInChildren<Animator>();
 
-            _attack = Animator.StringToHash("attack");
+            _attack = Animator.StringToHash("Attack");
         }
 
         internal void Attack()

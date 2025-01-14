@@ -15,13 +15,15 @@ MonoBehaviour:
   _id: 0
   _displayName: "\uBAA8\uD5D8\uAC00"
   _description: 
-  _sprite: {fileID: 0}
+  _sprite: {fileID: 21300000, guid: e36b79d98daaaf247b097d172c363419, type: 3}
   _prefab: {fileID: 7137419757110548002, guid: 7d233aa6d5a7eda4586f7c721927a1a8, type: 3}
-  _moveSpeed: 0
+  _moveSpeed: 0.5
+  _chaseRange: 3
+  _chaseFailRange: 6
   _moveType: 0
-  _atk: 1
+  _atk: 10
   _attackTerm: 1
-  _attackRange: 1
+  _attackRange: 3
   _isProjectileAttack: 0
   _projectilePrefab: {fileID: 0}
   _spawnPoint: 0
@@ -31,14 +33,15 @@ MonoBehaviour:
   _criticalHitDamage: 1
   _physicalPenetration: 1
   _magicPenetration: 1
-  _maxHP: 10000
-  _physicalResistance: 1
-  _magicResistance: 1
-  _maxMana: 1
-  _startMana: 1
+  _maxHP: 1000
+  _physicalResistance: 10
+  _magicResistance: 5
+  _maxMana: 100
+  _startMana: 10
   _hpRecoveryPerSec: 1
   _manaRecoveryPerSec: 1
-  _skillTreeGraph: {fileID: 0}
+  _manaRecoveryType: 1
+  _skillTreeGraph: {fileID: 11400000, guid: ca706e233ac782f4d8225868d92fef80, type: 2}
   _casterFX: {fileID: 0}
   _targetFX: {fileID: 0}
   isOwned: 0

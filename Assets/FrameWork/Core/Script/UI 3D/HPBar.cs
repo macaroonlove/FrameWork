@@ -14,6 +14,7 @@ namespace Temporary.Core
         }
         #endregion
 
+        private Unit _unit;
         private HealthAbility _healthAbility;
 
         private Image _hp;
@@ -28,22 +29,33 @@ namespace Temporary.Core
             _hp = GetImage((int)Images.HP_Fill);
             _shield = GetImage((int)Images.Shield_Fill);
 
-            _healthAbility = GetComponentInParent<HealthAbility>();
-            _healthAbility.onChangedHealth += OnChangedHealth;
-            _healthAbility.onChangedShield += OnChangedShield;
-            _healthAbility.onDeath += OnDeath;
-        }
-
-        private void OnEnable()
-        {
-            Show();
+            _unit = GetComponentInParent<Unit>();
+            
+            _unit.onAbilityInitialize += OnAbilityInitialize;
+            _unit.onAbilityDeinitialize += OnAbilityDeinitialize;
         }
 
         private void OnDestroy()
         {
+            _unit.onAbilityInitialize -= OnAbilityInitialize;
+            _unit.onAbilityDeinitialize -= OnAbilityDeinitialize;
+        }
+
+        private void OnAbilityInitialize()
+        {
+            Show();
+
+            _healthAbility = _unit.healthAbility;
+            _healthAbility.onChangedHealth += OnChangedHealth;
+            _healthAbility.onChangedShield += OnChangedShield;
+        }
+
+        private void OnAbilityDeinitialize()
+        {
+            Hide();
+
             _healthAbility.onChangedHealth -= OnChangedHealth;
             _healthAbility.onChangedShield -= OnChangedShield;
-            _healthAbility.onDeath -= OnDeath;
         }
 
         private void OnChangedHealth(int hp)
@@ -73,11 +85,6 @@ namespace Temporary.Core
                 _shield.rectTransform.anchoredPosition = _shieldPos;
                 _shield.fillOrigin = 1;
             }
-        }
-
-        private void OnDeath()
-        {
-            Hide();
         }
     }
 }

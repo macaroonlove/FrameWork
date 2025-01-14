@@ -16,14 +16,19 @@ namespace Temporary.Core
 
         private Unit _unit;
 
-        internal void Initialize(Unit unit)
+        protected override void Awake()
         {
-            _unit = unit;
+            base.Awake();
 
             BindButton(typeof(Buttons));
             GetButton((int)Buttons.HealButton).onClick.AddListener(Heal);
             GetButton((int)Buttons.ShieldInfinityButton).onClick.AddListener(InfinityShield);
             GetButton((int)Buttons.ShieldDurationButton).onClick.AddListener(DurationShield);
+        }
+
+        internal void Initialize(Unit unit)
+        {
+            _unit = unit;
         }
 
         private void Heal()

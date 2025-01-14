@@ -89,12 +89,14 @@ namespace Temporary.Core
                 _baseMaxMana = agentUnit.template.MaxMana;
                 _currentMana = agentUnit.template.StartMana;
                 _baseManaRecoveryPerSec = agentUnit.template.ManaRecoveryPerSec;
+                _manaRecoveryType = agentUnit.template.ManaRecoveryType;
             }
             else if (unit is EnemyUnit enemyUnit)
             {
                 _baseMaxMana = enemyUnit.template.MaxMana;
                 _currentMana = enemyUnit.template.StartMana;
                 _baseManaRecoveryPerSec = enemyUnit.template.ManaRecoveryPerSec;
+                _manaRecoveryType = enemyUnit.template.ManaRecoveryType;
             }
 
             SetManaRecoveryType(true);
@@ -135,6 +137,7 @@ namespace Temporary.Core
             if (_manaRecoveryCooldown > 0)
             {
                 _manaRecoveryCooldown -= Time.deltaTime;
+                return;
             }
 
             Recovery(finalManaRecoveryPerSec);
@@ -167,7 +170,7 @@ namespace Temporary.Core
 
         private void SetMana(int mana)
         {
-            _currentMana = Mathf.Max(_baseMaxMana, mana);
+            _currentMana = Mathf.Min(_baseMaxMana, mana);
             onChangedMana?.Invoke(_currentMana);
         }
         #endregion

@@ -28,16 +28,22 @@ namespace Temporary.Core
         private TextMeshProUGUI _statusNameText;
         private int _index = 0;
 
-        internal void Initialize(Unit unit)
+        protected override void Awake()
         {
-            _unit = unit;
+            base.Awake();
+
             BindButton(typeof(Buttons));
             BindText(typeof(Texts));
             GetButton((int)Buttons.StatusApplyButton).onClick.AddListener(ApplyStatus);
             GetButton((int)Buttons.PrevButton).onClick.AddListener(PrevButton);
             GetButton((int)Buttons.NextButton).onClick.AddListener(NextButton);
             _statusNameText = GetText((int)Texts.StatusName);
+        }
 
+        internal void Initialize(Unit unit)
+        {
+            _unit = unit;
+            
             UpdateTemplate();
         }
 
