@@ -27,6 +27,7 @@ namespace Temporary.Core
         private float _baseAttackRange;
         private EAttackType _baseAttackType;
         private float _attackCooldown;
+        private bool _isAttackActive;
 
         private AttackEventHandler _attackEventHandler;
         private bool _isEventAttack;
@@ -225,12 +226,14 @@ namespace Temporary.Core
 
         internal override bool IsExecute()
         {
+            if (_isAttackActive) return true;
+
             return IsAction();
         }
 
         internal override void UpdateAbility()
         {
-            if (IsAction() == false)
+            if (_isAttackActive == false)
             {
                 unit.ReleaseCurrentAbility();
             }
@@ -256,6 +259,8 @@ namespace Temporary.Core
             // 공격이 성공했을 경우
             if (isAction)
             {
+                _isAttackActive = true;
+
                 // 쿨타임 재생
                 _attackCooldown = finalAttackTerm;
             }
@@ -369,6 +374,8 @@ namespace Temporary.Core
                     ApplyAttack(attackTarget);
                 }
             }
+
+            _isAttackActive = false;
         }
 
         private void ApplyAttack(Unit attackTarget)
@@ -431,6 +438,8 @@ namespace Temporary.Core
                     ApplyHeal(healTarget);
                 }
             }
+
+            _isAttackActive = false;
         }
 
         private void ApplyHeal(Unit healTarget)

@@ -16,6 +16,7 @@ namespace Temporary.Core
             var buff = GetComponentInChildren<BuffTestCanvas>();
             var abnormalStatus = GetComponentInChildren<AbnormalStatusTestCanvas>();
             var activeSkill = GetComponentInChildren<ActiveSkillTestCanvas>();
+            var skillTreeTestCanvas = GetComponentInChildren<SkillTreeTestCanvas>();
 
             BattleManager.Instance.InitializeBattle();
             BattleManager.Instance.GetSubSystem<AgentCreateSystem>().CreateUnit(_agentTemplate, Vector3.zero);
@@ -29,6 +30,7 @@ namespace Temporary.Core
                 buff?.Initialize(unit);
                 abnormalStatus?.Initialize(unit);
                 activeSkill?.Initialize(unit);
+                skillTreeTestCanvas?.Initialize(unit);
             };
         }
     }
