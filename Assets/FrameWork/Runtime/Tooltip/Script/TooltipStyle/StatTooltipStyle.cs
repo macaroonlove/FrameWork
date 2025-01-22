@@ -20,8 +20,8 @@ namespace FrameWork.Tooltip
         {
             var data = new TooltipData();
 
-            data.Add("BaseStat", "");
-            data.Add("DetailStat", "");
+            data.AddString("BaseStat", "");
+            data.AddString("DetailStat", "");
 
             return data;
         }

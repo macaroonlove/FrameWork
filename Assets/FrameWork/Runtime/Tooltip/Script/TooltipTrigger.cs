@@ -106,14 +106,14 @@ namespace FrameWork.Tooltip.Editor
                     }
                 }
 
-                // 텍스처 데이터 처리
-                var textureData = trigger.tooltipData.getAllTexture;
-                foreach (var key in textureData.Keys.ToList())
+                // 스프라이트 데이터 처리
+                var spriteData = trigger.tooltipData.getAllSprite;
+                foreach (var key in spriteData.Keys.ToList())
                 {
-                    Texture newValue = (Texture)EditorGUILayout.ObjectField(key, textureData[key], typeof(Texture), allowSceneObjects: false);
-                    if (newValue != textureData[key])
+                    Sprite newValue = (Sprite)EditorGUILayout.ObjectField(key, spriteData[key], typeof(Sprite), false);
+                    if (newValue != spriteData[key])
                     {
-                        trigger.tooltipData.SetTexture(key, newValue);
+                        trigger.tooltipData.SetSprite(key, newValue);
                         GUI.changed = true;
                     }
                 }

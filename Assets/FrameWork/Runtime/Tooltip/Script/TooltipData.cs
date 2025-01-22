@@ -7,41 +7,43 @@ namespace FrameWork.Tooltip
     [System.Serializable]
     public class TooltipData
     {
-        [SerializeField] private List<string> _keys = new List<string>();
+        [SerializeField] private List<string> _stringKeys = new List<string>();
+        [SerializeField] private List<string> _spriteKeys = new List<string>();
+
         [SerializeField] private List<string> _stringValues = new List<string>();
-        [SerializeField] private List<Texture> _textureValues = new List<Texture>();
+        [SerializeField] private List<Sprite> _spriteValues = new List<Sprite>();
 
         private Dictionary<string, string> _stringData = new Dictionary<string, string>();
-        private Dictionary<string, Texture> _textureData = new Dictionary<string, Texture>();
+        private Dictionary<string, Sprite> _spriteData = new Dictionary<string, Sprite>();
 
         internal Dictionary<string, string> getAllString => _stringData;
-        internal Dictionary<string, Texture> getAllTexture => _textureData;
+        internal Dictionary<string, Sprite> getAllSprite => _spriteData;
 
         public void InitializeData()
         {
-            _stringData = _keys.Zip(_stringValues, (key, value) => new { key, value })
+            _stringData = _stringKeys.Zip(_stringValues, (key, value) => new { key, value })
                              .ToDictionary(x => x.key, x => x.value);
-            _textureData = _keys.Zip(_textureValues, (key, value) => new { key, value })
+            _spriteData = _spriteKeys.Zip(_spriteValues, (key, value) => new { key, value })
                               .ToDictionary(x => x.key, x => x.value);
         }
 
         #region 데이터 추가
-        internal void Add(string key, string value)
+        internal void AddString(string key, string value)
         {
             if (_stringData.ContainsKey(key)) return;
 
-            _keys.Add(key);
+            _stringKeys.Add(key);
             _stringData[key] = value;
-            _stringValues = _keys.Select(key => _stringData.ContainsKey(key) ? _stringData[key] : "").ToList();
+            _stringValues = _stringKeys.Select(key => _stringData.ContainsKey(key) ? _stringData[key] : "").ToList();
         }
 
-        internal void Add(string key, Texture value)
+        internal void AddSprite(string key, Sprite value)
         {
-            if (_textureData.ContainsKey(key)) return;
+            if (_spriteData.ContainsKey(key)) return;
 
-            _keys.Add(key);
-            _textureData[key] = value;
-            _textureValues = _keys.Select(key => _textureData.ContainsKey(key) ? _textureData[key] : null).ToList();
+            _spriteKeys.Add(key);
+            _spriteData[key] = value;
+            _spriteValues = _spriteKeys.Select(key => _spriteData.ContainsKey(key) ? _spriteData[key] : null).ToList();
         }
         #endregion
 
@@ -51,39 +53,39 @@ namespace FrameWork.Tooltip
             if (_stringData.ContainsKey(key))
             {
                 _stringData[key] = value;
-                _stringValues = _keys.Select(key => _stringData.ContainsKey(key) ? _stringData[key] : "").ToList();
+                _stringValues = _stringKeys.Select(key => _stringData.ContainsKey(key) ? _stringData[key] : "").ToList();
             }
             else
             {
-                Add(key, value);
+                AddString(key, value);
             }
         }
 
-        internal void SetTexture(string key, Texture value)
+        internal void SetSprite(string key, Sprite value)
         {
-            if (_textureData.ContainsKey(key))
+            if (_spriteData.ContainsKey(key))
             {
-                _textureData[key] = value;
-                _textureValues = _keys.Select(key => _textureData.ContainsKey(key) ? _textureData[key] : null).ToList();
+                _spriteData[key] = value;
+                _spriteValues = _spriteKeys.Select(key => _spriteData.ContainsKey(key) ? _spriteData[key] : null).ToList();
             }
             else
             {
-                Add(key, value);
+                AddSprite(key, value);
             }
         }
         #endregion
 
         internal string GetString(string key) => _stringData.ContainsKey(key) ? _stringData[key] : string.Empty;
-        internal Texture GetTexture(string key) => _textureData.ContainsKey(key) ? _textureData[key] : null;
+        internal Sprite GetSprite(string key) => _spriteData.ContainsKey(key) ? _spriteData[key] : null;
 
         internal bool IsInitialize()
         {
-            return _keys.Count > 0;
+            return _stringKeys.Count > 0 || _spriteKeys.Count > 0;
         }
 
         internal bool IsInitializeData()
         {
-            return _stringData.Count > 0 || _textureData.Count > 0;
+            return _stringData.Count > 0 || _spriteData.Count > 0;
         }
     }
 }

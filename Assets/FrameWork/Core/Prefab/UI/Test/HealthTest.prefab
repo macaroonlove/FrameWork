@@ -746,6 +746,7 @@ GameObject:
   - component: {fileID: 2180042621150181834}
   - component: {fileID: 5901894998141957425}
   - component: {fileID: 2862489028596660174}
+  - component: {fileID: 6208343458547775017}
   m_Layer: 0
   m_Name: ShieldInfinityButton
   m_TagString: Untagged
@@ -856,3 +857,29 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6208343458547775017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8632740074160162466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b47eb08c5e798734285f019b5cf6e202, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _tooltipStyle: {fileID: -1564438647186107921, guid: c77d903157c635846ba93f29832b7196,
+    type: 3}
+  _tooltipPosition: 8
+  _tooltipOffset: {x: 110, y: 50}
+  tooltipData:
+    _stringKeys:
+    - Description
+    _spriteKeys:
+    - AssistanceImage
+    _stringValues:
+    - "1~100 \uC0AC\uC774\uC758 \uBB34\uD55C \uC9C0\uC18D \uBCF4\uD638\uB9C9\uC744
+      \uC5BB\uC2B5\uB2C8\uB2E4."
+    _spriteValues:
+    - {fileID: 21300000, guid: 05c813996bf9845dfb047fd3cc7fa9a3, type: 3}
