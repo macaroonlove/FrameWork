@@ -616,11 +616,12 @@ MonoBehaviour:
   _tooltipPosition: 8
   _tooltipOffset: {x: 110, y: -50}
   tooltipData:
-    _keys:
+    _stringKeys:
     - Description
+    _spriteKeys: []
     _stringValues:
     - "1~100 \uC0AC\uC774\uC758 \uBB3C\uB9AC \uD53C\uD574\uB97C \uC785\uD799\uB2C8\uB2E4."
-    _textureValues: []
+    _spriteValues: []
 --- !u!1 &8957590334163290912
 GameObject:
   m_ObjectHideFlags: 0

@@ -36,7 +36,7 @@ namespace FrameWork.Tooltip
             style.ApplyData(trigger.tooltipData);
 
             var rect = style.transform as RectTransform;
-            SetRectTransform(rect, trigger.tooltipPosition);
+            SetAnchorPivot(rect, trigger.tooltipPosition);
             style.transform.position = trigger.transform.position;
             rect.anchoredPosition += trigger.tooltipOffset;
         }
@@ -70,7 +70,7 @@ namespace FrameWork.Tooltip
             return instance;
         }
 
-        private void SetRectTransform(RectTransform rectTransform, TipPosition tipPosition)
+        private void SetAnchorPivot(RectTransform rectTransform, TipPosition tipPosition)
         {
             Vector2 anchorPosition = Vector2.zero;
 

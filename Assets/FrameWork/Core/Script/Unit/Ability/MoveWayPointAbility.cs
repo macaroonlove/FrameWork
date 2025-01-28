@@ -66,6 +66,8 @@ namespace Temporary.Core
             // 3D È¸Àü
             //RotateUnit(direction);
             #endregion
+
+            MoveAnimation();
         }
     }
 }

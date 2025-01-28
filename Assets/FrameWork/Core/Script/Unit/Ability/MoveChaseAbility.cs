@@ -63,9 +63,16 @@ namespace Temporary.Core
             {
                 // 장애물이 없을 때, 직진 이동
                 float distance = (_targetPosition.position - transform.position).sqrMagnitude;
+
                 if (distance > _stoppingDistance)
                 {
                     transform.position = Vector3.MoveTowards(transform.position, _targetPosition.position, finalMoveSpeed * Time.deltaTime);
+
+                    MoveAnimation();
+                }
+                else
+                {
+                    StopMoveAnimation();
                 }
 
                 if (distance > _chaseFailRange)

@@ -33,8 +33,8 @@ namespace FrameWork.Tooltip
             if (_stringData.ContainsKey(key)) return;
 
             _stringKeys.Add(key);
+            _stringValues.Add(value);
             _stringData[key] = value;
-            _stringValues = _stringKeys.Select(key => _stringData.ContainsKey(key) ? _stringData[key] : "").ToList();
         }
 
         internal void AddSprite(string key, Sprite value)
@@ -42,8 +42,8 @@ namespace FrameWork.Tooltip
             if (_spriteData.ContainsKey(key)) return;
 
             _spriteKeys.Add(key);
+            _spriteValues.Add(value);
             _spriteData[key] = value;
-            _spriteValues = _spriteKeys.Select(key => _spriteData.ContainsKey(key) ? _spriteData[key] : null).ToList();
         }
         #endregion
 

@@ -11,6 +11,7 @@ namespace Temporary.Core
 
         private BuffAbility _buffAbility;
         private AbnormalStatusAbility _abnormalStatusAbility;
+        private UnitAnimationAbility _unitAnimationAbility;
 
         #region 3D의 경우 (2D의 경우 삭제)
         protected NavMeshAgent _navMeshAgent;
@@ -70,6 +71,7 @@ namespace Temporary.Core
 
             _buffAbility = unit.GetAbility<BuffAbility>();
             _abnormalStatusAbility = unit.GetAbility<AbnormalStatusAbility>();
+            _unitAnimationAbility = unit.GetAbility<UnitAnimationAbility>();
 
             if (unit is AgentUnit agentUnit)
             {
@@ -116,5 +118,15 @@ namespace Temporary.Core
         }
         #endregion
         #endregion
+
+        protected void MoveAnimation()
+        {
+            _unitAnimationAbility.Move(finalMoveSpeed);
+        }
+
+        protected void StopMoveAnimation()
+        {
+            _unitAnimationAbility.Move(0);
+        }
     }
 }
