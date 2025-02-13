@@ -159,60 +159,54 @@ AnimatorController:
   m_Name: NormalAnimator
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: Run
-    m_Type: 4
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
   - m_Name: Attack
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: Die
-    m_Type: 9
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: AttackSpeed
     m_Type: 1
     m_DefaultFloat: 1
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: NormalState
-    m_Type: 1
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: SkillState
-    m_Type: 1
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: RunState
-    m_Type: 1
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: AttackState
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
+  - m_Name: NormalState
+    m_Type: 1
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
+  - m_Name: SkillState
+    m_Type: 1
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
+  - m_Name: MoveState
+    m_Type: 1
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
+  - m_Name: Die
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
   - m_Name: EditChk
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -237,13 +231,13 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -3005496446509145968}
-    m_Position: {x: 80, y: -300, z: 0}
+    m_Position: {x: -80, y: -60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 5536674428392761870}
-    m_Position: {x: 220, y: -410, z: 0}
+    m_Position: {x: 60, y: -170, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 5016202323645204772}
-    m_Position: {x: -70, y: -410, z: 0}
+    m_Position: {x: -230, y: -170, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -364,7 +358,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: RunState
+  m_Name: MoveState
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -391,7 +385,7 @@ BlendTree:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: RunState
+  m_Name: MoveState
   m_Childs:
   - serializedVersion: 2
     m_Motion: {fileID: 7400000, guid: f28f6b07698afa64788c223754b1f4ff, type: 2}
@@ -403,21 +397,13 @@ BlendTree:
     m_Mirror: 0
   - serializedVersion: 2
     m_Motion: {fileID: 7400000, guid: 45bbd5bcac10f2248acbdb405a96904c, type: 2}
-    m_Threshold: 0.5
-    m_Position: {x: 0, y: 0}
-    m_TimeScale: 1
-    m_CycleOffset: 0
-    m_DirectBlendParameter: AttackSpeed
-    m_Mirror: 0
-  - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: fd50d243f2c25470ca643b0e4b0605f1, type: 2}
     m_Threshold: 1
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
     m_CycleOffset: 0
     m_DirectBlendParameter: AttackSpeed
     m_Mirror: 0
-  m_BlendParameter: RunState
+  m_BlendParameter: MoveState
   m_BlendParameterY: AttackSpeed
   m_MinThreshold: 0
   m_MaxThreshold: 1
