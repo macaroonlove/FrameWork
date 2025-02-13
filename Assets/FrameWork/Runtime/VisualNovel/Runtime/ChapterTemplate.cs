@@ -117,6 +117,7 @@ namespace FrameWork.VisualNovel.Editor
         private void CreateEpisodeCallback(object obj)
         {
             var episode = CreateInstance((Type)obj) as Episode;
+            
             if (episode != null)
             {
                 episode.hideFlags = HideFlags.HideInHierarchy;
@@ -163,7 +164,7 @@ namespace FrameWork.VisualNovel.Editor
 
             GUILayout.Space(20);
 
-            _reorderableList.DoLayoutList();
+            _reorderableList?.DoLayoutList();
 
             serializedObject.ApplyModifiedProperties();
 
@@ -208,6 +209,9 @@ namespace FrameWork.VisualNovel.Editor
 
         private void ConvertCSVToEpisode(string data)
         {
+            var template = target as ChapterTemplate;
+            var path = AssetDatabase.GetAssetPath(template);
+
             List<Episode> episodes = _target.episodes;
             episodes.Clear();
 
@@ -219,72 +223,70 @@ namespace FrameWork.VisualNovel.Editor
 
                 if (Enum.TryParse(cell[0], out CommandType command))
                 {
+                    Episode episode = null;
+
                     switch (command)
                     {
                         case CommandType.Speak_Start:
-                            SpeakStartEpisode speakStartEpisode = new SpeakStartEpisode();
-                            speakStartEpisode.Initialize(cell[1], cell[2]);
-                            episodes.Add(speakStartEpisode);
+                            episode = CreateInstance<SpeakStartEpisode>();
+                            ((SpeakStartEpisode)episode).Initialize(cell[1], cell[2]);
                             break;
                         case CommandType.Speak_End:
-                            SpeakEndEpisode speakEndEpisode = new SpeakEndEpisode();
-                            episodes.Add(speakEndEpisode);
+                            episode = CreateInstance<SpeakEndEpisode>();
                             break;
                         case CommandType.SCG_Show:
-                            SCGShowEpisode scgShowEpisode = new SCGShowEpisode();
-                            scgShowEpisode.Initialize(cell[1], cell[2]);
-                            episodes.Add(scgShowEpisode);
+                            episode = CreateInstance<SCGShowEpisode>();
+                            ((SCGShowEpisode)episode).Initialize(cell[1], cell[2]);
                             break;
                         case CommandType.SCG_Hide:
-                            SCGHideEpisode scgHideEpisode = new SCGHideEpisode();
-                            scgHideEpisode.Initialize(cell[1]);
-                            episodes.Add(scgHideEpisode);
+                            episode = CreateInstance<SCGHideEpisode>();
+                            ((SCGHideEpisode)episode).Initialize(cell[1]);
                             break;
                         case CommandType.SCG_Move:
-                            SCGMoveEpisode scgMoveEpisode = new SCGMoveEpisode();
-                            scgMoveEpisode.Initialize(cell[1], cell[2]);
-                            episodes.Add(scgMoveEpisode);
+                            episode = CreateInstance<SCGMoveEpisode>();
+                            ((SCGMoveEpisode)episode).Initialize(cell[1], cell[2]);
                             break;
                         case CommandType.ECG_Show:
-                            ECGShowEpisode ecgShowEpisode = new ECGShowEpisode();
-                            ecgShowEpisode.Initialize(cell[1]);
-                            episodes.Add(ecgShowEpisode);
+                            episode = CreateInstance<ECGShowEpisode>();
+                            ((ECGShowEpisode)episode).Initialize(cell[1]);
                             break;
                         case CommandType.ECG_Hide:
-                            ECGHideEpisode ecgHideEpisode = new ECGHideEpisode();
-                            episodes.Add(ecgHideEpisode);
+                            episode = CreateInstance<ECGHideEpisode>();
                             break;
                         case CommandType.BGM_Play:
-                            BGMPlayEpisode bgmPlayEpisode = new BGMPlayEpisode();
-                            bgmPlayEpisode.Initialize(cell[1]);
-                            episodes.Add(bgmPlayEpisode);
+                            episode = CreateInstance<BGMPlayEpisode>();
+                            ((BGMPlayEpisode)episode).Initialize(cell[1]);
                             break;
                         case CommandType.BGM_Stop:
-                            BGMStopEpisode bgmStopEpisode = new BGMStopEpisode();
-                            bgmStopEpisode.Initialize(cell[1]);
-                            episodes.Add(bgmStopEpisode);
+                            episode = CreateInstance<BGMStopEpisode>();
+                            ((BGMStopEpisode)episode).Initialize(cell[1]);
                             break;
                         case CommandType.SFX_Play:
-                            SFXPlayEpisode sfxPlayEpisode = new SFXPlayEpisode();
-                            sfxPlayEpisode.Initialize(cell[1]);
-                            episodes.Add(sfxPlayEpisode);
+                            episode = CreateInstance<SFXPlayEpisode>();
+                            ((SFXPlayEpisode)episode).Initialize(cell[1]);
                             break;
                         case CommandType.SFX_Stop:
-                            SFXStopEpisode sfxStopEpisode = new SFXStopEpisode();
-                            sfxStopEpisode.Initialize(cell[1]);
-                            episodes.Add(sfxStopEpisode);
+                            episode = CreateInstance<SFXStopEpisode>();
+                            ((SFXStopEpisode)episode).Initialize(cell[1]);
                             break;
                         case CommandType.CommandGroup_Start:
-                            CommandGroupStartEpisode commandGroupStartEpisode = new CommandGroupStartEpisode();
-                            episodes.Add(commandGroupStartEpisode);
+                            episode = CreateInstance<CommandGroupStartEpisode>();
                             break;
                         case CommandType.CommandGroup_End:
-                            CommandGroupEndEpisode commandGroupEndEpisode = new CommandGroupEndEpisode();
-                            episodes.Add(commandGroupEndEpisode);
+                            episode = CreateInstance<CommandGroupEndEpisode>();
                             break;
+                    }
+
+                    if (episode != null)
+                    {
+                        episode.hideFlags = HideFlags.HideInHierarchy;
+                        AssetDatabase.AddObjectToAsset(episode, path);
+                        episodes.Add(episode);
                     }
                 }
             }
+            
+            EditorUtility.SetDirty(template);
         }
         #endregion
     }
