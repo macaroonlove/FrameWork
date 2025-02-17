@@ -9,6 +9,7 @@ namespace FrameWork.VisualNovel
         [HideInInspector, SerializeField] private string _sheetID;
         [HideInInspector, SerializeField] private string _gid;
         [HideInInspector, SerializeField] private string _range = "A2:C";
+        [HideInInspector, SerializeField] internal ChapterTemplate nextChapter;
 
         [HideInInspector] public List<Episode> episodes = new List<Episode>();
 
@@ -39,6 +40,7 @@ namespace FrameWork.VisualNovel.Editor
         private SerializedProperty _sheetID;
         private SerializedProperty _gid;
         private SerializedProperty _range;
+        private SerializedProperty nextChapter;
 
         private ReorderableList _reorderableList;
 
@@ -50,6 +52,7 @@ namespace FrameWork.VisualNovel.Editor
             _sheetID = serializedObject.FindProperty("_sheetID");
             _gid = serializedObject.FindProperty("_gid");
             _range = serializedObject.FindProperty("_range");
+            nextChapter = serializedObject.FindProperty("nextChapter");
 
             SetEpisodeList();
         }
@@ -138,6 +141,13 @@ namespace FrameWork.VisualNovel.Editor
             GUILayout.BeginHorizontal();
             GUILayout.Label("주제", GUILayout.Width(120));
             EditorGUILayout.PropertyField(_title, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("다음 챕터", GUILayout.Width(120));
+            EditorGUILayout.PropertyField(nextChapter, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
@@ -259,7 +269,6 @@ namespace FrameWork.VisualNovel.Editor
                             break;
                         case CommandType.BGM_Stop:
                             episode = CreateInstance<BGMStopEpisode>();
-                            ((BGMStopEpisode)episode).Initialize(cell[1]);
                             break;
                         case CommandType.SFX_Play:
                             episode = CreateInstance<SFXPlayEpisode>();
@@ -267,7 +276,6 @@ namespace FrameWork.VisualNovel.Editor
                             break;
                         case CommandType.SFX_Stop:
                             episode = CreateInstance<SFXStopEpisode>();
-                            ((SFXStopEpisode)episode).Initialize(cell[1]);
                             break;
                         case CommandType.CommandGroup_Start:
                             episode = CreateInstance<CommandGroupStartEpisode>();

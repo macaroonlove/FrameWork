@@ -1,4 +1,3 @@
-using DG.Tweening;
 using System;
 using UnityEditor;
 using UnityEngine;
@@ -6,18 +5,13 @@ using UnityEngine;
 namespace FrameWork.VisualNovel
 {
     [Serializable]
-    public class SCGMoveEpisode : ThemeEpisode
+    public class SCGShowEpisode : ThemeEpisode
     {
-        public override CommandType command => CommandType.SCG_Move;
+        public override CommandType command => CommandType.SCG_Show;
 
+        public int id;
         public Rect position;
-        public float anchorX;
-        public float anchorY;
-        public float duration;
-        public int loopCount = 1;
-        public Ease ease;
-        public bool isReturn;
-        public Ease returnEase;
+        public Vector2 anchor;
 
         public void Initialize(string theme, string cell)
         {
@@ -35,6 +29,9 @@ namespace FrameWork.VisualNovel
 
                     switch (key)
                     {
+                        case "id":
+                            int.TryParse(value, out id);
+                            break;
                         case "posX":
                             if (int.TryParse(value, out int x))
                             {
@@ -63,13 +60,13 @@ namespace FrameWork.VisualNovel
                             switch (value)
                             {
                                 case "left":
-                                    anchorX = 0;
+                                    anchor.x = 0;
                                     break;
                                 case "center":
-                                    anchorX = 0.5f;
+                                    anchor.x = 0.5f;
                                     break;
                                 case "right":
-                                    anchorX = 1;
+                                    anchor.x = 1;
                                     break;
                             }
                             break;
@@ -77,13 +74,13 @@ namespace FrameWork.VisualNovel
                             switch (value)
                             {
                                 case "bottom":
-                                    anchorY = 0;
+                                    anchor.y = 0;
                                     break;
                                 case "middle":
-                                    anchorY = 0.5f;
+                                    anchor.y = 0.5f;
                                     break;
                                 case "top":
-                                    anchorY = 1;
+                                    anchor.y = 1;
                                     break;
                             }
                             break;
@@ -93,9 +90,16 @@ namespace FrameWork.VisualNovel
         }
 
 #if UNITY_EDITOR
+        private string[] _horizontal = { "Left", "Center", "Right" };
+        private string[] _vertical = { "Bottom", "Middle", "Top" };
+        private float[] _anchorValues = { 0, 0.5f, 1 };
+
         public override void Draw(Rect rect)
         {
             base.Draw(rect);
+
+            EditorGUI.LabelField(new Rect(rect.x + 130, rect.y + 24, 60, 18), "SCG ID");
+            id = EditorGUI.IntField(new Rect(rect.x + 190, rect.y + 24, 130, 18), id);
 
             int middle = (int)(rect.width - 330) / 2;
             var labelRect = new Rect(rect.x + 330, rect.y + 4, rect.width - 330, 40);
@@ -109,52 +113,22 @@ namespace FrameWork.VisualNovel
             labelRect.height = 18;
 
             EditorGUI.LabelField(labelRect, "앵커 X");
-            anchorX = EditorGUI.FloatField(valueRect, anchorX);
+            int selectedX = Array.IndexOf(_anchorValues, anchor.x);
+            selectedX = EditorGUI.Popup(valueRect, selectedX, _horizontal);
+            if (selectedX >= 0) anchor.x = _anchorValues[selectedX];
 
             labelRect.x += middle;
             valueRect.x += middle;
             valueRect.width = middle - 60;
             EditorGUI.LabelField(labelRect, "앵커 Y");
-            anchorY = EditorGUI.FloatField(valueRect, anchorY);
-
-            labelRect.y += 20;
-            valueRect.y += 20;
-            EditorGUI.LabelField(labelRect, "반복 횟수");
-            loopCount = EditorGUI.IntField(valueRect, loopCount);
-
-            labelRect.x -= middle;
-            valueRect.x -= middle;
-            valueRect.width = middle - 62;
-            EditorGUI.LabelField(labelRect, "지속 시간");
-            duration = EditorGUI.FloatField(valueRect, duration);
-
-            labelRect.y += 20;
-            valueRect.y += 20;
-            valueRect.x += 60;
-            labelRect.width = 120;
-            valueRect.width = rect.width - 450;
-            EditorGUI.LabelField(labelRect, "애니메이션 방식");
-            ease = (Ease)EditorGUI.EnumPopup(valueRect, ease);
-
-            labelRect.y += 20;
-            valueRect.y += 20;
-            EditorGUI.LabelField(labelRect, "본래 위치로 돌아갈지");
-            isReturn = EditorGUI.Toggle(valueRect, isReturn);
-
-            if (isReturn)
-            {
-                labelRect.y += 20;
-                valueRect.y += 20;
-                EditorGUI.LabelField(labelRect, "리턴 애니메이션 방식");
-                returnEase = (Ease)EditorGUI.EnumPopup(valueRect, returnEase);
-            }
+            int selectedY = Array.IndexOf(_anchorValues, anchor.y);
+            selectedY = EditorGUI.Popup(valueRect, selectedY, _vertical);
+            if (selectedY >= 0) anchor.y = _anchorValues[selectedY];
         }
 
         public override int GetHeight()
         {
-            if (isReturn) return 7;
-            
-            return 6;
+            return 3;
         }
 #endif
     }

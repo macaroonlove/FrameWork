@@ -114,15 +114,9 @@ MonoBehaviour:
   _sheetID: 1YiRc26I9IONog01MkGinMkmTzY9E6a6F8J4Az3EY4Dw
   _gid: 2043098924
   _range: A2:C100
+  nextChapter: {fileID: 0}
   episodes:
-  - {fileID: -2503114545369101753}
-  - {fileID: 1755331663832182981}
   - {fileID: 6770083075692224467}
-  - {fileID: -4010695234916397437}
-  - {fileID: -5056542685516911231}
-  - {fileID: -3935286124846004618}
-  - {fileID: -973568492456817727}
-  - {fileID: -375800777385404975}
 --- !u!114 &1733520937655185294
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -163,4 +157,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   theme: "\uD14C\uC2A4\uD2B8"
-  context: "\uACFC\uC5F0"
+  context: "\uD29C\uD1A0\uB9AC\uC5BC2 \uC2DC\uC791"

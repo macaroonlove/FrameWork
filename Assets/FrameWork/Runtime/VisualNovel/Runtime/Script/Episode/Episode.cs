@@ -54,7 +54,7 @@ namespace FrameWork.VisualNovel
         {
             base.Draw(rect);
 
-            var themeRect = new Rect(rect.x + 130, rect.y + 4, 190, 20);
+            var themeRect = new Rect(rect.x + 130, rect.y + 4, 190, 18);
             theme = EditorGUI.TextField(themeRect, theme);
         }
 #endif
