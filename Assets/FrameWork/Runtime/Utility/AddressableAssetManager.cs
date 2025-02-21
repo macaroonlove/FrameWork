@@ -9,12 +9,19 @@ namespace FrameWork
     public class AddressableAssetManager : Singleton<AddressableAssetManager>
     {
         private Dictionary<string, AsyncOperationHandle<Sprite>> _sprites = new Dictionary<string, AsyncOperationHandle<Sprite>>();
-        private Dictionary<string, AsyncOperationHandle<AudioClip>> _audioClip = new Dictionary<string, AsyncOperationHandle<AudioClip>>();
+        private Dictionary<string, AsyncOperationHandle<AudioClip>> _audioClips = new Dictionary<string, AsyncOperationHandle<AudioClip>>();
+        private Dictionary<string, AsyncOperationHandle> _scriptableObjects = new Dictionary<string, AsyncOperationHandle>();
 
         #region Sprite
         public void GetSprite(string key, UnityAction<Sprite> onComplete)
         {
-            if (string.IsNullOrEmpty(key) || _sprites.ContainsKey(key))
+            if (string.IsNullOrEmpty(key))
+            {
+                onComplete?.Invoke(null);
+                return;
+            }
+
+            if (_sprites.ContainsKey(key))
             {
                 onComplete?.Invoke(_sprites[key].Result);
                 return;
@@ -56,9 +63,15 @@ namespace FrameWork
         #region AudioClip
         public void GetAudioClip(string key, UnityAction<AudioClip> onComplete)
         {
-            if (string.IsNullOrEmpty(key) || _audioClip.ContainsKey(key))
+            if (string.IsNullOrEmpty(key))
             {
-                onComplete?.Invoke(_audioClip[key].Result);
+                onComplete?.Invoke(null);
+                return;
+            }
+
+            if (_audioClips.ContainsKey(key))
+            {
+                onComplete?.Invoke(_audioClips[key].Result);
                 return;
             }
 
@@ -66,7 +79,7 @@ namespace FrameWork
             {
                 if (handle.Status == AsyncOperationStatus.Succeeded)
                 {
-                    _audioClip[key] = handle;
+                    _audioClips[key] = handle;
                     onComplete?.Invoke(handle.Result);
                 }
                 else
@@ -78,20 +91,68 @@ namespace FrameWork
 
         public void ReleaseAudioClip(string key)
         {
-            if (_audioClip.TryGetValue(key, out var handle))
+            if (_audioClips.TryGetValue(key, out var handle))
             {
                 Addressables.Release(handle);
-                _audioClip.Remove(key);
+                _audioClips.Remove(key);
             }
         }
 
         public void ReleaseAllAudioClips()
         {
-            foreach (var handle in _audioClip.Values)
+            foreach (var handle in _audioClips.Values)
             {
                 Addressables.Release(handle);
             }
-            _audioClip.Clear();
+            _audioClips.Clear();
+        }
+        #endregion
+
+        #region ScriptableObject
+        public void GetScriptableObject<T>(string key, UnityAction<T> onComplete) where T : ScriptableObject
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                onComplete?.Invoke(null);
+                return;
+            }
+
+            if (_scriptableObjects.ContainsKey(key))
+            {
+                onComplete?.Invoke(_scriptableObjects[key].Result as T);
+                return;
+            }
+
+            Addressables.LoadAssetAsync<T>(key).Completed += (AsyncOperationHandle<T> handle) =>
+            {
+                if (handle.Status == AsyncOperationStatus.Succeeded)
+                {
+                    _scriptableObjects.TryAdd(key, handle);
+                    onComplete?.Invoke(handle.Result);
+                }
+                else
+                {
+                    Addressables.Release(handle);
+                }
+            };
+        }
+
+        public void ReleaseScriptableObject(string key)
+        {
+            if (_scriptableObjects.TryGetValue(key, out var handle))
+            {
+                Addressables.Release(handle);
+                _scriptableObjects.Remove(key);
+            }
+        }
+
+        public void ReleaseAllScriptableObjects()
+        {
+            foreach (var handle in _scriptableObjects.Values)
+            {
+                Addressables.Release(handle);
+            }
+            _scriptableObjects.Clear();
         }
         #endregion
 
@@ -99,6 +160,7 @@ namespace FrameWork
         {
             ReleaseAllSprites();
             ReleaseAllAudioClips();
+            ReleaseAllScriptableObjects();
         }
 
         private void OnDestroy()

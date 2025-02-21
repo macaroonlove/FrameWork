@@ -1,4 +1,3 @@
-using DG.Tweening;
 using System;
 using UnityEditor;
 using UnityEngine;
@@ -7,6 +6,8 @@ namespace FrameWork.VisualNovel
 {
     public enum CommandType
     {
+        CommandGroup_Start, // 커맨드 묶기 시작
+        CommandGroup_End,   // 커맨드 묶기 종료
         Speak_Start, // 대화 시작
         Speak_End, // 대화 종료
         SCG_Show, // 캐릭터나 물체 일러스트를 보이게 하기
@@ -18,8 +19,7 @@ namespace FrameWork.VisualNovel
         BGM_Stop, // 배경음 정지
         SFX_Play, // 효과음 재생
         SFX_Stop, // 효과음 정지
-        CommandGroup_Start, // 커맨드 묶기 시작
-        CommandGroup_End,   // 커맨드 묶기 종료
+        Choice,   // 선택지
     }
 
     [Serializable]

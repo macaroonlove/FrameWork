@@ -7,6 +7,16 @@ namespace FrameWork.VisualNovel
     {
         private Dictionary<string, List<Command>> _chapter = new Dictionary<string, List<Command>>();
 
+        private void OnEnable()
+        {
+            CommandExecutor.Instance.onJumpChapter += Load;
+        }
+
+        private void OnDisable()
+        {
+            CommandExecutor.Instance.onJumpChapter -= Load;
+        }
+
         public void Load(ChapterTemplate template)
         {
             // 새롭게 로드된 챕터라면
@@ -42,6 +52,12 @@ namespace FrameWork.VisualNovel
 
                 switch (episode.command)
                 {
+                    case CommandType.CommandGroup_Start:
+                        isGroup = true;
+                        break;
+                    case CommandType.CommandGroup_End:
+                        isGroup = false;
+                        break;
                     case CommandType.Speak_Start:
                         command += new SpeakStartCommand(episode);
                         break;
@@ -75,11 +91,8 @@ namespace FrameWork.VisualNovel
                     case CommandType.SFX_Stop:
                         command += new SFXStopCommand();
                         break;
-                    case CommandType.CommandGroup_Start:
-                        isGroup = true;
-                        break;
-                    case CommandType.CommandGroup_End:
-                        isGroup = false;
+                    case CommandType.Choice:
+                        command += new ChoiceCommand(episode);
                         break;
                 }
 

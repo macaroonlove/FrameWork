@@ -100,6 +100,8 @@ namespace FrameWork.VisualNovel.Editor
         {
             var menu = new GenericMenu();
 
+            menu.AddItem(new GUIContent("명령어 그룹으로 묶기 시작"), false, CreateEpisodeCallback, typeof(CommandGroupStartEpisode));
+            menu.AddItem(new GUIContent("명령어 그룹으로 묶기 종료"), false, CreateEpisodeCallback, typeof(CommandGroupEndEpisode));
             menu.AddItem(new GUIContent("대화 시작 명령어"), false, CreateEpisodeCallback, typeof(SpeakStartEpisode));
             menu.AddItem(new GUIContent("대화 종료 명령어"), false, CreateEpisodeCallback, typeof(SpeakEndEpisode));
             menu.AddItem(new GUIContent("캐릭터 및 물체 표시 명령어"), false, CreateEpisodeCallback, typeof(SCGShowEpisode));
@@ -111,8 +113,7 @@ namespace FrameWork.VisualNovel.Editor
             menu.AddItem(new GUIContent("배경음 정지 명령어"), false, CreateEpisodeCallback, typeof(BGMStopEpisode));
             menu.AddItem(new GUIContent("효과음 실행 명령어"), false, CreateEpisodeCallback, typeof(SFXPlayEpisode));
             menu.AddItem(new GUIContent("효과음 정지 명령어"), false, CreateEpisodeCallback, typeof(SFXStopEpisode));
-            menu.AddItem(new GUIContent("명령어 그룹으로 묶기 시작"), false, CreateEpisodeCallback, typeof(CommandGroupStartEpisode));
-            menu.AddItem(new GUIContent("명령어 그룹으로 묶기 종료"), false, CreateEpisodeCallback, typeof(CommandGroupEndEpisode));
+            menu.AddItem(new GUIContent("선택지 명령어"), false, CreateEpisodeCallback, typeof(ChoiceEpisode));
 
             menu.ShowAsContext();
         }
@@ -237,6 +238,12 @@ namespace FrameWork.VisualNovel.Editor
 
                     switch (command)
                     {
+                        case CommandType.CommandGroup_Start:
+                            episode = CreateInstance<CommandGroupStartEpisode>();
+                            break;
+                        case CommandType.CommandGroup_End:
+                            episode = CreateInstance<CommandGroupEndEpisode>();
+                            break;
                         case CommandType.Speak_Start:
                             episode = CreateInstance<SpeakStartEpisode>();
                             ((SpeakStartEpisode)episode).Initialize(cell[1], cell[2]);
@@ -277,11 +284,9 @@ namespace FrameWork.VisualNovel.Editor
                         case CommandType.SFX_Stop:
                             episode = CreateInstance<SFXStopEpisode>();
                             break;
-                        case CommandType.CommandGroup_Start:
-                            episode = CreateInstance<CommandGroupStartEpisode>();
-                            break;
-                        case CommandType.CommandGroup_End:
-                            episode = CreateInstance<CommandGroupEndEpisode>();
+                        case CommandType.Choice:
+                            episode = CreateInstance<ChoiceEpisode>();
+                            ((ChoiceEpisode)episode).Initialize(cell[2]);
                             break;
                     }
 

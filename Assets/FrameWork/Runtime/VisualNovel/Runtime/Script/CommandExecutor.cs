@@ -23,6 +23,7 @@ namespace FrameWork.VisualNovel
         private List<Command> _commandList = new List<Command>();
 
         private UnityAction _onEndChapter;
+        internal event UnityAction<ChapterTemplate> onJumpChapter;
 
         /// <summary>
         /// 챕터 시작
@@ -84,6 +85,24 @@ namespace FrameWork.VisualNovel
         /// </summary>
         internal void Skip()
         {
+            CommandEnd();
+            ChapterEnd();
+        }
+
+        /// <summary>
+        /// 현재 챕터를 종료하고, 원하는 챕터로 이동
+        /// </summary>
+        internal void JumpChapter(ChapterTemplate chapterTemplate)
+        {
+            CommandEnd();
+            chapterState = ChapterState.None;
+            _onEndChapter = null;
+
+            onJumpChapter?.Invoke(chapterTemplate);
+        }
+
+        private void CommandEnd()
+        {
             if (_currentCommand.isComplete == false)
             {
                 if (_currentCommandCorutine != null)
@@ -95,11 +114,14 @@ namespace FrameWork.VisualNovel
                 _currentCommand.isComplete = true;
             }
 
-            ChapterEnd();
+            SpeakEnd();
+            SCGHide(-1);
+            //CommandExecutor.Instance.BGMStop 추가하기
         }
 
         private void ChapterEnd()
         {
+            chapterState = ChapterState.None;
             _onEndChapter?.Invoke();
             _onEndChapter = null;
         }
@@ -108,9 +130,9 @@ namespace FrameWork.VisualNovel
         internal event UnityAction<string, string, UnityAction, bool> speakStart;
         internal event UnityAction speakEnd;
 
-        internal void Speak(string speaker, string content, UnityAction onSucess, bool isForce = false)
+        internal void Speak(string speaker, string content, UnityAction onComplete, bool isForce = false)
         {
-            speakStart?.Invoke(speaker, content, onSucess, isForce);
+            speakStart?.Invoke(speaker, content, onComplete, isForce);
         }
 
         internal void SpeakEnd()
@@ -152,6 +174,24 @@ namespace FrameWork.VisualNovel
         internal void ECGHide()
         {
             ecgHide?.Invoke();
+        }
+        #endregion
+
+        #region Choice
+        internal event UnityAction<List<KeyValuePair<string, ChapterTemplate>>, UnityAction> choice;
+
+        internal void Choice(List<KeyValuePair<string, ChapterTemplate>> choiceList, UnityAction onComplete)
+        {
+            choice?.Invoke(choiceList, onComplete);
+        }
+        #endregion
+
+        #region Utility
+        internal event UnityAction<bool> onNextButtonInteractableChanged;
+
+        internal void SetNextButtonInteractable(bool isOn)
+        {
+            onNextButtonInteractableChanged?.Invoke(isOn);
         }
         #endregion
     }
