@@ -9,7 +9,7 @@ namespace Temporary.Core
     /// 아군 유닛을 관리하는 클래스
     /// (유틸리티 메서드)
     /// </summary>
-    public class AgentSystem : MonoBehaviour, ISubSystem
+    public class AgentSystem : MonoBehaviour, IBattleSystem
     {
         [SerializeField, ReadOnly] private List<AgentUnit> _agents = new List<AgentUnit>();
 

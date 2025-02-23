@@ -5,7 +5,7 @@ namespace Temporary.Core
     /// <summary>
     /// 전투에서 사용하는 시간을 관리하는 클래스
     /// </summary>
-    public class TimeSystem : MonoBehaviour, ISubSystem
+    public class TimeSystem : MonoBehaviour, IBattleSystem
     {
         private float _startTime;
 

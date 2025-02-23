@@ -16,14 +16,18 @@ namespace Temporary.Core
             BattleManager.Instance.onBattleDeinitialize += Deinitialize;
 
             _stats = GetComponentsInChildren<IBattleStat>().ToList();
+            BattleManager.Instance.onBattleManagerDestroy += Unsubscribe;
         }
 
-        private void OnApplicationQuit()
+        private void Unsubscribe()
         {
+            _stats.Clear();
+
+            if (BattleManager.Instance == null) return;
+
             BattleManager.Instance.onBattleInitialize -= Initialize;
             BattleManager.Instance.onBattleDeinitialize -= Deinitialize;
-
-            _stats.Clear();
+            BattleManager.Instance.onBattleManagerDestroy -= Unsubscribe;
         }
 
         private void Initialize()

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class EnemySpawnSystem : MonoBehaviour, ISubSystem
+    public class EnemySpawnSystem : MonoBehaviour, IBattleSystem
     {
         private EnemySystem _enemySystem;
         private PoolSystem _poolSystem;

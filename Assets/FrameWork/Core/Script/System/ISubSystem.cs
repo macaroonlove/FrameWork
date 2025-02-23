@@ -5,4 +5,7 @@ namespace Temporary.Core
         void Initialize();
         void Deinitialize();
     }
+
+    public interface ICoreSystem : ISubSystem { }
+    public interface IBattleSystem : ISubSystem { }
 }

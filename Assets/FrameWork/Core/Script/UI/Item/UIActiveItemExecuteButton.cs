@@ -99,9 +99,35 @@ namespace Temporary.Core
             _cooldownTimeImage.gameObject.SetActive(false);
 
             _threshold *= _threshold;
+
+            BattleManager.Instance.onBattleInitialize += GetActiveItem;
+            BattleManager.Instance.onBattleDeinitialize += Hide;
+            BattleManager.Instance.onBattleManagerDestroy += Unsubscribe;
         }
 
-        internal void Show(ActiveItemTemplate template)
+        private void Unsubscribe()
+        {
+            if (BattleManager.Instance == null) return;
+
+            BattleManager.Instance.onBattleInitialize -= GetActiveItem;
+            BattleManager.Instance.onBattleDeinitialize -= Hide;
+            BattleManager.Instance.onBattleManagerDestroy -= Unsubscribe;
+        }
+
+        private void GetActiveItem()
+        {
+            var template = CoreManager.Instance.GetSubSystem<ActiveItemSystem>().GetSelectedItem((int)_actionType);
+            if (template != null)
+            {
+                Show(template);
+            }
+            else
+            {
+                base.Hide(true);
+            }
+        }
+
+        private void Show(ActiveItemTemplate template)
         {
             GetImage((int)Images.Icon).sprite = template.sprite;
 
@@ -121,12 +147,12 @@ namespace Temporary.Core
 
             InputBinding();
 
-            base.Show();
+            base.Show(true);
         }
 
         internal void Hide()
         {
-            base.Hide();
+            base.Hide(true);
 
             _template = null;
             _rangeRenderer = null;

@@ -9,7 +9,7 @@ namespace Temporary.Core
     /// <summary>
     /// 전역 상태들을 관리하는 클래스
     /// </summary>
-    public class GlobalStatusSystem : MonoBehaviour, ISubSystem
+    public class GlobalStatusSystem : MonoBehaviour, ICoreSystem
     {
         #region Effect List
         private List<GoldGainAdditionalDataEffect> _goldGainAdditionalDataEffects = new List<GoldGainAdditionalDataEffect>();

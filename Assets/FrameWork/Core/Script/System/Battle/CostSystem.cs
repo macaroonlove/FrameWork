@@ -7,7 +7,7 @@ namespace Temporary.Core
     /// <summary>
     /// 전투에서 사용하는 Cost 값을 관리하는 클래스
     /// </summary>
-    public class CostSystem : MonoBehaviour, ISubSystem
+    public class CostSystem : MonoBehaviour, IBattleSystem
     {
         [SerializeField] private ObscuredIntVariable _costVariable;
 
@@ -65,7 +65,7 @@ namespace Temporary.Core
 
         public void Initialize()
         {
-            _globalStatusSystem = BattleManager.Instance.GetSubSystem<GlobalStatusSystem>();
+            _globalStatusSystem = CoreManager.Instance.GetSubSystem<GlobalStatusSystem>();
 
             _isInitializeCostSystem = true;
 

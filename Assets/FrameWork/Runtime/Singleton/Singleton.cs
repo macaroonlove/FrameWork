@@ -9,6 +9,11 @@ namespace FrameWork
         {
             get
             {
+                if (isApplicationQuitting)
+                {
+                    return null;
+                }
+
                 if (instance == null)
                 {
                     instance = new GameObject(nameof(T)).AddComponent<T>();
@@ -34,6 +39,12 @@ namespace FrameWork
         protected virtual void Initialize()
         {
 
+        }
+
+        private static bool isApplicationQuitting = false;
+        private void OnApplicationQuit()
+        {
+            isApplicationQuitting = true;
         }
     }
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class AgentCreateSystem : MonoBehaviour, ISubSystem
+    public class AgentCreateSystem : MonoBehaviour, IBattleSystem
     {
         private AgentSystem _agentSystem;
         private PoolSystem _poolSystem;

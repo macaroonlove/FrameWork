@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class WaveSystem : MonoBehaviour, ISubSystem
+    public class WaveSystem : MonoBehaviour, IBattleSystem
     {
         private EnemySpawnSystem _enemySpawnSystem;
         private TimeSystem _timeSystem;

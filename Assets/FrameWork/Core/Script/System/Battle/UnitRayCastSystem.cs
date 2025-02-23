@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 namespace Temporary.Core
 {
-    public class UnitRayCastSystem : MonoBehaviour, ISubSystem
+    public class UnitRayCastSystem : MonoBehaviour, IBattleSystem
     {
         private Camera _camera;
         private LayerMask _layerMask;

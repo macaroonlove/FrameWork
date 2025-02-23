@@ -1,4 +1,3 @@
-using FrameWork.UIBinding;
 using System.Collections.Generic;
 using UnityEngine;
 

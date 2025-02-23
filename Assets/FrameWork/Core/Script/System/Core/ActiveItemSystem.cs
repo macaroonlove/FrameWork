@@ -8,9 +8,8 @@ namespace Temporary.Core
     /// <summary>
     /// 액티브 아이템 효과를 적용시키는 시스템
     /// </summary>
-    public class ActiveItemSystem : MonoBehaviour, ISubSystem
+    public class ActiveItemSystem : MonoBehaviour, ICoreSystem
     {
-        [SerializeField] private List<UIActiveItemExecuteButton> _executeButton = new List<UIActiveItemExecuteButton>();
         [SerializeField, ReadOnly] private List<ActiveItemTemplate> _selectedItems = new List<ActiveItemTemplate>();
 
         [SerializeField, ReadOnly] private List<ActiveItemTemplate> _items = new List<ActiveItemTemplate>();
@@ -25,24 +24,6 @@ namespace Temporary.Core
 #if UNITY_EDITOR
             _selectedItems.AddRange(_debugItems);
 #endif
-
-            int maxCount = Mathf.Min(_executeButton.Count, _selectedItems.Count);
-            for (int i = 0; i < maxCount; i++)
-            {
-                if (_selectedItems[i] == null)
-                {
-                    _executeButton[i].Hide(true);
-                }
-                else
-                {
-                    _executeButton[i].Show(_selectedItems[i]);
-                }
-            }
-
-            for (int i = maxCount; i < _executeButton.Count; i++)
-            {
-                _executeButton[i].Hide(true);
-            }
         }
 
         public void Deinitialize()
@@ -64,6 +45,16 @@ namespace Temporary.Core
             }
 
             _items.Add(template);
+        }
+
+        /// <summary>
+        /// 아이템 불러오기
+        /// </summary>
+        public ActiveItemTemplate GetSelectedItem(int index)
+        {
+            if (index >= _selectedItems.Count) return null;
+
+            return _selectedItems[index];
         }
 
         private void OnDestroy()

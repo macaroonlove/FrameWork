@@ -8,7 +8,7 @@ namespace Temporary.Core
     /// <summary>
     /// 패시브 아이템 효과를 적용시키는 시스템
     /// </summary>
-    public class PassiveItemSystem : MonoBehaviour, ISubSystem
+    public class PassiveItemSystem : MonoBehaviour, ICoreSystem
     {
         [SerializeField, ReadOnly] private List<PassiveItemTemplate> _items = new List<PassiveItemTemplate>();
 
@@ -29,16 +29,42 @@ namespace Temporary.Core
                 AddItem(debugItem, true);
             }
 #endif
-
-            BattleManager.Instance.GetSubSystem<AgentSystem>().onRegist += ApplyAlwaysEvent;
-            BattleManager.Instance.GetSubSystem<EnemySystem>().onRegist += ApplyAlwaysEvent;
         }
 
         public void Deinitialize()
         {
+
+        }
+
+        #region 구독
+        private void Start()
+        {
+            BattleManager.Instance.onBattleInitialize += OnBattleInitialize;
+            BattleManager.Instance.onBattleDeinitialize += OnBattleDeinitialize;
+            BattleManager.Instance.onBattleManagerDestroy += Unsubscribe;
+        }
+
+        private void Unsubscribe()
+        {
+            if (BattleManager.Instance == null) return;
+
+            BattleManager.Instance.onBattleInitialize -= OnBattleInitialize;
+            BattleManager.Instance.onBattleDeinitialize -= OnBattleDeinitialize;
+            BattleManager.Instance.onBattleManagerDestroy -= Unsubscribe;
+        }
+
+        private void OnBattleInitialize()
+        {
+            BattleManager.Instance.GetSubSystem<AgentSystem>().onRegist += ApplyAlwaysEvent;
+            BattleManager.Instance.GetSubSystem<EnemySystem>().onRegist += ApplyAlwaysEvent;
+        }
+
+        private void OnBattleDeinitialize()
+        {
             BattleManager.Instance.GetSubSystem<AgentSystem>().onRegist -= ApplyAlwaysEvent;
             BattleManager.Instance.GetSubSystem<EnemySystem>().onRegist -= ApplyAlwaysEvent;
         }
+        #endregion
 
         private void ApplyAlwaysEvent(Unit unit)
         {

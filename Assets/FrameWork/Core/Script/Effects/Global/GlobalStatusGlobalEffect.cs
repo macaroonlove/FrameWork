@@ -20,11 +20,11 @@ namespace Temporary.Core
         {
             if (_isInfinity)
             {
-                BattleManager.Instance.GetSubSystem<GlobalStatusSystem>().ApplyGlobalStatus(_globalStatus, int.MaxValue);
+                CoreManager.Instance.GetSubSystem<GlobalStatusSystem>().ApplyGlobalStatus(_globalStatus, int.MaxValue);
             }
             else
             {
-                BattleManager.Instance.GetSubSystem<GlobalStatusSystem>().ApplyGlobalStatus(_globalStatus, _duration);
+                CoreManager.Instance.GetSubSystem<GlobalStatusSystem>().ApplyGlobalStatus(_globalStatus, _duration);
             }
         }
 

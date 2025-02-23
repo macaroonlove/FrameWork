@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class PoolSystem : MonoBehaviour, ISubSystem
+    public class PoolSystem : MonoBehaviour, IBattleSystem
     {
         private Dictionary<string, Stack<GameObject>> _objectPool = new Dictionary<string, Stack<GameObject>>();
 

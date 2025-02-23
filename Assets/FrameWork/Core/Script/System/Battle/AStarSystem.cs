@@ -7,7 +7,7 @@ namespace Temporary.Core
     /// <summary>
     /// A* 알고리즘 시스템
     /// </summary>
-    public class AStarSystem : MonoBehaviour, ISubSystem
+    public class AStarSystem : MonoBehaviour, IBattleSystem
     {
         public enum NodeTag
         {

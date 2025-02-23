@@ -7,7 +7,7 @@ namespace Temporary.Core
     /// <summary>
     /// 골드를 관리하는 시스템
     /// </summary>
-    public class GoldSystem : MonoBehaviour, ISubSystem
+    public class GoldSystem : MonoBehaviour, ICoreSystem
     {
         [SerializeField] private ObscuredIntVariable _goldVariable;
 
@@ -19,7 +19,7 @@ namespace Temporary.Core
 
         public void Initialize()
         {
-            _globalStatusSystem = BattleManager.Instance.GetSubSystem<GlobalStatusSystem>();
+            _globalStatusSystem = CoreManager.Instance.GetSubSystem<GlobalStatusSystem>();
 
             // TODO: Template에서 시작 골드 받아오도록 수정
             SetGold(100);

@@ -9,7 +9,7 @@ namespace Temporary.Core
     /// 적 유닛을 관리하는 클래스
     /// (유틸리티 메서드)
     /// </summary>
-    public class EnemySystem : MonoBehaviour, ISubSystem
+    public class EnemySystem : MonoBehaviour, IBattleSystem
     {
         [SerializeField, ReadOnly] private List<EnemyUnit> _enemies = new List<EnemyUnit>();
 

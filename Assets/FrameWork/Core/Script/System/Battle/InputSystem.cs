@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 namespace Temporary.Core
 {
-    public class InputSystem : MonoBehaviour, ISubSystem
+    public class InputSystem : MonoBehaviour, IBattleSystem
     {
         private PlayerInput _playerInput;
 

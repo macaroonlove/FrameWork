@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 namespace Temporary.Core
 {
-    public class ActiveItemRangeRenderer : MonoBehaviour, ISubSystem
+    public class ActiveItemRangeRenderer : MonoBehaviour, IBattleSystem
     {
         private Transform _parent;
         private Transform _circle;
