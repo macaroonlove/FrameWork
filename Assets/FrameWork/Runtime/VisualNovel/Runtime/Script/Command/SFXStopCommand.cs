@@ -7,14 +7,14 @@ namespace FrameWork.VisualNovel
     {
         internal override IEnumerator Execute()
         {
-            SoundManager.StopAllSounds();
+            CommandExecutor.Instance.SFXStop();
             isComplete = true;
             yield return null;
         }
 
         internal override void ForceExecute()
         {
-            SoundManager.StopAllSounds();
+            CommandExecutor.Instance.SFXStop();
             isComplete = true;
         }
     }

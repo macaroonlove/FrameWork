@@ -1,4 +1,5 @@
 using DG.Tweening;
+using FrameWork.Sound;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,7 +24,6 @@ namespace FrameWork.VisualNovel
         private List<Command> _commandList = new List<Command>();
 
         private UnityAction _onEndChapter;
-        internal event UnityAction<ChapterTemplate> onJumpChapter;
 
         /// <summary>
         /// 챕터 시작
@@ -98,7 +98,7 @@ namespace FrameWork.VisualNovel
             chapterState = ChapterState.None;
             _onEndChapter = null;
 
-            onJumpChapter?.Invoke(chapterTemplate);
+            VisualNovelManager.instance.Load(chapterTemplate);
         }
 
         private void CommandEnd()
@@ -116,7 +116,8 @@ namespace FrameWork.VisualNovel
 
             SpeakEnd();
             SCGHide(-1);
-            //CommandExecutor.Instance.BGMStop 추가하기
+            BGMStop();
+            SFXStop();
         }
 
         private void ChapterEnd()
@@ -177,12 +178,51 @@ namespace FrameWork.VisualNovel
         }
         #endregion
 
+        #region BGM
+        internal void BGMPlay(string audio)
+        {
+            AddressableAssetManager.Instance.GetAudioClip(audio, (audioClip) =>
+            {
+                SoundManager.PlayMusic(audioClip);
+            });
+        }
+
+        internal void BGMStop()
+        {
+            SoundManager.StopAllMusic();
+        }
+        #endregion
+
+        #region SFX
+        internal void SFXPlay(string audio)
+        {
+            AddressableAssetManager.Instance.GetAudioClip(audio, (audioClip) =>
+            {
+                SoundManager.PlaySound(audioClip);
+            });
+        }
+
+        internal void SFXStop()
+        {
+            SoundManager.StopAllSounds();
+        }
+        #endregion
+
         #region Choice
         internal event UnityAction<List<KeyValuePair<string, ChapterTemplate>>, UnityAction> choice;
 
         internal void Choice(List<KeyValuePair<string, ChapterTemplate>> choiceList, UnityAction onComplete)
         {
             choice?.Invoke(choiceList, onComplete);
+        }
+        #endregion
+
+        #region Get
+        public event UnityAction<ItemType, int, string> getItem;
+
+        internal void Get(ItemType itemType, int amount, string name)
+        {
+            getItem?.Invoke(itemType, amount, name);
         }
         #endregion
 

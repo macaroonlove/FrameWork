@@ -30,7 +30,7 @@ namespace Temporary.Core
             _globalStatusSystem = null;
         }
 
-        internal void AddGold(int gold)
+        public void AddGold(int gold)
         {
             #region °ñµå È¹µæ·® °è»ê
             float result = gold;

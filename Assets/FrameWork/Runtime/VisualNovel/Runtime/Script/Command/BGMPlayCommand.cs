@@ -15,22 +15,14 @@ namespace FrameWork.VisualNovel
 
         internal override IEnumerator Execute()
         {
-            AddressableAssetManager.Instance.GetAudioClip(_bgmPlayEpisode.theme, (audioClip) =>
-            {
-                SoundManager.PlayMusic(audioClip);
-            });
-
+            CommandExecutor.Instance.BGMPlay(_bgmPlayEpisode.theme);
             isComplete = true;
             yield return null;
         }
 
         internal override void ForceExecute()
         {
-            AddressableAssetManager.Instance.GetAudioClip(_bgmPlayEpisode.theme, (audioClip) =>
-            {
-                SoundManager.PlayMusic(audioClip);
-            });
-
+            CommandExecutor.Instance.BGMPlay(_bgmPlayEpisode.theme);
             isComplete = true;
         }
     }

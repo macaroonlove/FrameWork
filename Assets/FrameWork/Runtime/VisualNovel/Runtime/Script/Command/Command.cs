@@ -67,7 +67,8 @@ namespace FrameWork.VisualNovel
             CommandExecutor.Instance.chapterState = ChapterState.None;
             CommandExecutor.Instance.SpeakEnd();
             CommandExecutor.Instance.SCGHide(-1);
-            //CommandExecutor.Instance.BGMStop 추가하기
+            CommandExecutor.Instance.BGMStop();
+            CommandExecutor.Instance.SFXStop();
             isComplete = true;
             yield return null;
         }

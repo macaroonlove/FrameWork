@@ -39,6 +39,8 @@ namespace Temporary.Core
         #region ±¸µ¶
         private void Start()
         {
+            if (BattleManager.Instance == null) return;
+
             BattleManager.Instance.onBattleInitialize += OnBattleInitialize;
             BattleManager.Instance.onBattleDeinitialize += OnBattleDeinitialize;
             BattleManager.Instance.onBattleManagerDestroy += Unsubscribe;

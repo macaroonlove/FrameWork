@@ -3,19 +3,9 @@ using UnityEngine;
 
 namespace FrameWork.VisualNovel
 {
-    public class VisualNovelManager : MonoBehaviour
+    public class VisualNovelManager : Singleton<VisualNovelManager>
     {
         private Dictionary<string, List<Command>> _chapter = new Dictionary<string, List<Command>>();
-
-        private void OnEnable()
-        {
-            CommandExecutor.Instance.onJumpChapter += Load;
-        }
-
-        private void OnDisable()
-        {
-            CommandExecutor.Instance.onJumpChapter -= Load;
-        }
 
         public void Load(ChapterTemplate template)
         {
@@ -93,6 +83,9 @@ namespace FrameWork.VisualNovel
                         break;
                     case CommandType.Choice:
                         command += new ChoiceCommand(episode);
+                        break;
+                    case CommandType.Get:
+                        command += new GetCommand(episode);
                         break;
                 }
 

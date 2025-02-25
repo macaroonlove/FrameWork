@@ -114,6 +114,7 @@ namespace FrameWork.VisualNovel.Editor
             menu.AddItem(new GUIContent("효과음 실행 명령어"), false, CreateEpisodeCallback, typeof(SFXPlayEpisode));
             menu.AddItem(new GUIContent("효과음 정지 명령어"), false, CreateEpisodeCallback, typeof(SFXStopEpisode));
             menu.AddItem(new GUIContent("선택지 명령어"), false, CreateEpisodeCallback, typeof(ChoiceEpisode));
+            menu.AddItem(new GUIContent("아이템 획득 명령어"), false, CreateEpisodeCallback, typeof(GetEpisode));
 
             menu.ShowAsContext();
         }
@@ -287,6 +288,10 @@ namespace FrameWork.VisualNovel.Editor
                         case CommandType.Choice:
                             episode = CreateInstance<ChoiceEpisode>();
                             ((ChoiceEpisode)episode).Initialize(cell[2]);
+                            break;
+                        case CommandType.Get:
+                            episode = CreateInstance<GetEpisode>();
+                            ((GetEpisode)episode).Initialize(cell[1], cell[2]);
                             break;
                     }
 

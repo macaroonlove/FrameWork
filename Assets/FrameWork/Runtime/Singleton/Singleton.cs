@@ -5,7 +5,9 @@ namespace FrameWork
     public class Singleton<T> : MonoBehaviour where T : Singleton<T>
     {
         protected static T instance;
-        public static T Instance
+        
+        public static T Instance => instance;
+        public static T GetOrCreateInstance
         {
             get
             {

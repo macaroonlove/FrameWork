@@ -20,6 +20,7 @@ namespace FrameWork.VisualNovel
         SFX_Play, // 효과음 재생
         SFX_Stop, // 효과음 정지
         Choice,   // 선택지
+        Get,      // 아이템 획득
     }
 
     [Serializable]

@@ -87,6 +87,11 @@ namespace FrameWork.Sound
             Instance.Init();
         }
 
+        static SoundManager()
+        {
+            Instance.Init();
+        }
+
         /// <summary>
         /// Initialized the sound manager
         /// </summary>
