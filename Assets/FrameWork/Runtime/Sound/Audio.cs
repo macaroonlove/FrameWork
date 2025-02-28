@@ -1,58 +1,85 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace FrameWork.Sound
 {
     public class Audio
     {
+        public enum AudioType
+        {
+            Master,
+            BGM,
+            SFX,
+            UI,
+            Voice
+        }
+
         /// <summary>
-        /// The ID of the Audio
+        /// 오디오 ID
+        /// <para>오디오 객체가 생성될 때 마다 +1씩 증가한다.</para>
         /// </summary>
         public int AudioID { get; private set; }
 
         /// <summary>
-        /// The type of the Audio
+        /// 오디오의 타입
         /// </summary>
         public AudioType Type { get; private set; }
 
         /// <summary>
-        /// Whether the audio is currently playing
+        /// 오디오가 재생 중인지 여부
         /// </summary>
         public bool IsPlaying { get; private set; }
 
         /// <summary>
-        /// Whether the audio is paused
+        /// 오디오가 일시 정지되었는지 여부
         /// </summary>
-        public bool Paused { get; private set; }
+        public bool IsPaused { get; private set; }
 
         /// <summary>
-        /// Whether the audio is stopping
+        /// 오디오가 완전히 정지되었는지 여부
         /// </summary>
-        public bool Stopping { get; private set; }
+        public bool IsStopped { get; private set; }
 
         /// <summary>
-        /// Whether the audio is created and updated at least once. 
+        /// 오디오가 생성되고 최소한 한 번 업데이트되었는지 여부
         /// </summary>
-        public bool Activated { get; private set; }
+        public bool IsUpdated { get; private set; }
 
         /// <summary>
-        /// Whether the audio is currently pooled. Do not modify this value, it is specifically used by EazySoundManager.
+        /// 오디오가 현재 풀링되어 있는지 여부
         /// </summary>
-        public bool Pooled { get; set; }
+        public bool IsPooled { get; set; }
 
         /// <summary>
-        /// The volume of the audio. Use SetVolume to change it.
+        /// 씬 전환 시, 오디오가 지속될지 여부
+        /// </summary>
+        public bool Persist { get; set; }
+
+        /// <summary>
+        /// 오디오가 페이드 인 되는데 걸리는 시간 (시작할 때)
+        /// <para>오디오의 목표 볼륨이 현재 볼륨보다 높은 경우, 목표 볼륨에 도달하는 데 소요되는 시간</para>
+        /// </summary>
+        public float FadeInSeconds { get; set; }
+
+        /// <summary>
+        /// 오디오가 페이드 아웃 되는데 걸리는 시간 (정지할 때)
+        /// <para>오디오의 목표 볼륨이 현재 볼륨보다 작은 경우, 목표 볼륨에 도달하는 데 소요되는 시간</para>
+        /// </summary>
+        public float FadeOutSeconds { get; set; }
+
+        /// <summary>
+        /// 오디오 볼륨
+        /// <para>SetVolume 메서드를 사용하여 값을 변경할 수 있습니다.</para>
         /// </summary>
         public float Volume { get; private set; }
 
         /// <summary>
-        /// The audio source that is responsible for this audio. Do not modify the audiosource directly as it could result to unpredictable behaviour. Use the Audio class instead.
+        /// 오디오 소스
         /// </summary>
         public AudioSource AudioSource { get; private set; }
 
         /// <summary>
-        /// The source transform of the audio.
+        /// AudioSource가 어떤 객체에 추가될지를 결정할 수 있습니다.
+        /// <para>※ 따로 설정을 안해줄 경우, SoundManager객체에 부착됩니다.</para>
         /// </summary>
         public Transform SourceTransform
         {
@@ -61,7 +88,7 @@ namespace FrameWork.Sound
             {
                 if (value == null)
                 {
-                    sourceTransform = SoundManager.Gameobject.transform;
+                    sourceTransform = SoundManager.Transform;
                 }
                 else
                 {
@@ -70,243 +97,7 @@ namespace FrameWork.Sound
             }
         }
 
-        /// <summary>
-        /// Audio clip to play/is playing
-        /// </summary>
-        public AudioClip Clip
-        {
-            get { return clip; }
-            set
-            {
-                clip = value;
-                if (AudioSource != null)
-                {
-                    AudioSource.clip = clip;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Whether the audio will be lopped
-        /// </summary>
-        public bool Loop
-        {
-            get { return loop; }
-            set
-            {
-                loop = value;
-                if (AudioSource != null)
-                {
-                    AudioSource.loop = loop;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Whether the audio is muted
-        /// </summary>
-        public bool Mute
-        {
-            get { return mute; }
-            set
-            {
-                mute = value;
-                if (AudioSource != null)
-                {
-                    AudioSource.mute = mute;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Sets the priority of the audio
-        /// </summary>
-        public int Priority
-        {
-            get { return priority; }
-            set
-            {
-                priority = Mathf.Clamp(value, 0, 256);
-                if (AudioSource != null)
-                {
-                    AudioSource.priority = priority;
-                }
-            }
-        }
-
-        /// <summary>
-        /// The pitch of the audio
-        /// </summary>
-        public float Pitch
-        {
-            get { return pitch; }
-            set
-            {
-                pitch = Mathf.Clamp(value, -3, 3);
-                if (AudioSource != null)
-                {
-                    AudioSource.pitch = pitch;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Pans a playing sound in a stereo way (left or right). This only applies to sounds that are Mono or Stereo.
-        /// </summary>
-        public float StereoPan
-        {
-            get { return stereoPan; }
-            set
-            {
-                stereoPan = Mathf.Clamp(value, -1, 1);
-                if (AudioSource != null)
-                {
-                    AudioSource.panStereo = stereoPan;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Sets how much this AudioSource is affected by 3D spatialisation calculations (attenuation, doppler etc). 0.0 makes the sound full 2D, 1.0 makes it full 3D.
-        /// </summary>
-        public float SpatialBlend
-        {
-            get { return spatialBlend; }
-            set
-            {
-                spatialBlend = Mathf.Clamp01(value);
-                if (AudioSource != null)
-                {
-                    AudioSource.spatialBlend = spatialBlend;
-                }
-            }
-        }
-
-        /// <summary>
-        /// The amount by which the signal from the AudioSource will be mixed into the global reverb associated with the Reverb Zones.
-        /// </summary>
-        public float ReverbZoneMix
-        {
-            get { return reverbZoneMix; }
-            set
-            {
-                reverbZoneMix = Mathf.Clamp(value, 0, 1.1f);
-                if (AudioSource != null)
-                {
-                    AudioSource.reverbZoneMix = reverbZoneMix;
-                }
-            }
-        }
-
-        /// <summary>
-        /// The doppler scale of the audio
-        /// </summary>
-        public float DopplerLevel
-        {
-            get { return dopplerLevel; }
-            set
-            {
-                dopplerLevel = Mathf.Clamp(value, 0, 5);
-                if (AudioSource != null)
-                {
-                    AudioSource.dopplerLevel = dopplerLevel;
-                }
-            }
-        }
-
-        /// <summary>
-        /// The spread angle (in degrees) of a 3d stereo or multichannel sound in speaker space.
-        /// </summary>
-        public float Spread
-        {
-            get { return spread; }
-            set
-            {
-                spread = Mathf.Clamp(value, 0, 360);
-                if (AudioSource != null)
-                {
-                    AudioSource.spread = spread;
-                }
-            }
-        }
-
-        /// <summary>
-        /// How the audio attenuates over distance
-        /// </summary>
-        public AudioRolloffMode RolloffMode
-        {
-            get { return rolloffMode; }
-            set
-            {
-                rolloffMode = value;
-                if (AudioSource != null)
-                {
-                    AudioSource.rolloffMode = rolloffMode;
-                }
-            }
-        }
-
-        /// <summary>
-        /// (Logarithmic rolloff) MaxDistance is the distance a sound stops attenuating at.
-        /// </summary>
-        public float Max3DDistance
-        {
-            get { return max3DDistance; }
-            set
-            {
-                max3DDistance = Mathf.Max(value, 0.01f);
-                if (AudioSource != null)
-                {
-                    AudioSource.maxDistance = max3DDistance;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Within the Min distance the audio will cease to grow louder in volume.
-        /// </summary>
-        public float Min3DDistance
-        {
-            get { return min3DDistance; }
-            set
-            {
-                min3DDistance = Mathf.Max(value, 0);
-                if (AudioSource != null)
-                {
-                    AudioSource.minDistance = min3DDistance;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Whether the audio persists in between scene changes
-        /// </summary>
-        public bool Persist { get; set; }
-
-        /// <summary>
-        /// How many seconds it needs for the audio to fade in/ reach target volume (if higher than current)
-        /// </summary>
-        public float FadeInSeconds { get; set; }
-
-        /// <summary>
-        /// How many seconds it needs for the audio to fade out/ reach target volume (if lower than current)
-        /// </summary>
-        public float FadeOutSeconds { get; set; }
-
-        /// <summary>
-        /// Enum representing the type of audio
-        /// </summary>
-        public enum AudioType
-        {
-            Master,
-            Music,
-            SFX,
-            UI,
-            Voice
-        }
-
-        private static int audioCounter = 0;
-
+        #region AudioSource 필드 설정
         private AudioClip clip;
         private bool loop;
         private bool mute;
@@ -320,21 +111,267 @@ namespace FrameWork.Sound
         private AudioRolloffMode rolloffMode;
         private float max3DDistance;
         private float min3DDistance;
+        #endregion
+
+        #region AudioSource 프로퍼티 설정
+        /// <summary>
+        /// 오디오 클립
+        /// <para>※ 클립을 수정하면, 자동으로 AudioSource의 Clip에 적용됩니다.</para>
+        /// </summary>
+        public AudioClip Clip
+        {
+            get { return clip; }
+            set
+            {
+                clip = value;
+
+                if (AudioSource != null)
+                {
+                    AudioSource.clip = clip;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 오디오가 반복될지 여부
+        /// <para>※ 수정하면, 자동으로 AudioSource의 loop에 적용됩니다.</para>
+        /// </summary>
+        public bool Loop
+        {
+            get { return loop; }
+            set
+            {
+                loop = value;
+
+                if (AudioSource != null)
+                {
+                    AudioSource.loop = loop;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 오디오가 음소거되어 있는지 여부
+        /// </summary>
+        public bool Mute
+        {
+            get { return mute; }
+            set
+            {
+                mute = value;
+
+                if (AudioSource != null)
+                {
+                    AudioSource.mute = mute;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 오디오의 우선순위를 설정합니다.
+        /// </summary>
+        /// <value>0 ~ 256</value>
+        public int Priority
+        {
+            get { return priority; }
+            set
+            {
+                priority = Mathf.Clamp(value, 0, 256);
+
+                if (AudioSource != null)
+                {
+                    AudioSource.priority = priority;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 오디오의 피치(소리의 높낮이)를 설정합니다.
+        /// <para>피치는 를 결정하며, 기본값은 1.0입니다. 값이 0.5이면 반음이 낮아지고, 2.0이면 두 배 높아집니다.</para>
+        /// </summary>
+        /// <value>-3.0(낮아짐) ~ 3.0(높아짐)</value>
+        public float Pitch
+        {
+            get { return pitch; }
+            set
+            {
+                pitch = Mathf.Clamp(value, -3.0f, 3.0f);
+
+                if (AudioSource != null)
+                {
+                    AudioSource.pitch = pitch;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 재생 중인 오디오의 좌우 채널(L/R) 벨런스를 설정합니다.
+        /// <para>Stereo 채널에만 적용됩니다. (SpatialBlend가 1에 근접할수록)</para>
+        /// </summary>
+        /// <value>-1.0(왼쪽) ~ 1.0(오른쪽)</value>
+        public float StereoPan
+        {
+            get { return stereoPan; }
+            set
+            {
+                stereoPan = Mathf.Clamp(value, -1.0f, 1.0f);
+
+                if (AudioSource != null)
+                {
+                    AudioSource.panStereo = stereoPan;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 재생 중인 오디오의 Mono와 Stereo 간의 비율을 설정합니다.
+        /// </summary>
+        /// <value>0.0(2D, Mono) ~ 1.0(3D, Stereo)</value>
+        public float SpatialBlend
+        {
+            get { return spatialBlend; }
+            set
+            {
+                spatialBlend = Mathf.Clamp01(value);
+
+                if (AudioSource != null)
+                {
+                    AudioSource.spatialBlend = spatialBlend;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 오디오가 얼마나 공간에 반사되면서 울릴지(리버브 효과)를 설정할 수 있습니다.
+        /// </summary>
+        /// <value>
+        /// 0.0(리버브 없음) ~ 2.0(강한 리버브)
+        /// <para>기본: 1.0</para>
+        /// </value>
+        public float ReverbZoneMix
+        {
+            get { return reverbZoneMix; }
+            set
+            {
+                reverbZoneMix = Mathf.Clamp(value, 0, 2.0f);
+
+                if (AudioSource != null)
+                {
+                    AudioSource.reverbZoneMix = reverbZoneMix;
+                }
+            }
+        }
+
+        #region 3D 세팅
+        /// <summary>
+        /// 오디오에 도플러 효과를 설정할 수 있습니다.
+        /// <para>도플러 효과: 소리가 이동 속도에 따라 피치가 변하는 효과</para>
+        /// </summary>
+        /// <value>0.0(속도에 따른 피치 변화 없음) ~ 5.0(속도에 따른 피치 변화 극대화)</value>
+        public float DopplerLevel
+        {
+            get { return dopplerLevel; }
+            set
+            {
+                dopplerLevel = Mathf.Clamp(value, 0, 5.0f);
+
+                if (AudioSource != null)
+                {
+                    AudioSource.dopplerLevel = dopplerLevel;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 오디오가 얼마나 넓게 퍼질지 설정할 수 있습니다.
+        /// <para>※ Stereo 채널에서만 동작하여 소리의 방향과 입체감을 제공합니다.</para>
+        /// </summary>
+        /// <value>
+        /// <para>0: 소리가 한쪽(좌 or 우)에서만 들림</para>
+        /// <para>180: 소리가 좌측과 우측 모두에서 들림</para>
+        /// <para>360: 소리가 전방위적으로 퍼져서 주위에서 소리가 나오는 것 처럼 들림</para>
+        /// </value>
+        public float Spread
+        {
+            get { return spread; }
+            set
+            {
+                spread = Mathf.Clamp(value, 0, 360.0f);
+
+                if (AudioSource != null)
+                {
+                    AudioSource.spread = spread;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 오디오 소스와 리스너의 거리에 따라 소리의 감소되는 방식을 설정할 수 있습니다.
+        /// </summary>
+        public AudioRolloffMode RolloffMode
+        {
+            get { return rolloffMode; }
+            set
+            {
+                rolloffMode = value;
+
+                if (AudioSource != null)
+                {
+                    AudioSource.rolloffMode = rolloffMode;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 소리의 최대 거리, 이 거리를 초과하면 소리가 들리지 않습니다.
+        /// </summary>
+        public float Max3DDistance
+        {
+            get { return max3DDistance; }
+            set
+            {
+                max3DDistance = Mathf.Max(value, 0.01f);
+
+                if (AudioSource != null)
+                {
+                    AudioSource.maxDistance = max3DDistance;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 소리가 명확하게 들리는 최대 거리
+        /// <para>※ 이 거리를 초과하면 소리의 볼륨은 거리와 함께 감소</para>
+        /// </summary>
+        public float Min3DDistance
+        {
+            get { return min3DDistance; }
+            set
+            {
+                min3DDistance = Mathf.Max(value, 0);
+
+                if (AudioSource != null)
+                {
+                    AudioSource.minDistance = min3DDistance;
+                }
+            }
+        }
+        #endregion
+        #endregion
+
+        private static int audioCounter = 0;
 
         private float targetVolume;
         private float initTargetVolume;
-        private float tempFadeSeconds;
         private float fadeInterpolater;
         private float onFadeStartVolume;
         private Transform sourceTransform;
 
         public Audio(AudioType audioType, AudioClip clip, bool loop, bool persist, float volume, float fadeInValue, float fadeOutValue, Transform sourceTransform)
         {
-            // Set unique audio ID
             AudioID = audioCounter;
             audioCounter++;
 
-            // Initialize values
             this.Type = audioType;
             this.Clip = clip;
             this.SourceTransform = sourceTransform;
@@ -342,41 +379,72 @@ namespace FrameWork.Sound
             this.Persist = persist;
             this.targetVolume = volume;
             this.initTargetVolume = volume;
-            this.tempFadeSeconds = -1;
             this.FadeInSeconds = fadeInValue;
             this.FadeOutSeconds = fadeOutValue;
 
-            Volume = 0f;
-            Pooled = false;
-
-            // Set audiosource default values
             Mute = false;
+            Volume = 0f;
             Priority = 128;
             Pitch = 1;
             StereoPan = 0;
-            if (sourceTransform != null && sourceTransform != SoundManager.Gameobject.transform)
+            if (sourceTransform != null && sourceTransform != SoundManager.Transform)
             {
                 SpatialBlend = 1;
             }
             ReverbZoneMix = 1;
+
             DopplerLevel = 1;
             Spread = 0;
             RolloffMode = AudioRolloffMode.Logarithmic;
             Min3DDistance = 1;
             Max3DDistance = 500;
 
-            // Initliaze states
             IsPlaying = false;
-            Paused = false;
-            Activated = false;
+            IsPaused = false;
+            IsUpdated = false;
+            IsPooled = false;
+        }
+
+        #region 오디오 재생
+        /// <summary>
+        /// 오디오 클립을 처음부터 재생합니다.
+        /// </summary>
+        public void Play()
+        {
+            Play(initTargetVolume);
         }
 
         /// <summary>
-        /// Creates and initializes the audiosource component with the appropriate values
+        /// 오디오 클립을 처음부터 재생합니다.
         /// </summary>
+        /// <param name="volume">해당 오디오의 볼륨을 따로 설정할 수 있습니다.</param>
+        public void Play(float volume)
+        {
+            if (IsPooled)
+            {
+                bool restoredFromPool = SoundManager.RestoreAudioFromPool(Type, AudioID);
+
+                if (!restoredFromPool) return;
+
+                IsPooled = false;
+            }
+
+            if (AudioSource == null)
+            {
+                CreateAudiosource();
+            }
+
+            AudioSource.Play();
+            IsPlaying = true;
+
+            fadeInterpolater = 0f;
+            onFadeStartVolume = this.Volume;
+            targetVolume = volume;
+        }
+
         private void CreateAudiosource()
         {
-            AudioSource = SourceTransform.gameObject.AddComponent<AudioSource>() as AudioSource;
+            AudioSource = SourceTransform.gameObject.AddComponent<AudioSource>();
             AudioSource.clip = Clip;
             AudioSource.loop = Loop;
             AudioSource.mute = Mute;
@@ -392,177 +460,55 @@ namespace FrameWork.Sound
             AudioSource.maxDistance = Max3DDistance;
             AudioSource.minDistance = Min3DDistance;
         }
+        #endregion
 
-        /// <summary>
-        /// Start playing audio clip from the beginning
-        /// </summary>
-        public void Play()
-        {
-            Play(initTargetVolume);
-        }
-
-        /// <summary>
-        /// Start playing audio clip from the beggining
-        /// </summary>
-        /// <param name="volume">The target volume</param>
-        public void Play(float volume)
-        {
-            // Check if audio still exists in sound manager
-            if (Pooled)
-            {
-                // If not, restore it from the audioPool
-                bool restoredFromPool = SoundManager.RestoreAudioFromPool(Type, AudioID);
-                if (!restoredFromPool)
-                {
-                    return;
-                }
-
-                Pooled = true;
-            }
-
-            // Recreate audiosource if it does not exist
-            if (AudioSource == null)
-            {
-                CreateAudiosource();
-            }
-
-            AudioSource.Play();
-            IsPlaying = true;
-
-            fadeInterpolater = 0f;
-            onFadeStartVolume = this.Volume;
-            targetVolume = volume;
-        }
-
-        /// <summary>
-        /// Stop playing audio clip
-        /// </summary>
+        #region 오디오 정지/일시 정지/다시 시작
         public void Stop()
         {
             fadeInterpolater = 0f;
             onFadeStartVolume = Volume;
             targetVolume = 0f;
 
-            Stopping = true;
+            IsStopped = true;
         }
 
-        /// <summary>
-        /// Pause playing audio clip
-        /// </summary>
         public void Pause()
         {
             AudioSource.Pause();
-            Paused = true;
+            IsPaused = true;
         }
 
-        /// <summary>
-        /// Resume playing audio clip
-        /// </summary>
-        public void UnPause()
-        {
-            AudioSource.UnPause();
-            Paused = false;
-        }
-
-        /// <summary>
-        /// Resume playing audio clip
-        /// </summary>
         public void Resume()
         {
             AudioSource.UnPause();
-            Paused = false;
+            IsPaused = false;
         }
+        #endregion
 
-        /// <summary>
-        /// Sets the audio volume
-        /// </summary>
-        /// <param name="volume">The target volume</param>
-        public void SetVolume(float volume)
-        {
-            if (volume > targetVolume)
-            {
-                SetVolume(volume, FadeOutSeconds);
-            }
-            else
-            {
-                SetVolume(volume, FadeInSeconds);
-            }
-        }
-
-        /// <summary>
-        /// Sets the audio volume
-        /// </summary>
-        /// <param name="volume">The target volume</param>
-        /// <param name="fadeSeconds">How many seconds it needs for the audio to fade in/out to reach target volume. If passed, it will override the Audio's fade in/out seconds, but only for this transition</param>
-        public void SetVolume(float volume, float fadeSeconds)
-        {
-            SetVolume(volume, fadeSeconds, this.Volume);
-        }
-
-        /// <summary>
-        /// Sets the audio volume
-        /// </summary>
-        /// <param name="volume">The target volume</param>
-        /// <param name="fadeSeconds">How many seconds it needs for the audio to fade in/out to reach target volume. If passed, it will override the Audio's fade in/out seconds, but only for this transition</param>
-        /// <param name="startVolume">Immediately set the volume to this value before beginning the fade. If not passed, the Audio will start fading from the current volume towards the target volume</param>
-        public void SetVolume(float volume, float fadeSeconds, float startVolume)
-        {
-            targetVolume = Mathf.Clamp01(volume);
-            fadeInterpolater = 0;
-            onFadeStartVolume = startVolume;
-            tempFadeSeconds = fadeSeconds;
-        }
-
-        /// <summary>
-        /// Sets the Audio 3D distances
-        /// </summary>
-        /// <param name="min">the min distance</param>
-        /// <param name="max">the max distance</param>
-        public void Set3DDistances(float min, float max)
-        {
-            Min3DDistance = min;
-            Max3DDistance = max;
-        }
-
-        /// <summary>
-        /// Update loop of the Audio. This is automatically called from the sound manager itself. Do not use this function anywhere else, as it may lead to unwanted behaviour.
-        /// </summary>
         public void Update()
         {
-            if (AudioSource == null)
-            {
-                return;
-            }
+            if (AudioSource == null) return;
 
-            Activated = true;
+            IsUpdated = true;
 
-            // Increase/decrease volume to reach the current target
+            // 현재 볼륨이 목표 볼륨과 다르다면, 현재 볼륨을 목표 볼륨까지 높이거나 낮춥니다.
             if (Volume != targetVolume)
             {
                 float fadeValue;
                 fadeInterpolater += Time.unscaledDeltaTime;
-                if (Volume > targetVolume)
-                {
-                    fadeValue = tempFadeSeconds != -1 ? tempFadeSeconds : FadeOutSeconds;
-                }
-                else
-                {
-                    fadeValue = tempFadeSeconds != -1 ? tempFadeSeconds : FadeInSeconds;
-                }
+
+                if (Volume > targetVolume) fadeValue = FadeOutSeconds;
+                else fadeValue = FadeInSeconds;
 
                 Volume = Mathf.Lerp(onFadeStartVolume, targetVolume, fadeInterpolater / fadeValue);
             }
-            else if (tempFadeSeconds != -1)
-            {
-                tempFadeSeconds = -1;
-            }
 
-            // Set the volume, taking into account the global volumes as well.
+            // 볼륨을 조절합니다.
             switch (Type)
             {
-                case AudioType.Music:
+                case AudioType.BGM:
                     {
-                        AudioSource.volume = Volume * SoundManager.GlobalMusicVolume * SoundManager.GlobalVolume;
+                        AudioSource.volume = Volume * SoundManager.GlobalBGMVolume * SoundManager.GlobalVolume;
                         break;
                     }
                 case AudioType.SFX:
@@ -582,16 +528,16 @@ namespace FrameWork.Sound
                     }
             }
 
-            // Completely stop audio if it finished the process of stopping
-            if (Volume == 0f && Stopping)
+            // 오디오를 완전히 정지시킵니다.
+            if (Volume == 0f && IsStopped)
             {
                 AudioSource.Stop();
-                Stopping = false;
                 IsPlaying = false;
-                Paused = false;
+                IsStopped = false;
+                IsPaused = false;
             }
 
-            // Update playing status
+            // 어플리케이션이 활성화 되었을 때, 오디오가 재생되고 있는지 확인합니다.
             if (AudioSource.isPlaying != IsPlaying && Application.isFocused)
             {
                 IsPlaying = AudioSource.isPlaying;

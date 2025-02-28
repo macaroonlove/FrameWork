@@ -1,126 +1,75 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace FrameWork.Sound
 {
+    /// <summary>
+    /// 게임에 사용되는 모든 소리를 관리하는 매니저
+    /// </summary>
     public class SoundManager : PersistentSingleton<SoundManager>
     {
         /// <summary>
-        /// The gameobject that the sound manager is attached to
+        /// SoundManager가 연결된 GameObject의 Transform
         /// </summary>
-        public static GameObject Gameobject { get { return Instance.gameObject; } }
+        public static Transform Transform { get { return Instance.transform; } }
 
-        public static int prevCancelableSoundID = -1;
+        #region 중복된 오디오 클립 무시 여부
+        public static bool IgnoreDuplicateBGM { get; set; }
+        public static bool IgnoreDuplicateSFX { get; set; }
+        public static bool IgnoreDuplicateUISound { get; set; }
+        public static bool IgnoreDuplicateVoice { get; set; }
+        #endregion
 
-        public static void CancelPrevCancelableSound(int id)
-        {
-            if (prevCancelableSoundID != -1)
-            {
-                var prevAudio = GetAudio(prevCancelableSoundID);
-                if (prevAudio != null)
-                {
-                    prevAudio.Stop();
-                }
-            }
-
-            prevCancelableSoundID = id;
-        }
-
-        /// <summary>
-        /// When set to true, new music audios that have the same audio clip as any other music audios, will be ignored
-        /// </summary>
-        public static bool IgnoreDuplicateMusic { get; set; }
-
-        /// <summary>
-        /// When set to true, new sound audios that have the same audio clip as any other sound audios, will be ignored
-        /// </summary>
-        public static bool IgnoreDuplicateSounds { get; set; }
-
-        /// <summary>
-        /// When set to true, new UI sound audios that have the same audio clip as any other UI sound audios, will be ignored
-        /// </summary>
-        public static bool IgnoreDuplicateUISounds { get; set; }
-
-        public static bool IgnoreDuplicateVoiceSounds { get; set; }
-
-        /// <summary>
-        /// Global volume
-        /// </summary>
+        #region 음량 조절
         public static float GlobalVolume { get; set; }
-
-        /// <summary>
-        /// Global music volume
-        /// </summary>
-        public static float GlobalMusicVolume { get; set; }
-
-        /// <summary>
-        /// Global sounds volume
-        /// </summary>
+        public static float GlobalBGMVolume { get; set; }
         public static float GlobalSFXVolume { get; set; }
-
-        /// <summary>
-        /// Global UI sounds volume
-        /// </summary>
         public static float GlobalUIVolume { get; set; }
-
-        /// <summary>
-        /// Global Voice sounds volume
-        /// </summary>
         public static float GlobalVoiceVolume { get; set; }
+        #endregion
 
-        private static Dictionary<int, Audio> musicAudio;
-        private static Dictionary<int, Audio> soundsAudio;
-        private static Dictionary<int, Audio> UISoundsAudio;
-        private static Dictionary<int, Audio> VoiceSoundsAudio;
+        #region 오디오 클립을 가지고 있을 Dictionary
+        private static Dictionary<int, Audio> bgmAudio;
+        private static Dictionary<int, Audio> sfxAudio;
+        private static Dictionary<int, Audio> uiSoundAudio;
+        private static Dictionary<int, Audio> voiceAudio;
         private static Dictionary<int, Audio> audioPool;
+        #endregion
 
         private static bool initialized = false;
 
-        protected override void Awake()
-        {
-            base.Awake();
-
-            Instance.Init();
-        }
-
         static SoundManager()
         {
-            Instance.Init();
+            Instance.Initialize();
         }
 
-        /// <summary>
-        /// Initialized the sound manager
-        /// </summary>
-        private void Init()
+        private new void Initialize()
         {
             if (!initialized)
             {
-                musicAudio = new Dictionary<int, Audio>();
-                soundsAudio = new Dictionary<int, Audio>();
-                UISoundsAudio = new Dictionary<int, Audio>();
-                VoiceSoundsAudio = new Dictionary<int, Audio>();
+                bgmAudio = new Dictionary<int, Audio>();
+                sfxAudio = new Dictionary<int, Audio>();
+                uiSoundAudio = new Dictionary<int, Audio>();
+                voiceAudio = new Dictionary<int, Audio>();
                 audioPool = new Dictionary<int, Audio>();
 
                 GlobalVolume = 0.5f;
-                GlobalMusicVolume = 0.5f;
+                GlobalBGMVolume = 0.5f;
                 GlobalSFXVolume = 0.5f;
-                GlobalUIVolume = 1;
-                GlobalVoiceVolume = 1;
+                GlobalUIVolume = 0.5f;
+                GlobalVoiceVolume = 0.5f;
 
-                IgnoreDuplicateMusic = false;
-                IgnoreDuplicateSounds = false;
-                IgnoreDuplicateUISounds = false;
-                IgnoreDuplicateVoiceSounds = false;
+                IgnoreDuplicateBGM = false;
+                IgnoreDuplicateSFX = false;
+                IgnoreDuplicateUISound = false;
+                IgnoreDuplicateVoice = false;
 
                 initialized = true;
-                DontDestroyOnLoad(this);
             }
         }
 
+        #region 씬 로드 시 초기화 로직
         private void OnEnable()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
@@ -132,48 +81,103 @@ namespace FrameWork.Sound
         }
 
         /// <summary>
-        /// Event triggered when a new scene is loaded
+        /// 모든 오디오를 중지하고 제거합니다.
         /// </summary>
-        /// <param name="scene">The scene that is loaded</param>
-        /// <param name="mode">The scene load mode</param>
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            // Stop and remove all non-persistent audio
-            RemoveNonPersistAudio(musicAudio);
-            RemoveNonPersistAudio(soundsAudio);
-            RemoveNonPersistAudio(UISoundsAudio);
-            RemoveNonPersistAudio(VoiceSoundsAudio);
-        }
-
-        private void Update()
-        {
-            UpdateAllAudio(musicAudio);
-            UpdateAllAudio(soundsAudio);
-            UpdateAllAudio(UISoundsAudio);
-            UpdateAllAudio(VoiceSoundsAudio);
+            RemoveNonPersistAudio(bgmAudio);
+            RemoveNonPersistAudio(sfxAudio);
+            RemoveNonPersistAudio(uiSoundAudio);
+            RemoveNonPersistAudio(voiceAudio);
         }
 
         /// <summary>
-        /// Retrieves the audio dictionary based on the audioType
+        /// 씬이 전환될 때, 지속되지 않을 오디오를 Audio Dictionary에서 제거
         /// </summary>
-        /// <param name="audioType">The audio type of the dictionary to return</param>
-        /// <returns>An audio dictionary</returns>
+        private static void RemoveNonPersistAudio(Dictionary<int, Audio> audioDict)
+        {
+            List<int> keys = new List<int>(audioDict.Keys);
+
+            foreach (int key in keys)
+            {
+                Audio audio = audioDict[key];
+
+                if (!audio.Persist && audio.IsUpdated)
+                {
+                    Destroy(audio.AudioSource);
+                    audioDict.Remove(key);
+                }
+            }
+
+            keys = new List<int>(audioPool.Keys);
+
+            foreach (int key in keys)
+            {
+                Audio audio = audioPool[key];
+
+                if (!audio.Persist && audio.IsUpdated)
+                {
+                    audioPool.Remove(key);
+                }
+            }
+        }
+        #endregion
+
+        #region 오디오 업데이트
+        private void Update()
+        {
+            UpdateAllAudio(bgmAudio);
+            UpdateAllAudio(sfxAudio);
+            UpdateAllAudio(uiSoundAudio);
+            UpdateAllAudio(voiceAudio);
+        }
+
+        /// <summary>
+        /// Audio Dictionary의 모든 오디오 상태를 업데이트합니다.
+        /// </summary>
+        private static void UpdateAllAudio(Dictionary<int, Audio> audioDict)
+        {
+            List<int> keys = new List<int>(audioDict.Keys);
+
+            foreach (int key in keys)
+            {
+                Audio audio = audioDict[key];
+                audio.Update();
+
+                // 오디오가 완전히 정지되었다면
+                if (!audio.IsPlaying && !audio.IsPaused)
+                {
+                    Destroy(audio.AudioSource);
+
+                    audioPool.Add(key, audio);
+                    audio.IsPooled = true;
+                    audioDict.Remove(key);
+                }
+            }
+        }
+        #endregion
+
+        #region 유틸리티
+        /// <summary>
+        /// AudioType에 따라 오디오 사전을 반환합니다.
+        /// </summary>
         private static Dictionary<int, Audio> GetAudioTypeDictionary(Audio.AudioType audioType)
         {
             Dictionary<int, Audio> audioDict = new Dictionary<int, Audio>();
+
             switch (audioType)
             {
-                case Audio.AudioType.Music:
-                    audioDict = musicAudio;
+                case Audio.AudioType.BGM:
+                    audioDict = bgmAudio;
                     break;
                 case Audio.AudioType.SFX:
-                    audioDict = soundsAudio;
+                    audioDict = sfxAudio;
                     break;
                 case Audio.AudioType.UI:
-                    audioDict = UISoundsAudio;
+                    audioDict = uiSoundAudio;
                     break;
                 case Audio.AudioType.Voice:
-                    audioDict = VoiceSoundsAudio;
+                    audioDict = voiceAudio;
                     break;
             }
 
@@ -181,89 +185,8 @@ namespace FrameWork.Sound
         }
 
         /// <summary>
-        /// Retrieves the IgnoreDuplicates setting of audios of a specified audio type
+        /// 풀링된 오디오를 복원하여 해당 Audio Dictionary에 다시 추가합니다.
         /// </summary>
-        /// <param name="audioType">The audio type that the returned IgnoreDuplicates setting affects</param>
-        /// <returns>An IgnoreDuplicates setting (bool)</returns>
-        private static bool GetAudioTypeIgnoreDuplicateSetting(Audio.AudioType audioType)
-        {
-            switch (audioType)
-            {
-                case Audio.AudioType.Music:
-                    return IgnoreDuplicateMusic;
-                case Audio.AudioType.SFX:
-                    return IgnoreDuplicateSounds;
-                case Audio.AudioType.UI:
-                    return IgnoreDuplicateUISounds;
-                case Audio.AudioType.Voice:
-                    return IgnoreDuplicateVoiceSounds;
-                default:
-                    return false;
-            }
-        }
-
-        /// <summary>
-        /// Updates the state of all audios of an audio dictionary
-        /// </summary>
-        /// <param name="audioDict">The audio dictionary to update</param>
-        private static void UpdateAllAudio(Dictionary<int, Audio> audioDict)
-        {
-            // Go through all audios and update them
-            List<int> keys = new List<int>(audioDict.Keys);
-            foreach (int key in keys)
-            {
-                Audio audio = audioDict[key];
-                audio.Update();
-
-                // Remove it if it is no longer active (playing)
-                if (!audio.IsPlaying && !audio.Paused)
-                {
-                    Destroy(audio.AudioSource);
-
-                    // Add it to the audio pool in case it needs to be referenced in the future
-                    audioPool.Add(key, audio);
-                    audio.Pooled = true;
-                    audioDict.Remove(key);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Remove all non-persistant audios from an audio dictionary
-        /// </summary>
-        /// <param name="audioDict">The audio dictionary whose non-persistant audios are getting removed</param>
-        private static void RemoveNonPersistAudio(Dictionary<int, Audio> audioDict)
-        {
-            // Go through all audios and remove them if they should not persist through scenes
-            List<int> keys = new List<int>(audioDict.Keys);
-            foreach (int key in keys)
-            {
-                Audio audio = audioDict[key];
-                if (!audio.Persist && audio.Activated)
-                {
-                    Destroy(audio.AudioSource);
-                    audioDict.Remove(key);
-                }
-            }
-
-            // Go through all audios in the audio pool and remove them if they should not persist through scenes
-            keys = new List<int>(audioPool.Keys);
-            foreach (int key in keys)
-            {
-                Audio audio = audioPool[key];
-                if (!audio.Persist && audio.Activated)
-                {
-                    audioPool.Remove(key);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Restores and re-adds a pooled audio to its corresponding audio dictionary
-        /// </summary>
-        /// <param name="audioType">The audio type of the audio to restore</param>
-        /// <param name="audioID">The ID of the audio to be restored</param>
-        /// <returns>True if the audio is restored, false if the audio was not in the audio pool.</returns>
         public static bool RestoreAudioFromPool(Audio.AudioType audioType, int audioID)
         {
             if (audioPool.ContainsKey(audioID))
@@ -277,145 +200,45 @@ namespace FrameWork.Sound
 
             return false;
         }
+        #endregion
 
-        #region GetAudio Functions
-
-        /// <summary>
-        /// Returns the Audio that has as its id the audioID if one is found, returns null if no such Audio is found
-        /// </summary>
-        /// <param name="audioID">The id of the Audio to be retrieved</param>
-        /// <returns>Audio that has as its id the audioID, null if no such Audio is found</returns>
-        public static Audio GetAudio(int audioID)
+        #region GetAudio (오디오 객체를 받아오는 메서드)
+        public static Audio GetBGMAudio(int audioID)
         {
-            Audio audio;
-
-            audio = GetMusicAudio(audioID);
-            if (audio != null)
-            {
-                return audio;
-            }
-
-            audio = GetSoundAudio(audioID);
-            if (audio != null)
-            {
-                return audio;
-            }
-
-            audio = GetUISoundAudio(audioID);
-            if (audio != null)
-            {
-                return audio;
-            }
-
-            audio = GetVoiceSoundAudio(audioID);
-            if (audio != null)
-            {
-                return audio;
-            }
-
-            return null;
+            return GetAudio(Audio.AudioType.BGM, true, audioID);
         }
 
-        /// <summary>
-        /// Returns the first occurrence of Audio that plays the given audioClip. Returns null if no such Audio is found
-        /// </summary>
-        /// <param name="audioClip">The audio clip of the Audio to be retrieved</param>
-        /// <returns>First occurrence of Audio that has as plays the audioClip, null if no such Audio is found</returns>
-        public static Audio GetAudio(AudioClip audioClip)
+        public static Audio GetBGMAudio(AudioClip audioClip)
         {
-            Audio audio = GetMusicAudio(audioClip);
-            if (audio != null)
-            {
-                return audio;
-            }
-
-            audio = GetSoundAudio(audioClip);
-            if (audio != null)
-            {
-                return audio;
-            }
-
-            audio = GetUISoundAudio(audioClip);
-            if (audio != null)
-            {
-                return audio;
-            }
-
-            audio = GetVoiceSoundAudio(audioClip);
-            if (audio != null)
-            {
-                return audio;
-            }
-
-            return null;
+            return GetAudio(Audio.AudioType.BGM, true, audioClip);
         }
 
-        /// <summary>
-        /// Returns the music Audio that has as its id the audioID if one is found, returns null if no such Audio is found
-        /// </summary>
-        /// <param name="audioID">The id of the music Audio to be returned</param>
-        /// <returns>Music Audio that has as its id the audioID if one is found, null if no such Audio is found</returns>
-        public static Audio GetMusicAudio(int audioID)
-        {
-            return GetAudio(Audio.AudioType.Music, true, audioID);
-        }
-
-        /// <summary>
-        /// Returns the first occurrence of music Audio that plays the given audioClip. Returns null if no such Audio is found
-        /// </summary>
-        /// <param name="audioClip">The audio clip of the music Audio to be retrieved</param>
-        /// <returns>First occurrence of music Audio that has as plays the audioClip, null if no such Audio is found</returns>
-        public static Audio GetMusicAudio(AudioClip audioClip)
-        {
-            return GetAudio(Audio.AudioType.Music, true, audioClip);
-        }
-
-        /// <summary>
-        /// Returns the sound fx Audio that has as its id the audioID if one is found, returns null if no such Audio is found
-        /// </summary>
-        /// <param name="audioID">The id of the sound fx Audio to be returned</param>
-        /// <returns>Sound fx Audio that has as its id the audioID if one is found, null if no such Audio is found</returns>
-        public static Audio GetSoundAudio(int audioID)
+        public static Audio GetSFXAudio(int audioID)
         {
             return GetAudio(Audio.AudioType.SFX, true, audioID);
         }
 
-        /// <summary>
-        /// Returns the first occurrence of sound Audio that plays the given audioClip. Returns null if no such Audio is found
-        /// </summary>
-        /// <param name="audioClip">The audio clip of the sound Audio to be retrieved</param>
-        /// <returns>First occurrence of sound Audio that has as plays the audioClip, null if no such Audio is found</returns>
-        public static Audio GetSoundAudio(AudioClip audioClip)
+        public static Audio GetSFXAudio(AudioClip audioClip)
         {
             return GetAudio(Audio.AudioType.SFX, true, audioClip);
         }
 
-        /// <summary>
-        /// Returns the UI sound fx Audio that has as its id the audioID if one is found, returns null if no such Audio is found
-        /// </summary>
-        /// <param name="audioID">The id of the UI sound fx Audio to be returned</param>
-        /// <returns>UI sound fx Audio that has as its id the audioID if one is found, null if no such Audio is found</returns>
         public static Audio GetUISoundAudio(int audioID)
         {
             return GetAudio(Audio.AudioType.UI, true, audioID);
         }
 
-        public static Audio GetVoiceSoundAudio(int audioID)
-        {
-            return GetAudio(Audio.AudioType.Voice, true, audioID);
-        }
-
-        /// <summary>
-        /// Returns the first occurrence of UI sound Audio that plays the given audioClip. Returns null if no such Audio is found
-        /// </summary>
-        /// <param name="audioClip">The audio clip of the UI sound Audio to be retrieved</param>
-        /// <returns>First occurrence of UI sound Audio that has as plays the audioClip, null if no such Audio is found</returns>
         public static Audio GetUISoundAudio(AudioClip audioClip)
         {
             return GetAudio(Audio.AudioType.UI, true, audioClip);
         }
 
-        public static Audio GetVoiceSoundAudio(AudioClip audioClip)
+        public static Audio GetVoiceAudio(int audioID)
+        {
+            return GetAudio(Audio.AudioType.Voice, true, audioID);
+        }
+
+        public static Audio GetVoiceAudio(AudioClip audioClip)
         {
             return GetAudio(Audio.AudioType.Voice, true, audioClip);
         }
@@ -441,184 +264,43 @@ namespace FrameWork.Sound
         {
             Dictionary<int, Audio> audioDict = GetAudioTypeDictionary(audioType);
 
-            List<int> audioTypeKeys = new List<int>(audioDict.Keys);
-            List<int> poolKeys = new List<int>(audioPool.Keys);
-            List<int> keys = usePool ? audioTypeKeys.Concat(poolKeys).ToList() : audioTypeKeys;
-            foreach (int key in keys)
+            List<Audio> audioList = new List<Audio>(audioDict.Values);
+            foreach (var audio in audioList)
             {
-                Audio audio = null;
-                if (audioDict.ContainsKey(key))
-                {
-                    audio = audioDict[key];
-                }
-                else if (audioPool.ContainsKey(key))
-                {
-                    audio = audioPool[key];
-                }
-                if (audio == null)
-                {
-                    return null;
-                }
                 if (audio.Clip == audioClip && audio.Type == audioType)
                 {
-                    return audio;
+                    if (audioDict.ContainsKey(audio.AudioID))
+                    {
+                        return audio;
+                    }
+                }
+            }
+
+            if (usePool)
+            {
+                List<Audio> poolList = new List<Audio>(audioPool.Values);
+                foreach (var audio in poolList)
+                {
+                    if (audio.Clip == audioClip && audio.Type == audioType)
+                    {
+                        if (audioPool.ContainsKey(audio.AudioID))
+                        {
+                            return audio;
+                        }
+                    }
                 }
             }
 
             return null;
         }
-
         #endregion
 
-        #region Prepare Function
-
-        /// <summary>
-        /// Prepares and initializes background music
-        /// </summary>
-        /// <param name="clip">The audio clip to prepare</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PrepareMusic(AudioClip clip)
-        {
-            return PrepareAudio(Audio.AudioType.Music, clip, 1f, false, false, 1f, 1f, -1f, null);
-        }
-
-        /// <summary>
-        /// Prepares and initializes background music
-        /// </summary>
-        /// <param name="clip">The audio clip to prepare</param>
-        /// <param name="volume"> The volume the music will have</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PrepareMusic(AudioClip clip, float volume)
-        {
-            return PrepareAudio(Audio.AudioType.Music, clip, volume, false, false, 1f, 1f, -1f, null);
-        }
-
-        /// <summary>
-        /// Prepares and initializes background music
-        /// </summary>
-        /// <param name="clip">The audio clip to prepare</param>
-        /// <param name="volume"> The volume the music will have</param>
-        /// <param name="loop">Wether the music is looped</param>
-        /// <param name = "persist" > Whether the audio persists in between scene changes</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PrepareMusic(AudioClip clip, float volume, bool loop, bool persist)
-        {
-            return PrepareAudio(Audio.AudioType.Music, clip, volume, loop, persist, 1f, 1f, -1f, null);
-        }
-
-        /// <summary>
-        /// Prerpares and initializes background music
-        /// </summary>
-        /// <param name="clip">The audio clip to prepare</param>
-        /// <param name="volume"> The volume the music will have</param>
-        /// <param name="loop">Wether the music is looped</param>
-        /// <param name="persist"> Whether the audio persists in between scene changes</param>
-        /// <param name="fadeInValue">How many seconds it needs for the audio to fade in/ reach target volume (if higher than current)</param>
-        /// <param name="fadeOutValue"> How many seconds it needs for the audio to fade out/ reach target volume (if lower than current)</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PrepareMusic(AudioClip clip, float volume, bool loop, bool persist, float fadeInSeconds, float fadeOutSeconds)
-        {
-            return PrepareAudio(Audio.AudioType.Music, clip, volume, loop, persist, fadeInSeconds, fadeOutSeconds, -1f, null);
-        }
-
-        /// <summary>
-        /// Prepares and initializes background music
-        /// </summary>
-        /// <param name="clip">The audio clip to prepare</param>
-        /// <param name="volume"> The volume the music will have</param>
-        /// <param name="loop">Wether the music is looped</param>
-        /// <param name="persist"> Whether the audio persists in between scene changes</param>
-        /// <param name="fadeInValue">How many seconds it needs for the audio to fade in/ reach target volume (if higher than current)</param>
-        /// <param name="fadeOutValue"> How many seconds it needs for the audio to fade out/ reach target volume (if lower than current)</param>
-        /// <param name="currentMusicfadeOutSeconds"> How many seconds it needs for current music audio to fade out. It will override its own fade out seconds. If -1 is passed, current music will keep its own fade out seconds</param>
-        /// <param name="sourceTransform">The transform that is the source of the music (will become 3D audio). If 3D audio is not wanted, use null</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PrepareMusic(AudioClip clip, float volume, bool loop, bool persist, float fadeInSeconds, float fadeOutSeconds, float currentMusicfadeOutSeconds, Transform sourceTransform)
-        {
-            return PrepareAudio(Audio.AudioType.Music, clip, volume, loop, persist, fadeInSeconds, fadeOutSeconds, currentMusicfadeOutSeconds, sourceTransform);
-        }
-
-        /// <summary>
-        /// Prepares and initializes a sound fx
-        /// </summary>
-        /// <param name="clip">The audio clip to prepare</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PrepareSound(AudioClip clip)
-        {
-            return PrepareAudio(Audio.AudioType.SFX, clip, 1f, false, false, 0f, 0f, -1f, null);
-        }
-
-        /// <summary>
-        /// Prepares and initializes a sound fx
-        /// </summary>
-        /// <param name="clip">The audio clip to prepare</param>
-        /// <param name="volume"> The volume the music will have</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PrepareSound(AudioClip clip, float volume)
-        {
-            return PrepareAudio(Audio.AudioType.SFX, clip, volume, false, false, 0f, 0f, -1f, null);
-        }
-
-        /// <summary>
-        /// Prepares and initializes a sound fx
-        /// </summary>
-        /// <param name="clip">The audio clip to prepare</param>
-        /// <param name="loop">Wether the sound is looped</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PrepareSound(AudioClip clip, bool loop)
-        {
-            return PrepareAudio(Audio.AudioType.SFX, clip, 1f, loop, false, 0f, 0f, -1f, null);
-        }
-
-        /// <summary>
-        /// Prepares and initializes a sound fx
-        /// </summary>
-        /// <param name="clip">The audio clip to prepare</param>
-        /// <param name="volume"> The volume the music will have</param>
-        /// <param name="loop">Wether the sound is looped</param>
-        /// <param name="sourceTransform">The transform that is the source of the sound (will become 3D audio). If 3D audio is not wanted, use null</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PrepareSound(AudioClip clip, float volume, bool loop, Transform sourceTransform)
-        {
-            return PrepareAudio(Audio.AudioType.SFX, clip, volume, loop, false, 0f, 0f, -1f, sourceTransform);
-        }
-
-        /// <summary>
-        /// Prepares and initializes a UI sound fx
-        /// </summary>
-        /// <param name="clip">The audio clip to prepare</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PrepareUISound(AudioClip clip)
-        {
-            return PrepareAudio(Audio.AudioType.UI, clip, 1f, false, false, 0f, 0f, -1f, null);
-        }
-
-        /// <summary>
-        /// Prepares and initializes a UI sound fx
-        /// </summary>
-        /// <param name="clip">The audio clip to prepare</param>
-        /// <param name="volume"> The volume the music will have</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PrepareUISound(AudioClip clip, float volume)
-        {
-            return PrepareAudio(Audio.AudioType.UI, clip, volume, false, false, 0f, 0f, -1f, null);
-        }
-
-        public static int PrepareVoiceSound(AudioClip clip)
-        {
-            return PrepareAudio(Audio.AudioType.Voice, clip, 1f, false, false, 0f, 0f, -1f, null);
-        }
-
-        public static int PrepareVoiceSound(AudioClip clip, float volume)
-        {
-            return PrepareAudio(Audio.AudioType.Voice, clip, volume, false, false, 0f, 0f, -1f, null);
-        }
-
-        private static int PrepareAudio(Audio.AudioType audioType, AudioClip clip, float volume, bool loop, bool persist, float fadeInSeconds, float fadeOutSeconds, float currentMusicfadeOutSeconds, Transform sourceTransform)
+        #region CreateAudio (오디오 객체를 생성하는 메서드)
+        private static int CreateAudio(Audio.AudioType audioType, AudioClip clip, float volume, bool loop, bool persist, float fadeInSeconds, float fadeOutSeconds, Transform sourceTransform)
         {
             if (clip == null)
             {
-                Debug.Log("<color=#ff0000>[Eazy Sound Manager] Audio clip is null</color>", clip);
+                Debug.Log("<color=#ff0000>[SoundManager] Audio clip이 없습니다.</color>", clip);
             }
 
             Dictionary<int, Audio> audioDict = GetAudioTypeDictionary(audioType);
@@ -626,249 +308,196 @@ namespace FrameWork.Sound
 
             if (ignoreDuplicateAudio)
             {
+                // 중복된 오디오가 있는지 탐색
                 Audio duplicateAudio = GetAudio(audioType, true, clip);
+
                 if (duplicateAudio != null)
                 {
                     return duplicateAudio.AudioID;
                 }
             }
 
-            // Create the audioSource
             Audio audio = new Audio(audioType, clip, loop, persist, volume, fadeInSeconds, fadeOutSeconds, sourceTransform);
 
-            // Add it to dictionary
             audioDict.Add(audio.AudioID, audio);
 
             return audio.AudioID;
         }
 
-
-
+        /// <summary>
+        /// 지정된 오디오 유형의 오디오에 대한 중복 무시 설정을 검색합니다.
+        /// </summary>
+        private static bool GetAudioTypeIgnoreDuplicateSetting(Audio.AudioType audioType)
+        {
+            switch (audioType)
+            {
+                case Audio.AudioType.BGM:
+                    return IgnoreDuplicateBGM;
+                case Audio.AudioType.SFX:
+                    return IgnoreDuplicateSFX;
+                case Audio.AudioType.UI:
+                    return IgnoreDuplicateUISound;
+                case Audio.AudioType.Voice:
+                    return IgnoreDuplicateVoice;
+                default:
+                    return false;
+            }
+        }
         #endregion
 
-        #region Play Functions
-
-        /// <summary>
-        /// Play background music
-        /// </summary>
-        /// <param name="clip">The audio clip to play</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PlayMusic(AudioClip clip)
+        #region PlayAudio (오디오를 실행시키는 메서드)
+        /// <param name="clip">재생할 오디오 클립</param>
+        /// <param name="volume">음악의 볼륨</param>
+        /// <param name="loop">음악이 반복 재생되는지 여부</param>
+        /// <param name="persist">오디오가 씬 전환 간에 유지되는지 여부</param>
+        /// <param name="fadeInSeconds">오디오가 페이드 인하여 목표 볼륨에 도달하는 데 필요한 시간(현재 볼륨보다 높을 경우)</param>
+        /// <param name="fadeOutSeconds">오디오가 페이드 아웃하여 목표 볼륨에 도달하는 데 필요한 시간(현재 볼륨보다 낮을 경우)</param>
+        /// <param name="currentMusicfadeOutSeconds">현재 음악 오디오가 페이드 아웃하는 데 필요한 시간입니다. 이 값이 설정되면 자체 페이드 아웃 시간을 덮어씁니다. -1이 전달되면 현재 음악은 자신의 페이드 아웃 시간을 유지합니다.</param>
+        /// <param name="sourceTransform">음악의 소스가 되는 변환(3D 오디오가 됩니다). 3D 오디오가 필요 없으면 null을 사용하세요.</param>
+        public static int PlayBGM(AudioClip clip, float volume = 1f, bool loop = false, bool persist = false, float fadeInSeconds = 1f, float fadeOutSeconds = 1f, float currentMusicfadeOutSeconds = -1f, Transform sourceTransform = null)
         {
-            return PlayAudio(Audio.AudioType.Music, clip, 1f, false, false, 1f, 1f, -1f, null);
+            return PlayAudio(Audio.AudioType.BGM, clip, volume, loop, persist, fadeInSeconds, fadeOutSeconds, currentMusicfadeOutSeconds, sourceTransform);
         }
 
-        /// <summary>
-        /// Play background music
-        /// </summary>
-        /// <param name="clip">The audio clip to play</param>
-        /// <param name="volume"> The volume the music will have</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PlayMusic(AudioClip clip, float volume)
+        /// <param name="clip">재생할 오디오 클립</param>
+        /// <param name="volume">음악의 볼륨</param>
+        /// <param name="loop">음악이 반복 재생되는지 여부</param>
+        /// <param name="persist">오디오가 씬 전환 간에 유지되는지 여부</param>
+        /// <param name="fadeInSeconds">오디오가 페이드 인하여 목표 볼륨에 도달하는 데 필요한 시간(현재 볼륨보다 높을 경우)</param>
+        /// <param name="fadeOutSeconds">오디오가 페이드 아웃하여 목표 볼륨에 도달하는 데 필요한 시간(현재 볼륨보다 낮을 경우)</param>
+        /// <param name="currentMusicfadeOutSeconds">현재 음악 오디오가 페이드 아웃하는 데 필요한 시간입니다. 이 값이 설정되면 자체 페이드 아웃 시간을 덮어씁니다. -1이 전달되면 현재 음악은 자신의 페이드 아웃 시간을 유지합니다.</param>
+        /// <param name="sourceTransform">음악의 소스가 되는 변환(3D 오디오가 됩니다). 3D 오디오가 필요 없으면 null을 사용하세요.</param>
+        public static int PlaySFX(AudioClip clip, float volume = 1f, bool loop = false, bool persist = false, float fadeInSeconds = 1f, float fadeOutSeconds = 1f, float currentMusicfadeOutSeconds = -1f, Transform sourceTransform = null)
         {
-            return PlayAudio(Audio.AudioType.Music, clip, volume, false, false, 1f, 1f, -1f, null);
+            return PlayAudio(Audio.AudioType.SFX, clip, volume, loop, persist, fadeInSeconds, fadeOutSeconds, currentMusicfadeOutSeconds, sourceTransform);
         }
 
-        /// <summary>
-        /// Play background music
-        /// </summary>
-        /// <param name="clip">The audio clip to play</param>
-        /// <param name="volume"> The volume the music will have</param>
-        /// <param name="loop">Wether the music is looped</param>
-        /// <param name = "persist" > Whether the audio persists in between scene changes</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PlayMusic(AudioClip clip, float volume, bool loop, bool persist)
+        /// <param name="clip">재생할 오디오 클립</param>
+        /// <param name="volume">음악의 볼륨</param>
+        /// <param name="loop">음악이 반복 재생되는지 여부</param>
+        /// <param name="persist">오디오가 씬 전환 간에 유지되는지 여부</param>
+        /// <param name="fadeInSeconds">오디오가 페이드 인하여 목표 볼륨에 도달하는 데 필요한 시간(현재 볼륨보다 높을 경우)</param>
+        /// <param name="fadeOutSeconds">오디오가 페이드 아웃하여 목표 볼륨에 도달하는 데 필요한 시간(현재 볼륨보다 낮을 경우)</param>
+        /// <param name="currentMusicfadeOutSeconds">현재 음악 오디오가 페이드 아웃하는 데 필요한 시간입니다. 이 값이 설정되면 자체 페이드 아웃 시간을 덮어씁니다. -1이 전달되면 현재 음악은 자신의 페이드 아웃 시간을 유지합니다.</param>
+        /// <param name="sourceTransform">음악의 소스가 되는 변환(3D 오디오가 됩니다). 3D 오디오가 필요 없으면 null을 사용하세요.</param>
+        public static int PlayUISound(AudioClip clip, float volume = 1f, bool loop = false, bool persist = false, float fadeInSeconds = 1f, float fadeOutSeconds = 1f, float currentMusicfadeOutSeconds = -1f, Transform sourceTransform = null)
         {
-            return PlayAudio(Audio.AudioType.Music, clip, volume, loop, persist, 1f, 1f, -1f, null);
+            return PlayAudio(Audio.AudioType.UI, clip, volume, loop, persist, fadeInSeconds, fadeOutSeconds, currentMusicfadeOutSeconds, sourceTransform);
         }
 
-        /// <summary>
-        /// Play background music
-        /// </summary>
-        /// <param name="clip">The audio clip to play</param>
-        /// <param name="volume"> The volume the music will have</param>
-        /// <param name="loop">Wether the music is looped</param>
-        /// <param name="persist"> Whether the audio persists in between scene changes</param>
-        /// <param name="fadeInSeconds">How many seconds it needs for the audio to fade in/ reach target volume (if higher than current)</param>
-        /// <param name="fadeOutSeconds"> How many seconds it needs for the audio to fade out/ reach target volume (if lower than current)</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PlayMusic(AudioClip clip, float volume, bool loop, bool persist, float fadeInSeconds, float fadeOutSeconds)
+        /// <param name="clip">재생할 오디오 클립</param>
+        /// <param name="volume">음악의 볼륨</param>
+        /// <param name="loop">음악이 반복 재생되는지 여부</param>
+        /// <param name="persist">오디오가 씬 전환 간에 유지되는지 여부</param>
+        /// <param name="fadeInSeconds">오디오가 페이드 인하여 목표 볼륨에 도달하는 데 필요한 시간(현재 볼륨보다 높을 경우)</param>
+        /// <param name="fadeOutSeconds">오디오가 페이드 아웃하여 목표 볼륨에 도달하는 데 필요한 시간(현재 볼륨보다 낮을 경우)</param>
+        /// <param name="currentMusicfadeOutSeconds">현재 음악 오디오가 페이드 아웃하는 데 필요한 시간입니다. 이 값이 설정되면 자체 페이드 아웃 시간을 덮어씁니다. -1이 전달되면 현재 음악은 자신의 페이드 아웃 시간을 유지합니다.</param>
+        /// <param name="sourceTransform">음악의 소스가 되는 변환(3D 오디오가 됩니다). 3D 오디오가 필요 없으면 null을 사용하세요.</param>
+        public static int PlayVoice(AudioClip clip, float volume = 1f, bool loop = false, bool persist = false, float fadeInSeconds = 1f, float fadeOutSeconds = 1f, float currentMusicfadeOutSeconds = -1f, Transform sourceTransform = null)
         {
-            return PlayAudio(Audio.AudioType.Music, clip, volume, loop, persist, fadeInSeconds, fadeOutSeconds, -1f, null);
+            return PlayAudio(Audio.AudioType.Voice, clip, volume, loop, persist, fadeInSeconds, fadeOutSeconds, currentMusicfadeOutSeconds, sourceTransform);
         }
-
-        /// <summary>
-        /// Play background music
-        /// </summary>
-        /// <param name="clip">The audio clip to play</param>
-        /// <param name="volume"> The volume the music will have</param>
-        /// <param name="loop">Wether the music is looped</param>
-        /// <param name="persist"> Whether the audio persists in between scene changes</param>
-        /// <param name="fadeInSeconds">How many seconds it needs for the audio to fade in/ reach target volume (if higher than current)</param>
-        /// <param name="fadeOutSeconds"> How many seconds it needs for the audio to fade out/ reach target volume (if lower than current)</param>
-        /// <param name="currentMusicfadeOutSeconds"> How many seconds it needs for current music audio to fade out. It will override its own fade out seconds. If -1 is passed, current music will keep its own fade out seconds</param>
-        /// <param name="sourceTransform">The transform that is the source of the music (will become 3D audio). If 3D audio is not wanted, use null</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PlayMusic(AudioClip clip, float volume, bool loop, bool persist, float fadeInSeconds, float fadeOutSeconds, float currentMusicfadeOutSeconds, Transform sourceTransform)
-        {
-            return PlayAudio(Audio.AudioType.Music, clip, volume, loop, persist, fadeInSeconds, fadeOutSeconds, currentMusicfadeOutSeconds, sourceTransform);
-        }
-
-        /// <summary>
-        /// Play a sound fx
-        /// </summary>
-        /// <param name="clip">The audio clip to play</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PlaySound(AudioClip clip)
-        {
-            return PlayAudio(Audio.AudioType.SFX, clip, 1f, false, false, 0f, 0f, -1f, null);
-        }
-
-        /// <summary>
-        /// Play a sound fx
-        /// </summary>
-        /// <param name="clip">The audio clip to play</param>
-        /// <param name="volume"> The volume the music will have</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PlaySound(AudioClip clip, float volume)
-        {
-            return PlayAudio(Audio.AudioType.SFX, clip, volume, false, false, 0f, 0f, -1f, null);
-        }
-
-        /// <summary>
-        /// Play a sound fx
-        /// </summary>
-        /// <param name="clip">The audio clip to play</param>
-        /// <param name="loop">Wether the sound is looped</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PlaySound(AudioClip clip, bool loop)
-        {
-            return PlayAudio(Audio.AudioType.SFX, clip, 1f, loop, false, 0f, 0f, -1f, null);
-        }
-
-        /// <summary>
-        /// Play a sound fx
-        /// </summary>
-        /// <param name="clip">The audio clip to play</param>
-        /// <param name="volume"> The volume the music will have</param>
-        /// <param name="loop">Wether the sound is looped</param>
-        /// <param name="sourceTransform">The transform that is the source of the sound (will become 3D audio). If 3D audio is not wanted, use null</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PlaySound(AudioClip clip, float volume, bool loop, Transform sourceTransform)
-        {
-            return PlayAudio(Audio.AudioType.SFX, clip, volume, loop, false, 0f, 0f, -1f, sourceTransform);
-        }
-
-        /// <summary>
-        /// Play a UI sound fx
-        /// </summary>
-        /// <param name="clip">The audio clip to play</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PlayUISound(AudioClip clip)
-        {
-            return PlayAudio(Audio.AudioType.UI, clip, 1f, false, false, 0f, 0f, -1f, null);
-        }
-
-        /// <summary>
-        /// Play a UI sound fx
-        /// </summary>
-        /// <param name="clip">The audio clip to play</param>
-        /// <param name="volume"> The volume the music will have</param>
-        /// <returns>The ID of the created Audio object</returns>
-        public static int PlayUISound(AudioClip clip, float volume)
-        {
-            return PlayAudio(Audio.AudioType.UI, clip, volume, false, false, 0f, 0f, -1f, null);
-        }
-        public static int PlayVoiceSound(AudioClip clip)
-        {
-            return PlayAudio(Audio.AudioType.Voice, clip, 1f, false, false, 0f, 0f, -1f, null);
-        }
-
-        public static int PlayVoiceSound(AudioClip clip, float volume)
-        {
-            return PlayAudio(Audio.AudioType.Voice, clip, volume, false, false, 0f, 0f, -1f, null);
-        }
-
-        public static int PlayVoiceSound(AudioClip clip, bool persist)
-        {
-            return PlayAudio(Audio.AudioType.Voice, clip, 1f, false, persist, 0f, 0f, -1f, null);
-        }
-
 
         private static int PlayAudio(Audio.AudioType audioType, AudioClip clip, float volume, bool loop, bool persist, float fadeInSeconds, float fadeOutSeconds, float currentMusicfadeOutSeconds, Transform sourceTransform)
         {
-            int audioID = PrepareAudio(audioType, clip, volume, loop, persist, fadeInSeconds, fadeOutSeconds, currentMusicfadeOutSeconds, sourceTransform);
+            int audioID = CreateAudio(audioType, clip, volume, loop, persist, fadeInSeconds, fadeOutSeconds, sourceTransform);
 
-            // Stop all current music playing
-            if (audioType == Audio.AudioType.Music)
+            if (audioType == Audio.AudioType.BGM)
             {
-                StopAllMusic(currentMusicfadeOutSeconds);
+                StopAllBGM(currentMusicfadeOutSeconds);
             }
 
             GetAudio(audioType, false, audioID).Play();
 
             return audioID;
         }
-
         #endregion
 
-        #region Stop Functions
-
-        /// <summary>
-        /// Stop all audio playing
-        /// </summary>
-        public static void StopAll()
+        #region StopAudio (특정 오디오를 완전히 정지시키는 메서드)
+        public static void StopSFX(int audioID, float fadeOutSeconds = -1)
         {
-            StopAll(-1f);
+            StopAudio(Audio.AudioType.SFX, audioID, fadeOutSeconds);
         }
 
-        /// <summary>
-        /// Stop all audio playing
-        /// </summary>
-        /// <param name="musicFadeOutSeconds"> How many seconds it needs for all music audio to fade out. It will override  their own fade out seconds. If -1 is passed, all music will keep their own fade out seconds</param>
-        public static void StopAll(float musicFadeOutSeconds)
+        public static void StopSFX(AudioClip clip, float fadeOutSeconds = -1)
         {
-            StopAllMusic(musicFadeOutSeconds);
-            StopAllSounds();
-            StopAllUISounds();
+            StopAudio(Audio.AudioType.SFX, clip, fadeOutSeconds);
         }
 
-        /// <summary>
-        /// Stop all music playing
-        /// </summary>
-        public static void StopAllMusic()
+        public static void StopUISound(AudioClip clip, float fadeOutSeconds = -1)
         {
-            StopAllAudio(Audio.AudioType.Music, -1f);
+            StopAudio(Audio.AudioType.UI, clip, fadeOutSeconds);
         }
 
-        /// <summary>
-        /// Stop all music playing
-        /// </summary>
-        /// <param name="fadeOutSeconds"> How many seconds it needs for all music audio to fade out. It will override  their own fade out seconds. If -1 is passed, all music will keep their own fade out seconds</param>
-        public static void StopAllMusic(float fadeOutSeconds)
+        public static void StopUISound(int audioID, float fadeOutSeconds = -1)
         {
-            StopAllAudio(Audio.AudioType.Music, fadeOutSeconds);
+            StopAudio(Audio.AudioType.UI, audioID, fadeOutSeconds);
         }
 
-        /// <summary>
-        /// Stop all sound fx playing
-        /// </summary>
-        public static void StopAllSounds()
+        public static void StopVoice(AudioClip clip, float fadeOutSeconds = -1)
         {
-            StopAllAudio(Audio.AudioType.SFX, -1f);
+            StopAudio(Audio.AudioType.Voice, clip, fadeOutSeconds);
         }
 
-        /// <summary>
-        /// Stop all UI sound fx playing
-        /// </summary>
-        public static void StopAllUISounds()
+        public static void StopVoice(int audioID, float fadeOutSeconds = -1)
         {
-            StopAllAudio(Audio.AudioType.UI, -1f);
+            StopAudio(Audio.AudioType.Voice, audioID, fadeOutSeconds);
         }
 
-        public static void StopAllVoiceSounds()
+        private static void StopAudio(Audio.AudioType audioType, int audioID, float fadeOutSeconds)
         {
-            StopAllAudio(Audio.AudioType.Voice, -1f);
+            Audio audio = GetAudio(audioType, true, audioID);
+
+            if (audio == null) return;
+
+            if (fadeOutSeconds > 0)
+            {
+                audio.FadeOutSeconds = fadeOutSeconds;
+            }
+            audio.Stop();
+        }
+
+        private static void StopAudio(Audio.AudioType audioType, AudioClip clip, float fadeOutSeconds)
+        {
+            Audio audio = GetAudio(audioType, true, clip);
+
+            if (audio == null) return;
+
+            if (fadeOutSeconds > 0)
+            {
+                audio.FadeOutSeconds = fadeOutSeconds;
+            }
+            audio.Stop();
+        }
+        #endregion
+
+        #region StopAllAudio (모든 오디오를 완전히 정지시키는 메서드)
+        public static void StopAll(float musicFadeOutSeconds = -1)
+        {
+            StopAllBGM(musicFadeOutSeconds);
+            StopAllSFX(musicFadeOutSeconds);
+            StopAllUISound(musicFadeOutSeconds);
+            StopAllVoice(musicFadeOutSeconds);
+        }
+
+        public static void StopAllBGM(float fadeOutSeconds = -1)
+        {
+            StopAllAudio(Audio.AudioType.BGM, fadeOutSeconds);
+        }
+
+        public static void StopAllSFX(float fadeOutSeconds = -1)
+        {
+            StopAllAudio(Audio.AudioType.SFX, fadeOutSeconds);
+        }
+
+        public static void StopAllUISound(float fadeOutSeconds = -1)
+        {
+            StopAllAudio(Audio.AudioType.UI, fadeOutSeconds);
+        }
+
+        public static void StopAllVoice(float fadeOutSeconds = -1)
+        {
+            StopAllAudio(Audio.AudioType.Voice, fadeOutSeconds);
         }
 
         private static void StopAllAudio(Audio.AudioType audioType, float fadeOutSeconds)
@@ -886,45 +515,83 @@ namespace FrameWork.Sound
                 audio.Stop();
             }
         }
-
         #endregion
 
-        #region Pause Functions
+        #region PauseAudio (특정 오디오를 일시 정지시키는 메서드)
+        public static void PauseSFX(int audioID)
+        {
+            PauseAudio(Audio.AudioType.SFX, audioID);
+        }
 
-        /// <summary>
-        /// Pause all audio playing
-        /// </summary>
+        public static void PauseSFX(AudioClip clip)
+        {
+            PauseAudio(Audio.AudioType.SFX, clip);
+        }
+
+        public static void PauseUISound(AudioClip clip)
+        {
+            PauseAudio(Audio.AudioType.UI, clip);
+        }
+
+        public static void PauseUISound(int audioID)
+        {
+            PauseAudio(Audio.AudioType.UI, audioID);
+        }
+
+        public static void PauseVoice(AudioClip clip)
+        {
+            PauseAudio(Audio.AudioType.Voice, clip);
+        }
+
+        public static void PauseVoice(int audioID)
+        {
+            PauseAudio(Audio.AudioType.Voice, audioID);
+        }
+
+        private static void PauseAudio(Audio.AudioType audioType, int audioID)
+        {
+            Audio audio = GetAudio(audioType, true, audioID);
+
+            if (audio == null) return;
+
+            audio.Pause();
+        }
+
+        private static void PauseAudio(Audio.AudioType audioType, AudioClip clip)
+        {
+            Audio audio = GetAudio(audioType, true, clip);
+
+            if (audio == null) return;
+
+            audio.Pause();
+        }
+        #endregion
+
+        #region PauseAllAudio (모든 오디오를 일시 정지시키는 메서드)
         public static void PauseAll()
         {
-            PauseAllMusic();
-            PauseAllSounds();
-            PauseAllUISounds();
+            PauseAllBGM();
+            PauseAllSFX();
+            PauseAllUISound();
+            PauseAllVoice();
         }
 
-        /// <summary>
-        /// Pause all music playing
-        /// </summary>
-        public static void PauseAllMusic()
+        public static void PauseAllBGM()
         {
-            PauseAllAudio(Audio.AudioType.Music);
+            PauseAllAudio(Audio.AudioType.BGM);
         }
 
-        /// <summary>
-        /// Pause all sound fx playing
-        /// </summary>
-        public static void PauseAllSounds()
+        public static void PauseAllSFX()
         {
             PauseAllAudio(Audio.AudioType.SFX);
         }
 
-        /// <summary>
-        /// Pause all UI sound fx playing
-        /// </summary>
-        public static void PauseAllUISounds()
+        public static void PauseAllUISound()
         {
             PauseAllAudio(Audio.AudioType.UI);
         }
-        public static void PauseAllVoiceSounds()
+
+        public static void PauseAllVoice()
         {
             PauseAllAudio(Audio.AudioType.Voice);
         }
@@ -940,49 +607,87 @@ namespace FrameWork.Sound
                 audio.Pause();
             }
         }
-
         #endregion
 
-        #region Resume Functions
+        #region ResumeAudio (특정 오디오를 일시 정지시키는 메서드)
+        public static void ResumeSFX(int audioID)
+        {
+            ResumeAudio(Audio.AudioType.SFX, audioID);
+        }
 
-        /// <summary>
-        /// Resume all audio playing
-        /// </summary>
+        public static void ResumeSFX(AudioClip clip)
+        {
+            ResumeAudio(Audio.AudioType.SFX, clip);
+        }
+
+        public static void ResumeUISound(AudioClip clip)
+        {
+            ResumeAudio(Audio.AudioType.UI, clip);
+        }
+
+        public static void ResumeUISound(int audioID)
+        {
+            ResumeAudio(Audio.AudioType.UI, audioID);
+        }
+
+        public static void ResumeVoice(AudioClip clip)
+        {
+            ResumeAudio(Audio.AudioType.Voice, clip);
+        }
+
+        public static void ResumeVoice(int audioID)
+        {
+            ResumeAudio(Audio.AudioType.Voice, audioID);
+        }
+
+        private static void ResumeAudio(Audio.AudioType audioType, int audioID)
+        {
+            Audio audio = GetAudio(audioType, true, audioID);
+
+            if (audio == null) return;
+
+            audio.Resume();
+        }
+
+        private static void ResumeAudio(Audio.AudioType audioType, AudioClip clip)
+        {
+            Audio audio = GetAudio(audioType, true, clip);
+
+            if (audio == null) return;
+
+            audio.Resume();
+        }
+        #endregion
+
+        #region ResumeAllAudio (일시정지된 모든 오디오를 다시 시작시키는 메서드)
         public static void ResumeAll()
         {
-            ResumeAllMusic();
-            ResumeAllSounds();
-            ResumeAllUISounds();
+            ResumeAllBGM();
+            ResumeAllSFX();
+            ResumeAllUISound();
+            ResumeAllVoice();
         }
 
-        /// <summary>
-        /// Resume all music playing
-        /// </summary>
-        public static void ResumeAllMusic()
+        public static void ResumeAllBGM()
         {
-            ResumeAllAudio(Audio.AudioType.Music);
+            ResumeAllAudio(Audio.AudioType.BGM);
         }
 
-        /// <summary>
-        /// Resume all sound fx playing
-        /// </summary>
-        public static void ResumeAllSounds()
+        public static void ResumeAllSFX()
         {
             ResumeAllAudio(Audio.AudioType.SFX);
         }
 
-        /// <summary>
-        /// Resume all UI sound fx playing
-        /// </summary>
-        public static void ResumeAllUISounds()
+        public static void ResumeAllUISound()
         {
             ResumeAllAudio(Audio.AudioType.UI);
         }
 
-        public static void ResumeAllVoiceSounds()
+        public static void ResumeAllVoice()
         {
             ResumeAllAudio(Audio.AudioType.Voice);
         }
+
         private static void ResumeAllAudio(Audio.AudioType audioType)
         {
             Dictionary<int, Audio> audioDict = GetAudioTypeDictionary(audioType);
@@ -994,14 +699,6 @@ namespace FrameWork.Sound
                 audio.Resume();
             }
         }
-
-        public static void PlayMusic(object bGM)
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
     }
-
 }
-

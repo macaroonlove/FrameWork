@@ -183,13 +183,13 @@ namespace FrameWork.VisualNovel
         {
             AddressableAssetManager.Instance.GetAudioClip(audio, (audioClip) =>
             {
-                SoundManager.PlayMusic(audioClip);
+                SoundManager.PlayBGM(audioClip);
             });
         }
 
         internal void BGMStop()
         {
-            SoundManager.StopAllMusic();
+            SoundManager.StopAllBGM();
         }
         #endregion
 
@@ -198,13 +198,13 @@ namespace FrameWork.VisualNovel
         {
             AddressableAssetManager.Instance.GetAudioClip(audio, (audioClip) =>
             {
-                SoundManager.PlaySound(audioClip);
+                SoundManager.PlaySFX(audioClip);
             });
         }
 
         internal void SFXStop()
         {
-            SoundManager.StopAllSounds();
+            SoundManager.StopAllSFX();
         }
         #endregion
 

@@ -13,14 +13,14 @@ namespace Temporary.Core
         {
             if (_clip == null) return;
 
-            SoundManager.PlaySound(_clip);
+            SoundManager.PlaySFX(_clip);
         }
 
         public override void Play(Vector3 pos)
         {
             if (_clip == null) return;
 
-            SoundManager.PlaySound(_clip);
+            SoundManager.PlaySFX(_clip);
         }
     }
 }

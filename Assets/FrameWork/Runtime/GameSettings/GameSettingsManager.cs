@@ -54,7 +54,7 @@ namespace FrameWork.GameSettings
 			var masterVolume = PlayerPrefs.GetFloat($"Settings.Volume.0", 0.5f);
 			SetSoundVolume(Audio.AudioType.Master, masterVolume);
 			var musicVolume = PlayerPrefs.GetFloat($"Settings.Volume.1", 0.5f);
-			SetSoundVolume(Audio.AudioType.Music, musicVolume);
+			SetSoundVolume(Audio.AudioType.BGM, musicVolume);
 			var sfxVolume = PlayerPrefs.GetFloat($"Settings.Volume.2", 0.5f);
 			SetSoundVolume(Audio.AudioType.SFX, sfxVolume);
 			var uiVolume = PlayerPrefs.GetFloat($"Settings.Volume.3", 1f);
@@ -417,8 +417,8 @@ namespace FrameWork.GameSettings
 				case Audio.AudioType.Master:
 					SoundManager.GlobalVolume = value;
 					break;
-				case Audio.AudioType.Music:
-					SoundManager.GlobalMusicVolume = value;
+				case Audio.AudioType.BGM:
+					SoundManager.GlobalBGMVolume = value;
 					break;
 				case Audio.AudioType.SFX:
 					SoundManager.GlobalSFXVolume = value;
@@ -444,8 +444,8 @@ namespace FrameWork.GameSettings
 			{
 				case Audio.AudioType.Master:
 					return SoundManager.GlobalVolume;
-				case Audio.AudioType.Music:
-					return SoundManager.GlobalMusicVolume;
+				case Audio.AudioType.BGM:
+					return SoundManager.GlobalBGMVolume;
 				case Audio.AudioType.SFX:
 					return SoundManager.GlobalSFXVolume;
 				case Audio.AudioType.UI:
