@@ -34,13 +34,13 @@ namespace FrameWork.UIPopup
         /// <summary>
         /// 확인, 취소 버튼이 있는 팝업
         /// </summary>
-        public void ShowConfirmCancelPopup(string context, UnityAction action = null)
+        public void ShowConfirmCancelPopup(string context, UnityAction<bool> action = null)
         {
             _confirmCancelPopup.Show(context);
 
-            _confirmCancelPopup.OnResult += () =>
+            _confirmCancelPopup.OnResult += (result) =>
             {
-                action?.Invoke();
+                action?.Invoke(result);
             };
         }
 

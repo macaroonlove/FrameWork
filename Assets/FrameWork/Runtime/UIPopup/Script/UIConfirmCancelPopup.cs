@@ -20,7 +20,7 @@ namespace FrameWork.UIPopup
         }
         #endregion
 
-        public event UnityAction OnResult;
+        public event UnityAction<bool> OnResult;
 
         protected override void Initialize()
         {
@@ -42,7 +42,7 @@ namespace FrameWork.UIPopup
         {
             Hide();
 
-            OnResult?.Invoke();
+            OnResult?.Invoke(true);
             OnResult = null;
         }
 
@@ -50,6 +50,7 @@ namespace FrameWork.UIPopup
         {
             Hide();
 
+            OnResult?.Invoke(false);
             OnResult = null;
         }
     }

@@ -49,6 +49,10 @@ namespace FrameWork.UIBinding
         //{
 
         //}
+        //enum CanvasGroupControllers
+        //{
+
+        //}
         #endregion
 
         /// <summary>
@@ -64,6 +68,7 @@ namespace FrameWork.UIBinding
             //BindToggle(typeof(Toggles));
             //BindSlider(typeof(Sliders));
             //BindDropdown(typeof(Dropdowns));
+            //BindCanvasGroupController(typeof(CanvasGroupControllers));
         }
         #endregion
 
@@ -125,6 +130,7 @@ namespace FrameWork.UIBinding
         protected void BindToggle(Type type) => Bind<Toggle>(type);
         protected void BindSlider(Type type) => Bind<Slider>(type);
         protected void BindDropdown(Type type) => Bind<TMP_Dropdown>(type);
+        protected void BindCanvasGroupController(Type type) => Bind<CanvasGroupController>(type);
         #endregion
 
         #region 객체 가져오기
@@ -143,6 +149,7 @@ namespace FrameWork.UIBinding
         protected Toggle GetToggle(int idx) => Get<Toggle>(idx);
         protected Slider GetSlider(int idx) => Get<Slider>(idx);
         protected TMP_Dropdown GetDropdown(int idx) => Get<TMP_Dropdown>(idx);
+        protected CanvasGroupController GetCanvasGroupController(int idx) => Get<CanvasGroupController>(idx);
         #endregion
 
         #region 이벤트 등록

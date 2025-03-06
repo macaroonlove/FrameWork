@@ -1,15 +1,19 @@
 using FrameWork;
 using FrameWork.GameSettings;
+using FrameWork.PlayFabExtensions;
 using PlayFab;
 using PlayFab.ClientModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Temporary.Save
 {
     public class SaveManager : PersistentSingleton<SaveManager>
     {
-        private SaveDataTemplate _profileData;
+        [SerializeField] private ProfileSaveDataTemplate _profileData;
+
+        public ProfileSaveDataTemplate profileData => _profileData;
 
         protected override void Initialize()
         {
@@ -17,7 +21,7 @@ namespace Temporary.Save
             GameSettingsManager.RestoreSettings();
 
             // 데이터 지우기
-            _profileData.Clear();
+            profileData.Clear();
         }
 
         #region Profile Data
@@ -35,7 +39,7 @@ namespace Temporary.Save
             {
                 if (result.Data != null && result.Data.ContainsKey("ProfileData"))
                 {
-                    isSuccess = _profileData.Load(result.Data["ProfileData"].Value);
+                    isSuccess = profileData.Load(result.Data["ProfileData"].Value);
                 }
                 else
                 {
@@ -51,7 +55,7 @@ namespace Temporary.Save
 
             if (isSuccess == false)
             {
-                _profileData.SetDefaultValues();
+                profileData.SetDefaultValues();
                 await Save_ProfileData();
             }
 
@@ -62,7 +66,7 @@ namespace Temporary.Save
         {
             var tcs = new TaskCompletionSource<bool>();
 
-            string jsonData = _profileData.ToJson();
+            string jsonData = profileData.ToJson();
 
             PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest
             {

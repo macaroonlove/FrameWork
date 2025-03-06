@@ -1,3 +1,4 @@
+using PlayFab;
 using PlayFab.ClientModels;
 using System;
 using UnityEngine;
@@ -7,7 +8,7 @@ using UnityEngine.Events;
 using Facebook.Unity;
 #endif
 
-namespace PlayFab
+namespace FrameWork.PlayFabExtensions
 {
     public enum Authtypes
     {
@@ -56,7 +57,7 @@ namespace PlayFab
             set => PlayerPrefs.SetInt(LoginRememberKey, value ? 1 : 0);
         }
 
-        private string RememberMeId
+        public string RememberMeId
         {
             get => PlayerPrefs.GetString(PlayFabRememberMeIdKey, "");
             set => PlayerPrefs.SetString(PlayFabRememberMeIdKey, string.IsNullOrEmpty(value) ? Guid.NewGuid().ToString() : value);
@@ -273,6 +274,11 @@ namespace PlayFab
             Debug.LogError($"PlayFab Error: {error.ErrorMessage}");
 #endif
             OnPlayFabError?.Invoke(error);
+        }
+
+        public void Logout()
+        {
+            PlayFabClientAPI.ForgetAllCredentials();
         }
     }
 }

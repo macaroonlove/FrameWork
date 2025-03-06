@@ -10,24 +10,21 @@ namespace Temporary.Save
     [Serializable]
     public class ProfileSaveData
     {
-        /// <summary>
-        /// 골드
-        /// </summary>
+        public string displayName;
+
+        [Tooltip("튜토리얼 클리어 여부")]
+        public bool isClearTutorial;
+
+        [Tooltip("골드")]
         public ObscuredInt gold;
 
-        /// <summary>
-        /// 보유하고 있는 아군 유닛들
-        /// </summary>
+        [Tooltip("보유하고 있는 아군 유닛들")]
         public List<Agent> ownedAgents = new List<Agent>();
 
-        /// <summary>
-        /// 보유하고 있는 패시브 아이템들의 아이디
-        /// </summary>
+        [Tooltip("보유하고 있는 패시브 아이템들의 아이디")]
         public List<int> ownedPassiveItemIds = new List<int>();
 
-        /// <summary>
-        /// 보유하고 있는 액티브 아이템들의 아이디
-        /// </summary>
+        [Tooltip("보유하고 있는 액티브 아이템들의 아이디")]
         public List<int> ownedActiveItemIds = new List<int>();
 
         #region 데이터 모델
@@ -57,6 +54,9 @@ namespace Temporary.Save
         [SerializeField] private ObscuredIntVariable _goldVariable;
 
         public bool isLoaded { get; private set; }
+
+        public string displayName { get => _data.displayName; set => _data.displayName = value; }
+        public bool isClearTutorial { get => _data.isClearTutorial; set => _data.isClearTutorial = value; }
 
         public override void SetDefaultValues()
         {
@@ -105,7 +105,7 @@ namespace Temporary.Save
         /// <summary>
         /// 유닛을 레벨업 하는데 요구하는 개수
         /// </summary>
-        private static readonly int[] _agentUpgradeRequirements = { 0, 1, 3, 5, 7, 10, 15, 30, 50, 90, 150 };
+        private static readonly ObscuredInt[] _agentUpgradeRequirements = { 0, 1, 3, 5, 7, 10, 15, 30, 50, 90, 150 };
 
         /// <summary>
         /// 유닛 추가
