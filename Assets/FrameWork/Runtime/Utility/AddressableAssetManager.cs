@@ -3,10 +3,11 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Events;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.SceneManagement;
 
 namespace FrameWork
 {
-    public class AddressableAssetManager : Singleton<AddressableAssetManager>
+    public class AddressableAssetManager : PersistentSingleton<AddressableAssetManager>
     {
         private Dictionary<string, AsyncOperationHandle<Sprite>> _sprites = new Dictionary<string, AsyncOperationHandle<Sprite>>();
         private Dictionary<string, AsyncOperationHandle<AudioClip>> _audioClips = new Dictionary<string, AsyncOperationHandle<AudioClip>>();
@@ -36,6 +37,7 @@ namespace FrameWork
                 }
                 else
                 {
+                    onComplete?.Invoke(null);
                     Addressables.Release(handle);
                 }
             };
@@ -84,6 +86,7 @@ namespace FrameWork
                 }
                 else
                 {
+                    onComplete?.Invoke(null);
                     Addressables.Release(handle);
                 }
             };
@@ -132,6 +135,7 @@ namespace FrameWork
                 }
                 else
                 {
+                    onComplete?.Invoke(null);
                     Addressables.Release(handle);
                 }
             };
@@ -163,7 +167,18 @@ namespace FrameWork
             ReleaseAllScriptableObjects();
         }
 
+        protected override void Initialize()
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
         private void OnDestroy()
+        {
+            ReleaseAll();
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             ReleaseAll();
         }

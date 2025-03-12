@@ -13,13 +13,21 @@ MonoBehaviour:
   m_Name: ProfileSaveData
   m_EditorClassIdentifier: 
   _data:
+    displayName: "\uB9C8\uCE74\uB871"
+    isClearTutorial: 1
     gold:
-      currentCryptoKey: 1772342209
-      hiddenValue: 1772342209
-      fakeValue: 0
-      fakeValueActive: 0
+      currentCryptoKey: 1363902501
+      hiddenValue: 1363902529
+      fakeValue: 100
+      fakeValueActive: 1
       inited: 1
-    ownedAgents: []
+    ownedAgents:
+    - id: 0
+      unitCount: 1
+      level: 1
+    - id: 1
+      unitCount: 1
+      level: 1
     ownedPassiveItemIds: 
     ownedActiveItemIds: 
   _goldVariable: {fileID: 11400000, guid: 54d4ab083b789544bbf5096f9f1d06f2, type: 2}

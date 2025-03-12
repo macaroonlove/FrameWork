@@ -3,7 +3,7 @@ using FrameWork.UIBinding;
 using TMPro;
 using UnityEngine;
 
-namespace Temporary.Login
+namespace FrameWork.UI
 {
     public class UIInputFieldEffect : UIBase
     {

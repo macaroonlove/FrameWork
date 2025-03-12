@@ -1,11 +1,11 @@
 using FrameWork;
+using FrameWork.Loading;
 using FrameWork.PlayFabExtensions;
 using FrameWork.UIBinding;
 using FrameWork.UIPopup;
 using PlayFab;
 using PlayFab.ClientModels;
 using Temporary.Save;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Temporary.Login
@@ -103,7 +103,7 @@ namespace Temporary.Login
             await SaveManager.Instance.Load_ProfileData();
 
             var profileData = SaveManager.Instance.profileData;
-            
+
             if (string.IsNullOrEmpty(profileData.displayName))
             {
                 _uiPlayFabDisplayNameCanvas.Show(SetDisplayName);
@@ -113,7 +113,7 @@ namespace Temporary.Login
             {
                 if (profileData.isClearTutorial)
                 {
-                    SceneManager.LoadScene("Lobby");
+                    LoadingManager.Instance.LoadScene("FrameWork"); // Lobby
                 }
                 else
                 {
@@ -155,14 +155,13 @@ namespace Temporary.Login
                     if (profileData != null)
                     {
                         profileData.isClearTutorial = true;
-                        await SaveManager.Instance.Save_ProfileData();
                     }
 
-                    SceneManager.LoadScene("Lobby");
+                    LoadingManager.Instance.LoadScene("Lobby");
                 }
                 else
                 {
-                    SceneManager.LoadScene("Tutorial");
+                    LoadingManager.Instance.LoadScene("Tutorial");
                 }
             });
         }

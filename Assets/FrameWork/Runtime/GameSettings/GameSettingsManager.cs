@@ -387,7 +387,7 @@ namespace FrameWork.GameSettings
 			get => PlayerPrefs.GetFloat("Settings.ScreenBrightness", 0f);
 			set
 			{
-				VolumeController.Instance.SetScreenBrightness(value);
+				VolumeController.Instance?.SetScreenBrightness(value);
 				PlayerPrefs.SetFloat("Settings.ScreenBrightness", value);
 				PlayerPrefs.Save();
 			}

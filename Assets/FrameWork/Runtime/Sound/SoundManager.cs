@@ -39,12 +39,7 @@ namespace FrameWork.Sound
 
         private static bool initialized = false;
 
-        static SoundManager()
-        {
-            Instance.Initialize();
-        }
-
-        private new void Initialize()
+        protected override void Initialize()
         {
             if (!initialized)
             {
