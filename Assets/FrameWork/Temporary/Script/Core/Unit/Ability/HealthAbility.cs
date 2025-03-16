@@ -213,7 +213,7 @@ namespace Temporary.Core
         {
             base.Initialize(unit);
 
-            _poolSystem = BattleManager.Instance.GetSubSystem<PoolSystem>();
+            _poolSystem = CoreManager.Instance.GetSubSystem<PoolSystem>();
 
             _passiveSkillAbility = unit.GetAbility<PassiveSkillAbility>();
             _buffAbility = unit.GetAbility<BuffAbility>();

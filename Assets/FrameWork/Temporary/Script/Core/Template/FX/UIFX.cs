@@ -25,7 +25,7 @@ namespace Temporary.Core
 
         private void Play()
         {
-            var poolSystem = BattleManager.Instance.GetSubSystem<PoolSystem>();
+            var poolSystem = CoreManager.Instance.GetSubSystem<PoolSystem>();
             var obj = poolSystem.Spawn(_uiParticle, _duration, BattleManager.Instance.canvas);
 
             var particle = obj.GetComponentInChildren<ParticleSystem>();

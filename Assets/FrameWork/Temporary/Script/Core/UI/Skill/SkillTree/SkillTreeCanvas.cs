@@ -24,7 +24,7 @@ namespace Temporary.Core
         {
             if (_poolSystem != null) return;
 
-            _poolSystem = BattleManager.Instance.GetSubSystem<PoolSystem>();
+            _poolSystem = CoreManager.Instance.GetSubSystem<PoolSystem>();
         }
 
         public void Show(SkillTreeGraph skillTree)

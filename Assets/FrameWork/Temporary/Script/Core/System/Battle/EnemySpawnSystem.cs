@@ -11,7 +11,7 @@ namespace Temporary.Core
 
         public void Initialize()
         {
-            _poolSystem = BattleManager.Instance.GetSubSystem<PoolSystem>();
+            _poolSystem = CoreManager.Instance.GetSubSystem<PoolSystem>();
             _enemySystem = BattleManager.Instance.GetSubSystem<EnemySystem>();
         }
 

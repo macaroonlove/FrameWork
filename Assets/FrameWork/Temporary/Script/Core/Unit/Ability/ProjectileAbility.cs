@@ -11,7 +11,7 @@ namespace Temporary.Core
         {
             base.Initialize(unit);
 
-            _poolSystem = BattleManager.Instance.GetSubSystem<PoolSystem>();
+            _poolSystem = CoreManager.Instance.GetSubSystem<PoolSystem>();
         }
 
         internal override void Deinitialize()

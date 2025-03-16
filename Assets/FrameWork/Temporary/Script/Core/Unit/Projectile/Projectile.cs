@@ -17,7 +17,7 @@ namespace Temporary.Core
         
         protected void DeSpawn()
         {
-            BattleManager.Instance.GetSubSystem<PoolSystem>().DeSpawn(gameObject);
+            CoreManager.Instance.GetSubSystem<PoolSystem>().DeSpawn(gameObject);
             _isInit = false;
         }
 

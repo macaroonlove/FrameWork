@@ -1254,50 +1254,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86a7c109aaab910428dbc2166c9ea3d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &4902934220089606101
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5473748943773749713}
-  - component: {fileID: 2861605429916475602}
-  m_Layer: 0
-  m_Name: PoolSystem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5473748943773749713
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4902934220089606101}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3922504144110307591}
-  m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2861605429916475602
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4902934220089606101}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45ebcf7dfb2195540b1aa8adfc1de02a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4928151531332796048
 GameObject:
   m_ObjectHideFlags: 0
@@ -2080,7 +2036,6 @@ Transform:
   - {fileID: 5033377472048142789}
   - {fileID: 2732570360920927933}
   - {fileID: 3535599450379851767}
-  - {fileID: 5473748943773749713}
   - {fileID: 4497056214624323783}
   - {fileID: 4512401954550358914}
   - {fileID: 3546449877731120229}

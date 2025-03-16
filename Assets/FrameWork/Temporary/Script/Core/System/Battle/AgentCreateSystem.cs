@@ -10,7 +10,7 @@ namespace Temporary.Core
         public void Initialize()
         {
             _agentSystem = BattleManager.Instance.GetSubSystem<AgentSystem>();
-            _poolSystem = BattleManager.Instance.GetSubSystem<PoolSystem>();
+            _poolSystem = CoreManager.Instance.GetSubSystem<PoolSystem>();
         }
 
         public void Deinitialize()

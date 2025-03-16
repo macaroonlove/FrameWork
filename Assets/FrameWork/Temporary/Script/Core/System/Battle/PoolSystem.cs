@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class PoolSystem : MonoBehaviour, IBattleSystem
+    public class PoolSystem : MonoBehaviour, ICoreSystem
     {
         private Dictionary<string, Stack<GameObject>> _objectPool = new Dictionary<string, Stack<GameObject>>();
 
@@ -27,7 +27,7 @@ namespace Temporary.Core
             _objectPool.Clear();
         }
 
-        internal GameObject Spawn(GameObject obj, Transform parent = null)
+        public GameObject Spawn(GameObject obj, Transform parent = null)
         {
             string key = obj.name;
 
@@ -58,13 +58,13 @@ namespace Temporary.Core
         }
 
         #region Spawn 메서드 지속시간 적용
-        internal GameObject Spawn(GameObject obj, float duration, Transform parent = null)
+        public GameObject Spawn(GameObject obj, float duration, Transform parent = null)
         {
             var newObj = Spawn(obj, parent);
 
             if (duration > 0)
             {
-                StartCoroutine(CoSpawn(obj, duration));
+                StartCoroutine(CoSpawn(newObj, duration));
             }
 
             return newObj;
@@ -73,12 +73,11 @@ namespace Temporary.Core
         private IEnumerator CoSpawn(GameObject obj, float duration = 0)
         {
             yield return new WaitForSeconds(duration);
-
             DeSpawn(obj);
         }
         #endregion
 
-        internal void DeSpawn(GameObject obj)
+        public void DeSpawn(GameObject obj)
         {
             string key = obj.name;
 

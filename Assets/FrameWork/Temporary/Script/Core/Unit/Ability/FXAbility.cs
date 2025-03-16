@@ -38,7 +38,7 @@ namespace Temporary.Core
 
         private void InitializeParticleFX()
         {
-            _poolSystem = BattleManager.Instance.GetSubSystem<PoolSystem>();
+            _poolSystem = CoreManager.Instance.GetSubSystem<PoolSystem>();
 
             unit.healthAbility.onDeath += DespawnAll;
         }

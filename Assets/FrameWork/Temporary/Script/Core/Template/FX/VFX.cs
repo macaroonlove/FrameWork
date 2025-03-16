@@ -89,7 +89,7 @@ namespace Temporary.Core
 
         private GameObject Play(Vector3 pos, Quaternion rot)
         {
-            var poolSystem = BattleManager.Instance.GetSubSystem<PoolSystem>();
+            var poolSystem = CoreManager.Instance.GetSubSystem<PoolSystem>();
             
             GameObject obj;
             if (_isInfinity)
