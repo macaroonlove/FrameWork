@@ -2,6 +2,7 @@ using FrameWork;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Temporary.Core;
 using UnityEditor;
 using UnityEngine;
@@ -227,6 +228,10 @@ namespace Temporary.Editor
         {
             GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
             GUILayout.BeginVertical(GUILayout.Width(200));
+            if (GUILayout.Button("아군 유닛 불러오기 창"))
+            {
+                LoadAgentTemplateWindow();
+            }
             if (GUILayout.Button("아군 유닛 추가"))
             {
                 AddAgentTemplate();
@@ -293,14 +298,22 @@ namespace Temporary.Editor
             GUILayout.EndHorizontal();
         }
 
+        private void LoadAgentTemplateWindow()
+        {
+            var window = GetWindow<LoadAgentTemplateEditorWindow>();
+            window.titleContent = new GUIContent("아군 유닛 불러오기");
+            window.minSize = new Vector2(300, 100);
+            window.maxSize = new Vector2(300, 100);
+        }
+
         private void AddAgentTemplate()
         {
             // 아군 유닛 템플릿 생성
             AgentTemplate newAgent = CreateInstance<AgentTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Core/GameData/Unit/Agent";
-            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Unit/Agent", "Agent_", "asset", "아군 템플릿은 FrameWork/Core/GameData/Unit/Agent 위치에 저장됩니다..", defaultPath);
+            string defaultPath = "Assets/FrameWork/Temporary/GameData/Unit/Agent";
+            string path = EditorUtility.SaveFilePanelInProject("아군 유닛 추가", "Agent_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
                 newAgent.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("Agent_", ""));
@@ -339,6 +352,8 @@ namespace Temporary.Editor
 
                 agentTemplates.Add(new Tuple<AgentTemplate, Texture2D>(agent, texture));
             }
+
+            agentTemplates = agentTemplates.OrderBy(tuple => tuple.Item1.id).ToList();
         }
         #endregion
 
@@ -347,6 +362,10 @@ namespace Temporary.Editor
         {
             GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
             GUILayout.BeginVertical(GUILayout.Width(200));
+            if (GUILayout.Button("아군 유닛 불러오기 창"))
+            {
+                LoadEnemyTemplateWindow();
+            }
             if (GUILayout.Button("적 유닛 추가"))
             {
                 AddEnemyTemplate();
@@ -413,14 +432,22 @@ namespace Temporary.Editor
             GUILayout.EndHorizontal();
         }
 
+        private void LoadEnemyTemplateWindow()
+        {
+            var window = GetWindow<LoadEnemyTemplateEditorWindow>();
+            window.titleContent = new GUIContent("적군 유닛 불러오기");
+            window.minSize = new Vector2(300, 100);
+            window.maxSize = new Vector2(300, 100);
+        }
+
         private void AddEnemyTemplate()
         {
             // 적 유닛 템플릿 생성
             EnemyTemplate newEnemy = CreateInstance<EnemyTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Core/GameData/Unit/Enemy";
-            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Unit/Enemy", "Enemy_", "asset", "적 템플릿은 FrameWork/Core/GameData/Unit/Enemy 위치에 저장됩니다..", defaultPath);
+            string defaultPath = "Assets/FrameWork/Temporary/GameData/Unit/Enemy";
+            string path = EditorUtility.SaveFilePanelInProject("적군 유닛 추가", "Enemy_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
                 newEnemy.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("Enemy_", ""));
@@ -459,6 +486,8 @@ namespace Temporary.Editor
 
                 enemyTemplates.Add(new Tuple<EnemyTemplate, Texture2D>(enemy, texture));
             }
+
+            enemyTemplates = enemyTemplates.OrderBy(tuple => tuple.Item1.id).ToList();
         }
         #endregion
 
@@ -537,8 +566,8 @@ namespace Temporary.Editor
             BuffTemplate newBuff = CreateInstance<BuffTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Core/GameData/Status/BuffStatus";
-            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Status/BuffStatus", "BuffStatus_", "asset", "상태이상 템플릿은 FrameWork/Core/GameData/Status/BuffStatus 위치에 저장됩니다..", defaultPath);
+            string defaultPath = "Assets/FrameWork/Temporary/GameData/Status/BuffStatus";
+            string path = EditorUtility.SaveFilePanelInProject("버프 추가", "BuffStatus_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
                 newBuff.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("BuffStatus_", ""));
@@ -652,8 +681,8 @@ namespace Temporary.Editor
             AbnormalStatusTemplate newAbnormalStatus = CreateInstance<AbnormalStatusTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Core/GameData/Status/AbnormalStatus";
-            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Status/AbnormalStatus", "AbnormalStatus_", "asset", "상태이상 템플릿은 FrameWork/Core/GameData/Status/AbnormalStatus 위치에 저장됩니다..", defaultPath);
+            string defaultPath = "Assets/FrameWork/Temporary/GameData/Status/AbnormalStatus";
+            string path = EditorUtility.SaveFilePanelInProject("상태이상 추가", "AbnormalStatus_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
                 newAbnormalStatus.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("AbnormalStatus_", ""));
@@ -772,8 +801,8 @@ namespace Temporary.Editor
             GlobalStatusTemplate newGlobalStatus = CreateInstance<GlobalStatusTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Core/GameData/Status/GlobalStatus";
-            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Status/GlobalStatus", "GlobalStatus_", "asset", "상태이상 템플릿은 FrameWork/Core/GameData/Status/GlobalStatus 위치에 저장됩니다..", defaultPath);
+            string defaultPath = "Assets/FrameWork/Temporary/GameData/Status/GlobalStatus";
+            string path = EditorUtility.SaveFilePanelInProject("전역 상태 추가", "GlobalStatus_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
                 newGlobalStatus.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("GlobalStatus_", ""));
@@ -892,8 +921,8 @@ namespace Temporary.Editor
             ActiveSkillTemplate newSkill = CreateInstance<ActiveSkillTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Core/GameData/Skill/ActiveSkill";
-            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Skill/ActiveSkill", "ActiveSkill_", "asset", "스킬 템플릿은 FrameWork/Core/GameData/Skill/ActiveSkill 위치에 저장됩니다..", defaultPath);
+            string defaultPath = "Assets/FrameWork/Temporary/GameData/Skill/ActiveSkill";
+            string path = EditorUtility.SaveFilePanelInProject("액티브 스킬 추가", "ActiveSkill_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
                 newSkill.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("ActiveSkill_", ""));
@@ -932,6 +961,8 @@ namespace Temporary.Editor
 
                 activeSkillTemplates.Add(new Tuple<ActiveSkillTemplate, Texture2D>(skill, texture));
             }
+
+            activeSkillTemplates = activeSkillTemplates.OrderBy(tuple => tuple.Item1.id).ToList();
         }
         #endregion
 
@@ -1012,8 +1043,8 @@ namespace Temporary.Editor
             PassiveSkillTemplate newSkill = CreateInstance<PassiveSkillTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Core/GameData/Skill/PassiveSkill";
-            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Skill/PassiveSkill", "PassiveSkill_", "asset", "스킬 템플릿은 FrameWork/Core/GameData/Skill/PassiveSkill 위치에 저장됩니다..", defaultPath);
+            string defaultPath = "Assets/FrameWork/Temporary/GameData/Skill/PassiveSkill";
+            string path = EditorUtility.SaveFilePanelInProject("패시브 스킬 추가", "PassiveSkill_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
                 newSkill.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("PassiveSkill_", ""));
@@ -1052,6 +1083,8 @@ namespace Temporary.Editor
 
                 passiveSkillTemplates.Add(new Tuple<PassiveSkillTemplate, Texture2D>(skill, texture));
             }
+
+            passiveSkillTemplates = passiveSkillTemplates.OrderBy(tuple => tuple.Item1.id).ToList();
         }
         #endregion
 
@@ -1118,8 +1151,8 @@ namespace Temporary.Editor
             SkillTreeGraph newSkill = CreateInstance<SkillTreeGraph>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Core/GameData/Skill/SkillTree";
-            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Skill/SkillTree", "SkillTree_", "asset", "스킬 트리 템플릿을 저장합니다.", defaultPath);
+            string defaultPath = "Assets/FrameWork/Temporary/GameData/Skill/SkillTree";
+            string path = EditorUtility.SaveFilePanelInProject("스킬 트리 추가", "SkillTree_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
                 newSkill.displayName = Path.GetFileNameWithoutExtension(path).Replace("SkillTree_", "");
@@ -1233,8 +1266,8 @@ namespace Temporary.Editor
             ActiveItemTemplate newItem = CreateInstance<ActiveItemTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Core/GameData/Item/ActiveItem";
-            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Item/ActiveItem", "ActiveItem_", "asset", "아이템 템플릿은 FrameWork/Core/GameData/Item/ActiveItem 위치에 저장됩니다..", defaultPath);
+            string defaultPath = "Assets/FrameWork/Temporary/GameData/Item/ActiveItem";
+            string path = EditorUtility.SaveFilePanelInProject("액티브 아이템 추가", "ActiveItem_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
                 newItem.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("ActiveItem_", ""));
@@ -1273,6 +1306,8 @@ namespace Temporary.Editor
 
                 activeItemTemplates.Add(new Tuple<ActiveItemTemplate, Texture2D>(item, texture));
             }
+
+            activeItemTemplates = activeItemTemplates.OrderBy(tuple => tuple.Item1.id).ToList();
         }
         #endregion
 
@@ -1353,8 +1388,8 @@ namespace Temporary.Editor
             PassiveItemTemplate newItem = CreateInstance<PassiveItemTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Core/GameData/Item/PassiveItem";
-            string path = EditorUtility.SaveFilePanelInProject("FrameWork/Core/GameData/Item/PassiveItem", "PassiveItem_", "asset", "스킬 템플릿은 FrameWork/Core/GameData/Item/PassiveItem 위치에 저장됩니다..", defaultPath);
+            string defaultPath = "Assets/FrameWork/Temporary/GameData/Item/PassiveItem";
+            string path = EditorUtility.SaveFilePanelInProject("패시브 아이템 추가", "PassiveItem_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
                 newItem.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("PassiveItem_", ""));
@@ -1393,6 +1428,8 @@ namespace Temporary.Editor
 
                 passiveItemTemplates.Add(new Tuple<PassiveItemTemplate, Texture2D>(item, texture));
             }
+
+            passiveItemTemplates = passiveItemTemplates.OrderBy(tuple => tuple.Item1.id).ToList();
         }
         #endregion
 

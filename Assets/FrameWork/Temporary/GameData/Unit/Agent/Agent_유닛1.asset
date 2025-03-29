@@ -10,38 +10,38 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 315827f885b2bdb4db10ec962e833c34, type: 3}
-  m_Name: "Agent_\uBAA8\uD5D8\uAC00"
+  m_Name: "Agent_\uC720\uB2DB1"
   m_EditorClassIdentifier: 
   _id: 0
-  _displayName: "\uBAA8\uD5D8\uAC00"
-  _description: 
+  _rarity: {fileID: 11400000, guid: fdffd9bf88ebfee489c82a6af675e02e, type: 2}
+  _job: {fileID: 0}
+  _displayName: "\uC720\uB2DB1"
   _sprite: {fileID: 21300000, guid: e36b79d98daaaf247b097d172c363419, type: 3}
   _prefab: {fileID: 7137419757110548002, guid: 7d233aa6d5a7eda4586f7c721927a1a8, type: 3}
-  _moveSpeed: 0.5
-  _chaseRange: 3
-  _chaseFailRange: 6
   _moveType: 0
-  _atk: 10
+  _moveSpeed: 1
+  _chaseRange: 5
+  _chaseFailRange: 8
+  _attackType: 0
+  _damageType: 0
+  _atk: 20
   _attackTerm: 1
-  _attackRange: 3
+  _attackRange: 1
   _isProjectileAttack: 0
   _projectilePrefab: {fileID: 0}
   _spawnPoint: 0
-  _attackType: 0
-  _damageType: 0
-  _criticalHitChance: 1
-  _criticalHitDamage: 1
-  _physicalPenetration: 1
-  _magicPenetration: 1
-  _maxHP: 1000
-  _physicalResistance: 10
-  _magicResistance: 5
+  _physicalPenetration: 0
+  _magicPenetration: 0
+  _criticalHitChance: 0
+  _criticalHitDamage: 0
+  _maxHP: 10000
+  _physicalResistance: 100
+  _magicResistance: 100
+  _hpRecoveryPerSec: 0
+  _manaRecoveryType: 0
   _maxMana: 100
-  _startMana: 10
-  _hpRecoveryPerSec: 1
-  _manaRecoveryPerSec: 1
-  _manaRecoveryType: 1
+  _startMana: 0
+  _manaRecoveryPerSec: 25
   _skillTreeGraph: {fileID: 11400000, guid: ca706e233ac782f4d8225868d92fef80, type: 2}
   _casterFX: {fileID: 0}
   _targetFX: {fileID: 0}
-  isOwned: 0

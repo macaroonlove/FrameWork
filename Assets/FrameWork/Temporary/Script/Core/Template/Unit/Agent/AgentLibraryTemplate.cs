@@ -26,7 +26,7 @@ namespace Temporary.Core
                 var template = AssetDatabase.LoadAssetAtPath(path, typeof(AgentTemplate)) as AgentTemplate;
 
                 bool isInclude = _isAll;
-                isInclude |= _isOwned && template.isOwned;
+                //isInclude |= _isOwned && template.isOwned;
 
                 if (template != null && isInclude)
                 {
