@@ -24,7 +24,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2676ce51c0285f242bd88fb9ab686a0b, type: 3}
   m_Name: "AbnormalStatus_\uAC10\uC804_50"
   m_EditorClassIdentifier: 
-  _sprite: {fileID: 0}
+  _sprite: {fileID: 21300000, guid: 8b8f0888d00c10245ae3a10227d7f731, type: 3}
   _displayName: "\uAC10\uC804"
   _description: "\uC774\uB3D9, \uACF5\uACA9, \uC2A4\uD0AC \uC0AC\uC6A9 \uBD88\uAC00
     \uC0C1\uD0DC\uAC00 \uB429\uB2C8\uB2E4."

@@ -362,7 +362,7 @@ namespace Temporary.Editor
         {
             GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
             GUILayout.BeginVertical(GUILayout.Width(200));
-            if (GUILayout.Button("아군 유닛 불러오기 창"))
+            if (GUILayout.Button("적군 유닛 불러오기 창"))
             {
                 LoadEnemyTemplateWindow();
             }
