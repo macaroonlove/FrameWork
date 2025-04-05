@@ -1,66 +1,28 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 namespace Temporary.Core
 {
     public class InstantBuffByTargetUnitEffect : InstantBuffUnitEffect, IGetTarget
     {
-        [SerializeField] private ETarget _target;
-        [SerializeField] private float _radius;
-        [SerializeField] private int _numberOfTarget;
+        [SerializeField] private GetTargetData _getTargetData = new GetTargetData();
 
         public List<Unit> GetTarget(Unit casterUnit)
         {
-            return casterUnit.GetAbility<FindTargetAbility>().FindAllyTarget(_target, _radius, _numberOfTarget);
+            return _getTargetData.GetTarget(casterUnit);
         }
 
 #if UNITY_EDITOR
         public override void Draw(Rect rect)
         {
-            var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
-            var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
+            rect = _getTargetData.Draw(rect);
 
-            GUI.Label(labelRect, "피해 대상");
-            _target = (ETarget)EditorGUI.EnumPopup(valueRect, _target);
-
-            if (_target != ETarget.Myself && _target != ETarget.AllTarget)
-            {
-                labelRect.y += 20;
-                valueRect.y += 20;
-                GUI.Label(labelRect, "범위");
-                _radius = EditorGUI.FloatField(valueRect, _radius);
-            }
-
-            if (_target == ETarget.NumTargetInRange)
-            {
-                labelRect.y += 20;
-                valueRect.y += 20;
-                GUI.Label(labelRect, "공격할 적의 수");
-                _numberOfTarget = EditorGUI.IntField(valueRect, _numberOfTarget);
-            }
-
-            rect.y = labelRect.y + 40;
             base.Draw(rect);
         }
 
         public override int GetNumRows()
         {
-            int rowNum = base.GetNumRows();
-
-            rowNum += 3;
-
-            if (_target != ETarget.Myself && _target != ETarget.AllTarget)
-            {
-                rowNum++;
-            }
-
-            if (_target == ETarget.NumTargetInRange)
-            {
-                rowNum++;
-            }
-
-            return rowNum;
+            return _getTargetData.GetNumRows(base.GetNumRows());
         }
 #endif
     }

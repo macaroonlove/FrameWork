@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace FrameWork.Editor
+namespace FrameWork
 {
     public class TileRangeAttribute : PropertyAttribute { }
 }

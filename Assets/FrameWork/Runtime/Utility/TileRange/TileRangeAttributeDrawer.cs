@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace FrameWork.Editor
+namespace FrameWork
 {
 #if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(TileRangeAttribute))]

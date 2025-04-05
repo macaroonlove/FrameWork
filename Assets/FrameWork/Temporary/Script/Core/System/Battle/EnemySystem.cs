@@ -1,3 +1,4 @@
+using FrameWork;
 using FrameWork.Editor;
 using System.Collections.Generic;
 using UnityEngine;
@@ -50,13 +51,25 @@ namespace Temporary.Core
             return _enemies;
         }
 
+        #region 원 범위 안쪽의 아군 유닛을 반환
         /// <summary>
-        /// 범위 내에 적 유닛을 반환 (unitPos와 가까운 유닛부터 반환)
+        /// 원 범위 안쪽의 아군 유닛을 반환 (unitPos와 가까운 유닛부터 반환)
         /// </summary>
-        internal List<EnemyUnit> GetEnemiesInRadius(Vector3 unitPos, float radius, int maxCount = int.MaxValue)
+        internal List<EnemyUnit> GetEnemiesInCircle(Vector3 unitPos, float radius, int maxCount = int.MaxValue)
+        {
+            if (maxCount == int.MaxValue)
+            {
+                return GetAllEnemiesInCircle(unitPos, radius);
+            }
+            else
+            {
+                return GetSortedEnemiesInCircle(unitPos, radius, maxCount);
+            }
+        }
+
+        private List<EnemyUnit> GetAllEnemiesInCircle(Vector3 unitPos, float radius)
         {
             List<EnemyUnit> enemies = new List<EnemyUnit>();
-            List<(EnemyUnit enemy, float distance)> enemiesWithDistance = new List<(EnemyUnit, float)>();
 
             radius *= radius;
 
@@ -68,32 +81,17 @@ namespace Temporary.Core
 
                     if (distance <= radius)
                     {
-                        enemiesWithDistance.Add((enemy, distance));
+                        enemies.Add((enemy));
                     }
                 }
-            }
-
-            if (enemiesWithDistance.Count > maxCount)
-            {
-                enemiesWithDistance.Sort((a, b) => a.distance.CompareTo(b.distance));
-            }
-
-            foreach (var (enemy, _) in enemiesWithDistance)
-            {
-                if (enemies.Count >= maxCount) break;
-                enemies.Add(enemy);
             }
 
             return enemies;
         }
 
-        /// <summary>
-        /// 공격 가능한 적 유닛을 반환
-        /// </summary>
-        internal List<EnemyUnit> GetAttackableEnemiesInRadius(Vector3 unitPos, float radius, EAttackType attackType, int maxCount = int.MaxValue)
+        private List<EnemyUnit> GetSortedEnemiesInCircle(Vector3 unitPos, float radius)
         {
-            List<EnemyUnit> enemies = new List<EnemyUnit>();
-            List<(EnemyUnit enemy, float distance)> enemiesWithDistance = new List<(EnemyUnit, float)>();
+            PriorityQueue<EnemyUnit> priorityQueue = new PriorityQueue<EnemyUnit>();
 
             radius *= radius;
 
@@ -101,38 +99,336 @@ namespace Temporary.Core
             {
                 if (enemy != null && enemy.isActiveAndEnabled)
                 {
-                    // 적이 공중 유닛일 떄, 원거리가 아니라면 공격 불가
-                    if (enemy.template.MoveType == EMoveType.Sky && attackType != EAttackType.Far) continue;
-                    // 공격 대상이 아니라면 타겟에 추가하지 않음
-                    if (enemy.GetAbility<HitAbility>().finalTargetOfAttack == false) continue;
-
                     var distance = (enemy.transform.position - unitPos).sqrMagnitude;
 
                     if (distance <= radius)
                     {
-                        enemiesWithDistance.Add((enemy, distance));
+                        priorityQueue.Enqueue(enemy, distance);
                     }
                 }
             }
 
-            if (enemiesWithDistance.Count > maxCount)
-            {
-                enemiesWithDistance.Sort((a, b) => a.distance.CompareTo(b.distance));
-            }
+            List<EnemyUnit> enemies = new List<EnemyUnit>(priorityQueue.Count);
 
-            foreach (var (enemy, _) in enemiesWithDistance)
+            while (priorityQueue.Count > 0)
             {
-                if (enemies.Count >= maxCount) break;
-                enemies.Add(enemy);
+                enemies.Add(priorityQueue.Dequeue());
             }
 
             return enemies;
         }
 
+        private List<EnemyUnit> GetSortedEnemiesInCircle(Vector3 unitPos, float radius, int maxCount)
+        {
+            PriorityQueue<EnemyUnit> priorityQueue = new PriorityQueue<EnemyUnit>();
+
+            radius *= radius;
+
+            foreach (EnemyUnit enemy in _enemies)
+            {
+                if (enemy != null && enemy.isActiveAndEnabled)
+                {
+                    var distance = (enemy.transform.position - unitPos).sqrMagnitude;
+
+                    if (distance <= radius)
+                    {
+                        priorityQueue.Enqueue(enemy, distance);
+
+                        if (priorityQueue.Count > maxCount)
+                        {
+                            priorityQueue.Dequeue();
+                        }
+                    }
+                }
+            }
+
+            List<EnemyUnit> enemies = new List<EnemyUnit>(priorityQueue.Count);
+
+            while (priorityQueue.Count > 0)
+            {
+                enemies.Add(priorityQueue.Dequeue());
+            }
+
+            return enemies;
+        }
+        #endregion
+
+        #region 직선 범위 안쪽의 아군 유닛을 반환
         /// <summary>
-        /// 공격 가능한 모든 적 유닛을 반환
+        /// 직선 범위 안쪽의 아군 유닛을 반환 (unitPos와 가까운 유닛부터 반환)
         /// </summary>
-        internal List<EnemyUnit> GetAttackableAllEnemies(EAttackType attackType)
+        internal List<EnemyUnit> GetEnemiesInStraight(Vector3 unitPos, Vector3 targetDir, float range, float width, int maxCount = int.MaxValue)
+        {
+            if (maxCount == int.MaxValue)
+            {
+                return GetAllEnemiesInStraight(unitPos, targetDir, range, width);
+            }
+            else
+            {
+                return GetSortedEnemiesInStraight(unitPos, targetDir, range, width, maxCount);
+            }
+        }
+
+        private List<EnemyUnit> GetAllEnemiesInStraight(Vector3 unitPos, Vector3 targetDir, float range, float width)
+        {
+            List<EnemyUnit> enemies = new List<EnemyUnit>();
+
+            range *= range;
+            float widthThreshold = ((width * width) / 4f) * targetDir.sqrMagnitude;
+
+            foreach (EnemyUnit enemy in _enemies)
+            {
+                if (enemy != null && enemy.isActiveAndEnabled)
+                {
+                    Vector3 dirVector = enemy.transform.position - unitPos;
+
+                    var distance = dirVector.sqrMagnitude;
+
+                    // 범위 밖이라면
+                    if (distance > range) continue;
+
+                    // 뒤쪽에 존재한다면
+                    if (Vector3.Dot(targetDir, dirVector) <= 0) continue;
+
+                    // 직선의 폭 내에 존재한다면
+                    if (Vector3.Cross(targetDir, dirVector).sqrMagnitude <= widthThreshold)
+                    {
+                        enemies.Add(enemy);
+                    }
+                }
+            }
+
+            return enemies;
+        }
+
+        private List<EnemyUnit> GetSortedEnemiesInStraight(Vector3 unitPos, Vector3 targetDir, float range, float width)
+        {
+            PriorityQueue<EnemyUnit> priorityQueue = new PriorityQueue<EnemyUnit>();
+
+            range *= range;
+            float widthThreshold = ((width * width) / 4f) * targetDir.sqrMagnitude;
+
+            foreach (EnemyUnit enemy in _enemies)
+            {
+                if (enemy != null && enemy.isActiveAndEnabled)
+                {
+                    Vector3 dirVector = enemy.transform.position - unitPos;
+                    float distance = dirVector.sqrMagnitude;
+
+                    // 범위 밖이라면
+                    if (distance > range) continue;
+
+                    // 뒤쪽에 존재한다면
+                    if (Vector3.Dot(targetDir, dirVector) <= 0) continue;
+
+                    // 직선의 폭 내에 존재한다면
+                    if (Vector3.Cross(targetDir, dirVector).sqrMagnitude <= widthThreshold)
+                    {
+                        priorityQueue.Enqueue(enemy, distance);
+                    }
+                }
+            }
+
+            List<EnemyUnit> enemies = new List<EnemyUnit>(priorityQueue.Count);
+
+            while (priorityQueue.Count > 0)
+            {
+                enemies.Add(priorityQueue.Dequeue());
+            }
+
+            return enemies;
+        }
+
+        private List<EnemyUnit> GetSortedEnemiesInStraight(Vector3 unitPos, Vector3 targetDir, float range, float width, int maxCount)
+        {
+            PriorityQueue<EnemyUnit> priorityQueue = new PriorityQueue<EnemyUnit>();
+
+            range *= range;
+            float widthThreshold = ((width * width) / 4f) * targetDir.sqrMagnitude;
+
+            foreach (EnemyUnit enemy in _enemies)
+            {
+                if (enemy != null && enemy.isActiveAndEnabled)
+                {
+                    Vector3 dirVector = enemy.transform.position - unitPos;
+                    float distance = dirVector.sqrMagnitude;
+
+                    // 범위 밖이라면
+                    if (distance > range) continue;
+
+                    // 뒤쪽에 존재한다면
+                    if (Vector3.Dot(targetDir, dirVector) <= 0) continue;
+
+                    // 직선의 폭 내에 존재한다면
+                    if (Vector3.Cross(targetDir, dirVector).sqrMagnitude <= widthThreshold)
+                    {
+                        priorityQueue.Enqueue(enemy, distance);
+
+                        if (priorityQueue.Count > maxCount)
+                        {
+                            priorityQueue.Dequeue();
+                        }
+                    }
+                }
+            }
+
+            List<EnemyUnit> enemies = new List<EnemyUnit>(priorityQueue.Count);
+
+            while (priorityQueue.Count > 0)
+            {
+                enemies.Add(priorityQueue.Dequeue());
+            }
+
+            return enemies;
+        }
+        #endregion
+
+        #region 시야각 안쪽의 아군 유닛을 반환
+        /// <summary>
+        /// 시야각 안쪽의 아군 유닛을 반환 (unitPos와 가까운 유닛부터 반환)
+        /// </summary>
+        internal List<EnemyUnit> GetEnemiesInCone(Vector3 unitPos, Vector3 targetDir, float range, int angle, int maxCount = int.MaxValue)
+        {
+            if (maxCount == int.MaxValue)
+            {
+                return GetAllEnemiesInCone(unitPos, targetDir, range, angle);
+            }
+            else
+            {
+                return GetSortedEnemiesInCone(unitPos, targetDir, range, angle, maxCount);
+            }
+        }
+
+        private List<EnemyUnit> GetAllEnemiesInCone(Vector3 unitPos, Vector3 targetDir, float range, int angle)
+        {
+            List<EnemyUnit> enemies = new List<EnemyUnit>();
+
+            range *= range;
+            float cos = Mathf.Cos((angle / 2) * Mathf.Deg2Rad);
+            cos *= cos;
+            targetDir.Normalize();
+
+            foreach (EnemyUnit enemy in _enemies)
+            {
+                if (enemy != null && enemy.isActiveAndEnabled)
+                {
+                    Vector3 dirVector = enemy.transform.position - unitPos;
+                    float distance = dirVector.sqrMagnitude;
+
+                    if (distance <= range)
+                    {
+                        float dot = Vector3.Dot(targetDir, dirVector);
+
+                        if (dot * dot >= cos * distance)
+                        {
+                            enemies.Add(enemy);
+                        }
+                    }
+                }
+            }
+
+            return enemies;
+        }
+
+        private List<EnemyUnit> GetSortedEnemiesInCone(Vector3 unitPos, Vector3 targetDir, float range, int angle)
+        {
+            PriorityQueue<EnemyUnit> priorityQueue = new PriorityQueue<EnemyUnit>();
+
+            range *= range;
+            float cos = Mathf.Cos((angle / 2) * Mathf.Deg2Rad);
+            cos *= cos;
+            targetDir.Normalize();
+
+            foreach (EnemyUnit enemy in _enemies)
+            {
+                if (enemy != null && enemy.isActiveAndEnabled)
+                {
+                    Vector3 dirVector = enemy.transform.position - unitPos;
+                    float distance = dirVector.sqrMagnitude;
+
+                    if (distance <= range)
+                    {
+                        float dot = Vector3.Dot(targetDir, dirVector);
+
+                        if (dot * dot >= cos * distance)
+                        {
+                            priorityQueue.Enqueue(enemy, distance);
+                        }
+                    }
+                }
+            }
+
+            List<EnemyUnit> enemies = new List<EnemyUnit>(priorityQueue.Count);
+
+            while (priorityQueue.Count > 0)
+            {
+                enemies.Add(priorityQueue.Dequeue());
+            }
+
+            return enemies;
+        }
+
+        private List<EnemyUnit> GetSortedEnemiesInCone(Vector3 unitPos, Vector3 targetDir, float range, float angle, int maxCount)
+        {
+            PriorityQueue<EnemyUnit> priorityQueue = new PriorityQueue<EnemyUnit>();
+
+            range *= range;
+            float cos = Mathf.Cos((angle / 2) * Mathf.Deg2Rad);
+            cos *= cos;
+            targetDir.Normalize();
+
+            foreach (EnemyUnit enemy in _enemies)
+            {
+                if (enemy != null && enemy.isActiveAndEnabled)
+                {
+                    Vector3 dirVector = enemy.transform.position - unitPos;
+                    float distance = dirVector.sqrMagnitude;
+
+                    if (distance <= range)
+                    {
+                        float dot = Vector3.Dot(targetDir, dirVector);
+
+                        if (dot * dot >= cos * distance)
+                        {
+                            priorityQueue.Enqueue(enemy, distance);
+
+                            if (priorityQueue.Count > maxCount)
+                            {
+                                priorityQueue.Dequeue();
+                            }
+                        }
+                    }
+                }
+            }
+
+            List<EnemyUnit> enemies = new List<EnemyUnit>(priorityQueue.Count);
+
+            while (priorityQueue.Count > 0)
+            {
+                enemies.Add(priorityQueue.Dequeue());
+            }
+
+            return enemies;
+        }
+        #endregion
+
+        #region 격자 범위 안쪽의 아군 유닛을 반환(2D 전용, X, Z 좌표)
+        /// <summary>
+        /// 격자 범위 안쪽의 아군 유닛을 반환 (unitPos와 가까운 유닛부터 반환)
+        /// </summary>
+        internal List<EnemyUnit> GetEnemiesInGrid(Vector2Int unitCellPos, List<Vector2Int> grid, int maxCount = int.MaxValue)
+        {
+            if (maxCount == int.MaxValue)
+            {
+                return GetAllEnemiesInGrid(unitCellPos, grid);
+            }
+            else
+            {
+                return GetSortedEnemiesInGrid(unitCellPos, grid, maxCount);
+            }
+        }
+
+        private List<EnemyUnit> GetAllEnemiesInGrid(Vector2Int unitCellPos, List<Vector2Int> grid)
         {
             List<EnemyUnit> enemies = new List<EnemyUnit>();
 
@@ -140,8 +436,122 @@ namespace Temporary.Core
             {
                 if (enemy != null && enemy.isActiveAndEnabled)
                 {
-                    // 적이 공중 유닛일 떄, 원거리가 아니라면 공격 불가
+                    var pos = enemy.cellPos - unitCellPos;
+
+                    if (grid.Contains(pos))
+                    {
+                        enemies.Add((enemy));
+                    }
+                }
+            }
+
+            return enemies;
+        }
+
+        private List<EnemyUnit> GetSortedEnemiesInGrid(Vector2Int unitCellPos, List<Vector2Int> grid)
+        {
+            PriorityQueue<EnemyUnit> priorityQueue = new PriorityQueue<EnemyUnit>();
+
+            foreach (EnemyUnit enemy in _enemies)
+            {
+                if (enemy != null && enemy.isActiveAndEnabled)
+                {
+                    var pos = enemy.cellPos - unitCellPos;
+
+                    if (grid.Contains(pos))
+                    {
+                        var distance = (enemy.cellPos - unitCellPos).sqrMagnitude;
+
+                        priorityQueue.Enqueue(enemy, distance);
+                    }
+                }
+            }
+
+            List<EnemyUnit> enemies = new List<EnemyUnit>(priorityQueue.Count);
+
+            while (priorityQueue.Count > 0)
+            {
+                enemies.Add(priorityQueue.Dequeue());
+            }
+
+            return enemies;
+        }
+
+        private List<EnemyUnit> GetSortedEnemiesInGrid(Vector2Int unitCellPos, List<Vector2Int> grid, int maxCount)
+        {
+            PriorityQueue<EnemyUnit> priorityQueue = new PriorityQueue<EnemyUnit>();
+
+            foreach (EnemyUnit enemy in _enemies)
+            {
+                if (enemy != null && enemy.isActiveAndEnabled)
+                {
+                    var pos = enemy.cellPos - unitCellPos;
+
+                    if (grid.Contains(pos))
+                    {
+                        var distance = (enemy.cellPos - unitCellPos).sqrMagnitude;
+
+                        priorityQueue.Enqueue(enemy, distance);
+
+                        if (priorityQueue.Count > maxCount)
+                        {
+                            priorityQueue.Dequeue();
+                        }
+                    }
+                }
+            }
+
+            List<EnemyUnit> enemies = new List<EnemyUnit>(priorityQueue.Count);
+
+            while (priorityQueue.Count > 0)
+            {
+                enemies.Add(priorityQueue.Dequeue());
+            }
+
+            return enemies;
+        }
+        #endregion
+
+        #region 범위 내 공격 가능한 적군 유닛을 반환
+        internal List<EnemyUnit> GetAttackableEnemies(Vector3 unitPos, float radius, EAttackType attackType, int maxCount = int.MaxValue)
+        {
+            var enemies = GetSortedEnemiesInCircle(unitPos, radius);
+
+            return CheckAttackable(enemies, attackType, maxCount);
+        }
+
+        internal List<EnemyUnit> GetAttackableEnemies(Vector3 unitPos, Vector3 targetDir, float range, float width, EAttackType attackType, int maxCount = int.MaxValue)
+        {
+            var enemies = GetSortedEnemiesInStraight(unitPos, targetDir, range, width);
+
+            return CheckAttackable(enemies, attackType, maxCount);
+        }
+
+        internal List<EnemyUnit> GetAttackableEnemies(Vector3 unitPos, Vector3 targetDir, float range, int angle, EAttackType attackType, int maxCount = int.MaxValue)
+        {
+            var enemies = GetSortedEnemiesInCone(unitPos, targetDir, range, angle);
+
+            return CheckAttackable(enemies, attackType, maxCount);
+        }
+
+        internal List<EnemyUnit> GetAttackableEnemies(Vector2Int unitCellPos, List<Vector2Int> grid, EAttackType attackType, int maxCount = int.MaxValue)
+        {
+            var enemies = GetSortedEnemiesInGrid(unitCellPos, grid);
+
+            return CheckAttackable(enemies, attackType, maxCount);
+        }
+
+        internal List<EnemyUnit> GetAllAttackableEnemies(EAttackType attackType)
+        {
+            var enemies = new List<EnemyUnit>();
+
+            foreach (var enemy in _enemies)
+            {
+                if (enemy != null && enemy.isActiveAndEnabled)
+                {
+                    // 적이 공중 유닛일 떄, 원거리가 아니라면 공격 불가 (타워 디펜스라면 언덕 유닛일 때, 로 변경)
                     if (enemy.template.MoveType == EMoveType.Sky && attackType != EAttackType.Far) continue;
+
                     // 공격 대상이 아니라면 타겟에 추가하지 않음
                     if (enemy.GetAbility<HitAbility>().finalTargetOfAttack == false) continue;
 
@@ -152,54 +562,62 @@ namespace Temporary.Core
             return enemies;
         }
 
-        /// <summary>
-        /// 회복 가능한 적 유닛을 반환
-        /// </summary>
-        internal List<EnemyUnit> GetHealableEnemiesInRadius(Vector3 unitPos, float radius, int maxCount = int.MaxValue)
+        private List<EnemyUnit> CheckAttackable(List<EnemyUnit> enemies, EAttackType attackType, int maxCount)
         {
-            List<EnemyUnit> enemies = new List<EnemyUnit>();
-            List<(EnemyUnit enemy, float distance)> enemiesWithDistance = new List<(EnemyUnit, float)>();
+            var healableEnemies = new List<EnemyUnit>(maxCount);
 
-            radius *= radius;
-
-            foreach (EnemyUnit enemy in _enemies)
+            foreach (var enemy in enemies)
             {
-                if (enemy != null && enemy.isActiveAndEnabled)
-                {
-                    // 회복 가능 유닛이 아니라면 타겟에 추가하지 않음
-                    if (enemy.GetAbility<HealthAbility>().finalIsHealAble == false) continue;
+                // maxCount만큼 유닛을 찾았다면
+                if (healableEnemies.Count >= maxCount) break;
 
-                    var distance = (enemy.transform.position - unitPos).sqrMagnitude;
+                // 적이 공중 유닛일 떄, 원거리가 아니라면 공격 불가 (타워 디펜스라면 언덕 유닛일 때, 로 변경)
+                if (enemy.template.MoveType == EMoveType.Sky && attackType != EAttackType.Far) continue;
 
-                    if (distance <= radius)
-                    {
-                        enemiesWithDistance.Add((enemy, distance));
-                    }
-                }
+                // 공격 대상이 아니라면 타겟에 추가하지 않음
+                if (enemy.GetAbility<HitAbility>().finalTargetOfAttack == false) continue;
+
+                healableEnemies.Add(enemy);
             }
 
-            if (enemiesWithDistance.Count > maxCount)
-            {
-                enemiesWithDistance.Sort((a, b) => a.distance.CompareTo(b.distance));
-            }
+            return healableEnemies;
+        }
+        #endregion
 
-            foreach (var (enemy, _) in enemiesWithDistance)
-            {
-                if (enemies.Count >= maxCount) break;
-                enemies.Add(enemy);
-            }
+        #region 범위 내 회복 가능한 적군 유닛을 반환
+        internal List<EnemyUnit> GetHealableEnemies(Vector3 unitPos, float radius, int maxCount = int.MaxValue)
+        {
+            var enemies = GetSortedEnemiesInCircle(unitPos, radius);
 
-            return enemies;
+            return CheckHealable(enemies, maxCount);
         }
 
-        /// <summary>
-        /// 회복 가능한 모든 적 유닛을 반환
-        /// </summary>
-        internal List<EnemyUnit> GetHealableAllEnemies()
+        internal List<EnemyUnit> GetHealableEnemies(Vector3 unitPos, Vector3 targetDir, float range, float width, int maxCount = int.MaxValue)
         {
-            List<EnemyUnit> enemies = new List<EnemyUnit>();
+            var enemies = GetSortedEnemiesInStraight(unitPos, targetDir, range, width);
 
-            foreach (EnemyUnit enemy in _enemies)
+            return CheckHealable(enemies, maxCount);
+        }
+
+        internal List<EnemyUnit> GetHealableEnemies(Vector3 unitPos, Vector3 targetDir, float range, int angle, int maxCount = int.MaxValue)
+        {
+            var enemies = GetSortedEnemiesInCone(unitPos, targetDir, range, angle);
+
+            return CheckHealable(enemies, maxCount);
+        }
+
+        internal List<EnemyUnit> GetHealableEnemies(Vector2Int unitCellPos, List<Vector2Int> grid, int maxCount = int.MaxValue)
+        {
+            var enemies = GetSortedEnemiesInGrid(unitCellPos, grid);
+
+            return CheckHealable(enemies, maxCount);
+        }
+
+        internal List<EnemyUnit> GetAllHealableEnemies()
+        {
+            var enemies = new List<EnemyUnit>();
+
+            foreach (var enemy in _enemies)
             {
                 if (enemy != null && enemy.isActiveAndEnabled)
                 {
@@ -212,6 +630,25 @@ namespace Temporary.Core
 
             return enemies;
         }
+
+        private List<EnemyUnit> CheckHealable(List<EnemyUnit> enemies, int maxCount)
+        {
+            var attackableEnemies = new List<EnemyUnit>(maxCount);
+
+            foreach (var enemy in enemies)
+            {
+                // maxCount만큼 유닛을 찾았다면
+                if (attackableEnemies.Count >= maxCount) break;
+
+                // 회복 가능 유닛이 아니라면 타겟에 추가하지 않음
+                if (enemy.GetAbility<HealthAbility>().finalIsHealAble == false) continue;
+
+                attackableEnemies.Add(enemy);
+            }
+
+            return attackableEnemies;
+        }
+        #endregion
 
         /// <summary>
         /// 범위 내에 가장 가까운 적 유닛을 반환

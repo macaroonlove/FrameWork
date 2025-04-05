@@ -7,20 +7,17 @@ namespace FrameWork.Editor
     [CustomPropertyDrawer(typeof(ConditionAttribute))]
     public class ConditionAttributeDrawer : PropertyDrawer
     {
-
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             ConditionAttribute conditionAttribute = (ConditionAttribute)attribute;
             bool conditionResult = GetConditionAttributeResult(conditionAttribute, property);
-
             bool enabled = conditionAttribute.ShowIfTrue ? conditionResult : !conditionResult;
 
             bool previouslyEnabled = GUI.enabled;
             GUI.enabled = enabled;
-
             if (!conditionAttribute.Hidden || enabled)
             {
-                EditorGUI.PropertyField(position, property, label, true);
+                EditorGUI.PropertyField(position, property, label, false);
             }
             GUI.enabled = previouslyEnabled;
         }
@@ -47,9 +44,11 @@ namespace FrameWork.Editor
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             ConditionAttribute conditionAttribute = (ConditionAttribute)attribute;
-            bool enabled = GetConditionAttributeResult(conditionAttribute, property);
+            bool conditionResult = GetConditionAttributeResult(conditionAttribute, property);
 
-            if (!conditionAttribute.Hidden || enabled)
+            bool enabled = conditionAttribute.ShowIfTrue ? conditionResult : !conditionResult;
+            
+            if (conditionAttribute.Hidden == false && enabled)
             {
                 return EditorGUI.GetPropertyHeight(property, label);
             }

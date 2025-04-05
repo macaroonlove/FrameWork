@@ -17,7 +17,7 @@ namespace Temporary.Core
 
         public override string GetDescription()
         {
-            return "즉시 데미지";
+            return "투사체 데미지";
         }
 
         public int GetAmount(Unit casterUnit, Unit targetUnit)

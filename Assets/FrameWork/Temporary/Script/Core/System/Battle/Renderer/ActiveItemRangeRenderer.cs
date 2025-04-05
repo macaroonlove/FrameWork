@@ -156,14 +156,14 @@ namespace Temporary.Core
             switch (_unitType)
             {
                 case EUnitType.All:
-                    units.AddRange(_agentSystem.GetAgentsInRadius(pos, _radius));
-                    units.AddRange(_enemySystem.GetEnemiesInRadius(pos, _radius));
+                    units.AddRange(_agentSystem.GetAgentsInCircle(pos, _radius));
+                    units.AddRange(_enemySystem.GetEnemiesInCircle(pos, _radius));
                     break;
                 case EUnitType.Agent:
-                    units.AddRange(_agentSystem.GetAgentsInRadius(pos, _radius));
+                    units.AddRange(_agentSystem.GetAgentsInCircle(pos, _radius));
                     break;
                 case EUnitType.Enemy:
-                    units.AddRange(_enemySystem.GetEnemiesInRadius(pos, _radius));
+                    units.AddRange(_enemySystem.GetEnemiesInCircle(pos, _radius));
                     break;
             }
 

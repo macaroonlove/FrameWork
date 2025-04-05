@@ -23,7 +23,6 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private int _parameterHash;
 
         [HideInInspector, SerializeField] private FX _casterFX;
-        [HideInInspector, SerializeField] private FX _targetFX;
 
         [HideInInspector]
         public List<Effect> effects = new List<Effect>();
@@ -45,7 +44,6 @@ namespace Temporary.Core
         public int parameterHash => _parameterHash;
 
         public FX casterFX => _casterFX;
-        public FX targetFX => _targetFX;
         #endregion
 
         #region 값 변경 메서드
@@ -82,7 +80,6 @@ namespace Temporary.Editor
         private SerializedProperty _parameterName;
         private SerializedProperty _parameterHash;
         private SerializedProperty _casterFX;
-        private SerializedProperty _targetFX;
 
         private ReorderableList _effectsList;
         private Effect _currentEffect;
@@ -103,7 +100,6 @@ namespace Temporary.Editor
             _parameterName = serializedObject.FindProperty("_parameterName");
             _parameterHash = serializedObject.FindProperty("_parameterHash");
             _casterFX = serializedObject.FindProperty("_casterFX");
-            _targetFX = serializedObject.FindProperty("_targetFX");
 
             CreateEffectList();
         }
@@ -150,19 +146,21 @@ namespace Temporary.Editor
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("스킬 타입", GUILayout.Width(192));
+            GUILayout.Label("스킬 방식", GUILayout.Width(192));
             EditorGUILayout.PropertyField(_skillType, GUIContent.none);
             GUILayout.EndHorizontal();
 
-            if (_skillType.enumValueIndex == (int)EActiveSkillType.Targeting)
+            var skillType = _skillType.enumValueIndex;
+
+            if (skillType == (int)EActiveSkillType.MouseTargeting)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("스킬 범위", GUILayout.Width(192));
+                GUILayout.Label("마우스가 인식할 스킬 범위", GUILayout.Width(192));
                 EditorGUILayout.PropertyField(_skillRange, GUIContent.none);
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("유닛 타입", GUILayout.Width(192));
+                GUILayout.Label("마우스가 인식할 유닛 타입", GUILayout.Width(192));
                 EditorGUILayout.PropertyField(_unitType, GUIContent.none);
                 GUILayout.EndHorizontal();
             }
@@ -194,14 +192,6 @@ namespace Temporary.Editor
             EditorGUILayout.PropertyField(_casterFX, GUIContent.none);
             GUILayout.EndHorizontal();
 
-            if (_skillType.enumValueIndex != (int)EActiveSkillType.Instant)
-            {
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("스킬 사용 시, 마우스 위치에 생성될 FX", GUILayout.Width(192));
-                EditorGUILayout.PropertyField(_targetFX, GUIContent.none);
-                GUILayout.EndHorizontal();
-            }
-
             GUILayout.Space(20);
 
             _effectsList?.DoLayoutList();
@@ -219,31 +209,34 @@ namespace Temporary.Editor
         {
             var menu = new GenericMenu();
 
-            if (_skillType.enumValueIndex == (int)EActiveSkillType.NonTargeting)
+            switch (_skillType.enumValueIndex)
             {
-                menu.AddItem(new GUIContent("즉시 데미지 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(InstantDamagePointEffect));
-                menu.AddItem(new GUIContent("투사체 데미지 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(ProjectileDamagePointEffect));
-                menu.AddItem(new GUIContent("즉시 회복 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(InstantHealPointEffect));
-                menu.AddItem(new GUIContent("투사체 회복 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(ProjectileHealPointEffect));
-                menu.AddItem(new GUIContent("즉시 보호막 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(InstantShieldPointEffect));
-                menu.AddItem(new GUIContent("투사체 보호막 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(ProjectileShieldPointEffect));
-                menu.AddItem(new GUIContent("즉시 버프 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(InstantBuffPointEffect));
-                menu.AddItem(new GUIContent("투사체 버프 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(ProjectileBuffPointEffect));
-                menu.AddItem(new GUIContent("즉시 상태이상 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(InstantAbnormalStatusPointEffect));
-                menu.AddItem(new GUIContent("투사체 상태이상 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(ProjectileAbnormalStatusPointEffect));
-            }
-            else
-            {
-                menu.AddItem(new GUIContent("즉시 데미지 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantDamageByTargetUnitEffect));
-                menu.AddItem(new GUIContent("투사체 데미지 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileDamageByTargetUnitEffect));
-                menu.AddItem(new GUIContent("즉시 회복 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantHealByTargetUnitEffect));
-                menu.AddItem(new GUIContent("투사체 회복 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileHealByTargetUnitEffect));
-                menu.AddItem(new GUIContent("즉시 보호막 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantShieldByTargetUnitEffect));
-                menu.AddItem(new GUIContent("투사체 보호막 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileShieldByTargetUnitEffect));
-                menu.AddItem(new GUIContent("즉시 버프 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantBuffByTargetUnitEffect));
-                menu.AddItem(new GUIContent("투사체 버프 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileBuffByTargetUnitEffect));
-                menu.AddItem(new GUIContent("즉시 상태이상 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantAbnormalStatusByTargetUnitEffect));
-                menu.AddItem(new GUIContent("투사체 상태이상 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileAbnormalStatusByTargetUnitEffect));
+                case (int)EActiveSkillType.InstantNonTargeting:
+                case (int)EActiveSkillType.MouseNonTargeting:
+                    menu.AddItem(new GUIContent("즉시 데미지 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(InstantDamagePointEffect));
+                    menu.AddItem(new GUIContent("투사체 데미지 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(ProjectileDamagePointEffect));
+                    menu.AddItem(new GUIContent("즉시 회복 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(InstantHealPointEffect));
+                    menu.AddItem(new GUIContent("투사체 회복 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(ProjectileHealPointEffect));
+                    menu.AddItem(new GUIContent("즉시 보호막 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(InstantShieldPointEffect));
+                    menu.AddItem(new GUIContent("투사체 보호막 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(ProjectileShieldPointEffect));
+                    menu.AddItem(new GUIContent("즉시 버프 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(InstantBuffPointEffect));
+                    menu.AddItem(new GUIContent("투사체 버프 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(ProjectileBuffPointEffect));
+                    menu.AddItem(new GUIContent("즉시 상태이상 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(InstantAbnormalStatusPointEffect));
+                    menu.AddItem(new GUIContent("투사체 상태이상 스킬 (논타겟팅)"), false, CreateEffectCallback, typeof(ProjectileAbnormalStatusPointEffect));
+                    break;
+                case (int)EActiveSkillType.InstantTargeting:
+                case (int)EActiveSkillType.MouseTargeting:
+                    menu.AddItem(new GUIContent("즉시 데미지 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantDamageByTargetUnitEffect));
+                    menu.AddItem(new GUIContent("투사체 데미지 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileDamageByTargetUnitEffect));
+                    menu.AddItem(new GUIContent("즉시 회복 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantHealByTargetUnitEffect));
+                    menu.AddItem(new GUIContent("투사체 회복 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileHealByTargetUnitEffect));
+                    menu.AddItem(new GUIContent("즉시 보호막 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantShieldByTargetUnitEffect));
+                    menu.AddItem(new GUIContent("투사체 보호막 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileShieldByTargetUnitEffect));
+                    menu.AddItem(new GUIContent("즉시 버프 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantBuffByTargetUnitEffect));
+                    menu.AddItem(new GUIContent("투사체 버프 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileBuffByTargetUnitEffect));
+                    menu.AddItem(new GUIContent("즉시 상태이상 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantAbnormalStatusByTargetUnitEffect));
+                    menu.AddItem(new GUIContent("투사체 상태이상 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileAbnormalStatusByTargetUnitEffect));
+                    break;
             }
 
             menu.ShowAsContext();

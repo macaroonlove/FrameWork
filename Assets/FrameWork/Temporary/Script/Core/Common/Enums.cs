@@ -113,36 +113,33 @@ namespace Temporary.Core
     {
         All,
         Circle,
-        //Quad,
+        Straight,
+        Cone,
+        Grid,
     }
 
     /// <summary>
     /// 액티브 스킬 타입
+    /// <para>※ 타겟팅은 적이 있어야만 스킬 발동이 가능합니다.</para>
     /// </summary>
     public enum EActiveSkillType
     {
         /// <summary>
-        /// 스킬을 사용하는 유닛의 위치를 기준으로 주위 유닛이 타겟
+        /// 스킬을 발동하는 유닛의 위치를 기준으로 "유닛"에게 스킬 발동
         /// </summary>
-        Instant,
+        InstantTargeting,
         /// <summary>
-        /// 마우스 위치에 유닛이 있다면 해당 유닛이 타겟
+        /// 스킬을 발동하는 유닛의 위치를 기준으로 "위치"에 스킬 발동
         /// </summary>
-        Targeting,
+        InstantNonTargeting,
         /// <summary>
-        /// 마우스 위치를 기준으로 스킬을 발동
-        /// <para>Cone형과 Straight형 스킬에 사용됩니다.</para>
+        /// 마우스의 위치를 기준으로 "유닛"에게 스킬 발동
         /// </summary>
-        NonTargeting,
-    }
-
-    /// <summary>
-    /// 논타겟 액티브 스킬 타입
-    /// </summary>
-    public enum ENonTargetingActiveSkillType
-    {
-        Straight,
-        Cone,
+        MouseTargeting,
+        /// <summary>
+        /// 마우스의 위치를 기준으로 "위치"에 스킬 발동
+        /// </summary>
+        MouseNonTargeting,
     }
 
     /// <summary>
@@ -154,6 +151,35 @@ namespace Temporary.Core
         Agent,
         Enemy,
         None,
+    }
+
+    /// <summary>
+    /// 방향 타입
+    /// </summary>
+    public enum EDirectionType
+    {
+        Up,
+        Down,
+        Left,
+        Right,
+        Front,
+        Back,
+        UpLeft,
+        UpRight,
+        DownLeft,
+        DownRight,
+        UpFront,
+        UpBack,
+        DownFront,
+        DownBack,
+        UpLeftFront,
+        UpLeftBack,
+        UpRightFront,
+        UpRightBack,
+        DownLeftFront,
+        DownLeftBack,
+        DownRightFront,
+        DownRightBack,
     }
 
     public enum EOperator

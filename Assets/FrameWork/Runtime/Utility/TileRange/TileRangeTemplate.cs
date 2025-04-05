@@ -5,7 +5,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace FrameWork.Editor
+namespace FrameWork
 {
     [CreateAssetMenu(menuName = "Templates/TileRange", fileName = "TileRange", order = 0)]
     public class TileRangeTemplate : ScriptableObject

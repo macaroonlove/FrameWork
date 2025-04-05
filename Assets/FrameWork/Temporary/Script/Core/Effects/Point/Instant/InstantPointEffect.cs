@@ -1,3 +1,5 @@
+using FrameWork;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -5,69 +7,126 @@ namespace Temporary.Core
 {
     public abstract class InstantPointEffect : PointEffect
     {
-        [SerializeField] protected float _skillRange;
-        [SerializeField] protected ENonTargetingActiveSkillType _skillType;
+        [SerializeField] protected ETarget _targetType;
         [SerializeField] protected EUnitType _unitType;
-        [SerializeField] protected float _skillWidth;
-        [SerializeField] protected float _skillAngle;
-        
+        [SerializeField] protected ERangeType _rangeType;
+
+        [SerializeField] protected EDirectionType _directionType;
+        [SerializeField] protected float _range;
+        [SerializeField] protected float _assistantRange;
+        [SerializeField] protected TileRangeTemplate _tileRangeTemplate;
+
+        [SerializeField] protected int _numberOfTarget;
+
         [SerializeField] protected FX _targetFX;
 
         public override void Execute(Unit casterUnit, Vector3 targetVector)
         {
             if (casterUnit == null) return;
 
-            switch (_skillType)
+            int maxCount = _numberOfTarget;
+
+            switch (_targetType)
             {
-                case ENonTargetingActiveSkillType.Straight:
-                    GetTargetStraight(casterUnit, targetVector);
+                case ETarget.OneTargetInRange:
+                    maxCount = 1;
                     break;
-                case ENonTargetingActiveSkillType.Cone:
-                    GetTargetCone(casterUnit, targetVector);
+                case ETarget.AllTargetInRange:
+                    maxCount = int.MaxValue;
+                    break;
+            }
+
+            switch (_rangeType)
+            {
+                case ERangeType.Circle:
+                    GetTargetInCircle(casterUnit, maxCount);
+                    break;
+                case ERangeType.Straight:
+                    GetTargetStraight(casterUnit, targetVector, maxCount);
+                    break;
+                case ERangeType.Cone:
+                    GetTargetCone(casterUnit, targetVector, maxCount);
+                    break;
+                case ERangeType.Grid:
+                    GetTargetGrid(casterUnit, maxCount);
+                    break;
+                default:
+                    GetAllTarget(casterUnit);
                     break;
             }
         }
 
-        private void GetTargetStraight(Unit casterUnit, Vector3 targetVector)
+        private void GetAllTarget(Unit casterUnit)
         {
             var targets = casterUnit.GetAbility<FindTargetAbility>().FindAllTarget(_unitType);
 
-            Vector3 forward = (targetVector - casterUnit.transform.position).normalized;
-            Vector3 right = Vector3.Cross(Vector3.up, forward);
-            float halfWidth = _skillWidth / 2f;
-
             foreach (var target in targets)
             {
-                Vector3 directionToTarget = target.transform.position - casterUnit.transform.position;
-
-                float forwardDistance = Vector3.Dot(forward, directionToTarget);
-                float rightDistance = Vector3.Dot(right, directionToTarget);
-
-                if (forwardDistance >= 0 && forwardDistance <= _skillRange && Mathf.Abs(rightDistance) <= halfWidth)
-                {
-                    SkillImpact(casterUnit, target);
-                }
+                SkillImpact(casterUnit, target);
 
                 ExecuteTargetFX(target);
             }
         }
 
-        private void GetTargetCone(Unit casterUnit, Vector3 targetVector)
+        private void GetTargetInCircle(Unit casterUnit, int maxCount)
         {
-            var targets = casterUnit.GetAbility<FindTargetAbility>().FindAttackableTarget(ETarget.AllTargetInRange, _skillRange, EAttackType.Far);
-
-            Vector3 forward = (targetVector - casterUnit.transform.position).normalized;
-
-            float cosThreshold = Mathf.Cos(Mathf.Deg2Rad * _skillAngle);
+            var targets = casterUnit.GetAbility<FindTargetAbility>().FindTargetInCircle(_range, _unitType, maxCount);
 
             foreach (var target in targets)
             {
-                Vector3 directionToTarget = (target.transform.position - casterUnit.transform.position).normalized;
+                SkillImpact(casterUnit, target);
 
-                if (Vector3.Dot(forward, directionToTarget) >= cosThreshold)
-                {
-                    SkillImpact(casterUnit, target);
-                }
+                ExecuteTargetFX(target);
+            }
+        }
+
+        private void GetTargetStraight(Unit casterUnit, Vector3 targetVector, int maxCount)
+        {
+            List<Unit> targets;
+            if (targetVector == Vector3.zero)
+            {
+                targets = casterUnit.GetAbility<FindTargetAbility>().FindTargetInStraight(_directionType, _range, _assistantRange, _unitType, maxCount);
+            }
+            else
+            {
+                targets = casterUnit.GetAbility<FindTargetAbility>().FindTargetInStraight(targetVector, _range, _assistantRange, _unitType, maxCount);
+            }
+
+            foreach (var target in targets)
+            {
+                SkillImpact(casterUnit, target);
+
+                ExecuteTargetFX(target);
+            }
+        }
+
+        private void GetTargetCone(Unit casterUnit, Vector3 targetVector, int maxCount)
+        {
+            List<Unit> targets;
+            if (targetVector == Vector3.zero)
+            {
+                targets = casterUnit.GetAbility<FindTargetAbility>().FindTargetInCone(_directionType, _range, (int)_assistantRange, _unitType, maxCount);
+            }
+            else
+            {
+                targets = casterUnit.GetAbility<FindTargetAbility>().FindTargetInCone(targetVector, _range, (int)_assistantRange, _unitType, maxCount);
+            }
+
+            foreach (var target in targets)
+            {
+                SkillImpact(casterUnit, target);
+
+                ExecuteTargetFX(target);
+            }
+        }
+
+        private void GetTargetGrid(Unit casterUnit, int maxCount)
+        {
+            var targets = casterUnit.GetAbility<FindTargetAbility>().FindTargetInGrid(_tileRangeTemplate.range, _unitType, maxCount);
+
+            foreach (var target in targets)
+            {
+                SkillImpact(casterUnit, target);
 
                 ExecuteTargetFX(target);
             }
@@ -98,32 +157,80 @@ namespace Temporary.Core
 
             labelRect.y += 40;
             valueRect.y += 40;
-            GUI.Label(labelRect, "범위");
-            _skillRange = EditorGUI.FloatField(valueRect, _skillRange);
+            GUI.Label(labelRect, "대상");
+            _targetType = (ETarget)EditorGUI.EnumPopup(valueRect, _targetType);
 
-            labelRect.y += 20;
-            valueRect.y += 20;
-            GUI.Label(labelRect, "스킬 방식");
-            _skillType = (ENonTargetingActiveSkillType)EditorGUI.EnumPopup(valueRect, _skillType);
-
-            if (_skillType == ENonTargetingActiveSkillType.Straight)
+            if (_targetType != ETarget.Myself)
             {
                 labelRect.y += 20;
                 valueRect.y += 20;
                 GUI.Label(labelRect, "유닛 타입");
                 _unitType = (EUnitType)EditorGUI.EnumPopup(valueRect, _unitType);
-
-                labelRect.y += 20;
-                valueRect.y += 20;
-                GUI.Label(labelRect, "스킬 너비");
-                _skillWidth = EditorGUI.FloatField(valueRect, _skillWidth);
             }
-            else
+
+            if (_targetType != ETarget.Myself && _targetType != ETarget.AllTarget)
             {
                 labelRect.y += 20;
                 valueRect.y += 20;
-                GUI.Label(labelRect, "콘 각도");
-                _skillAngle = EditorGUI.FloatField(valueRect, _skillAngle);
+                GUI.Label(labelRect, "범위 타입");
+                _rangeType = (ERangeType)EditorGUI.EnumPopup(valueRect, _rangeType);
+
+                if (_rangeType == ERangeType.Circle)
+                {
+                    labelRect.y += 20;
+                    valueRect.y += 20;
+                    GUI.Label(labelRect, "범위");
+                    _range = EditorGUI.FloatField(valueRect, _range);
+                }
+                else if (_rangeType == ERangeType.Straight)
+                {
+                    labelRect.y += 20;
+                    valueRect.y += 20;
+                    GUI.Label(labelRect, "방향");
+                    _directionType = (EDirectionType)EditorGUI.EnumPopup(valueRect, _directionType);
+
+                    labelRect.y += 20;
+                    valueRect.y += 20;
+                    GUI.Label(labelRect, "범위(세로)");
+                    _range = EditorGUI.FloatField(valueRect, _range);
+
+                    labelRect.y += 20;
+                    valueRect.y += 20;
+                    GUI.Label(labelRect, "너비(가로)");
+                    _assistantRange = EditorGUI.FloatField(valueRect, _assistantRange);
+                }
+                else if (_rangeType == ERangeType.Cone)
+                {
+                    labelRect.y += 20;
+                    valueRect.y += 20;
+                    GUI.Label(labelRect, "방향");
+                    _directionType = (EDirectionType)EditorGUI.EnumPopup(valueRect, _directionType);
+
+                    labelRect.y += 20;
+                    valueRect.y += 20;
+                    GUI.Label(labelRect, "범위");
+                    _range = EditorGUI.FloatField(valueRect, _range);
+
+                    labelRect.y += 20;
+                    valueRect.y += 20;
+                    GUI.Label(labelRect, "각도");
+                    _assistantRange = EditorGUI.IntField(valueRect, (int)_assistantRange);
+                }
+                else if (_rangeType == ERangeType.Grid)
+                {
+                    labelRect.y += 20;
+                    valueRect.y += 20;
+                    GUI.Label(labelRect, "범위");
+                    _tileRangeTemplate = (TileRangeTemplate)EditorGUI.ObjectField(valueRect, _tileRangeTemplate, typeof(TileRangeTemplate), false);
+                }
+            }
+
+            if (_targetType == ETarget.NumTargetInRange)
+            {
+                labelRect.y += 20;
+                valueRect.y += 20;
+                GUI.Label(labelRect, "감지할 유닛의 수");
+                _numberOfTarget = EditorGUI.IntField(valueRect, _numberOfTarget);
             }
 
             lastRectY = labelRect.y;
@@ -131,9 +238,36 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 4;
+            int rowNum = 2;
 
-            if (_skillType == ENonTargetingActiveSkillType.Straight)
+            if (_targetType != ETarget.Myself)
+            {
+                rowNum++;
+            }
+
+            if (_targetType != ETarget.Myself && _targetType != ETarget.AllTarget)
+            {
+                rowNum++;
+
+                if (_rangeType == ERangeType.Circle)
+                {
+                    rowNum++;
+                }
+                else if (_rangeType == ERangeType.Straight)
+                {
+                    rowNum += 3;
+                }
+                else if (_rangeType == ERangeType.Cone)
+                {
+                    rowNum += 3;
+                }
+                else if (_rangeType == ERangeType.Grid)
+                {
+                    rowNum++;
+                }
+            }
+
+            if (_targetType == ETarget.NumTargetInRange)
             {
                 rowNum++;
             }

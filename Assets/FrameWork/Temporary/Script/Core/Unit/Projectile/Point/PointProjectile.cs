@@ -8,9 +8,12 @@ namespace Temporary.Core
     {
         [SerializeField, Label("충돌 대상")] private LayerMask _layerMask;
         [SerializeField, Label("관통 여부")] private bool _isPiercing;
-
+        [SerializeField, Label("무한 관통 여부"), Condition("_isPiercing", true, true)] private bool _isInfinityPiercing;
+        [SerializeField, Label("관통 개수"), Condition("_isPiercing", true, true), Condition("_isInfinityPiercing", false, true)] private int _piercingCount;
+        
         protected Unit _caster;
         protected Vector3 _targetVector;
+        protected int _collisionCount;
 
         internal virtual void Initialize(Unit caster, Vector3 targetVector, UnityAction<Unit, Unit> action)
         {
@@ -26,6 +29,7 @@ namespace Temporary.Core
             }
 
             _isInit = true;
+            _collisionCount = 0;
         }
 
         private void Update()
@@ -64,6 +68,16 @@ namespace Temporary.Core
             if (_isPiercing == false)
             {
                 DeSpawn();
+            }
+            // 관통되는 투사체인데, 무한 관통이 아니라면
+            else if (_isInfinityPiercing == false)
+            {
+                _collisionCount++;
+
+                if (_collisionCount >= _piercingCount)
+                {
+                    DeSpawn();
+                }
             }
         }
     }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Temporary.Core
@@ -11,23 +12,17 @@ namespace Temporary.Core
         private ManaAbility _manaAbility;
         private AbnormalStatusAbility _abnormalStatusAbility;
 
-        private ActiveSkillTemplate _template;
-
-        private bool _isSkillActive;
+        private bool _isExecuteSkill;
         private Unit _targetUnit;
         private Vector3 _targetVector;
 
-        private SkillEventHandler _skillEventHandler;
-        private bool _isEventSkill;
+        private Dictionary<int, ActiveSkillTemplate> _templates = new Dictionary<int, ActiveSkillTemplate>();
 
         #region 스탯 계산
         private bool finalIsSkillAble
         {
             get
             {
-                // 이미 스킬을 사용 중이라면
-                if (_isSkillActive) return false;
-
                 // 스킬 사용 불가 상태이상에 걸렸다면
                 if (_abnormalStatusAbility.UnableToSkillEffects.Count > 0) return false;
 
@@ -43,30 +38,17 @@ namespace Temporary.Core
             _unitAnimationAbility = unit.GetAbility<UnitAnimationAbility>();
             _manaAbility = unit.GetAbility<ManaAbility>();
             _abnormalStatusAbility = unit.GetAbility<AbnormalStatusAbility>();
-
-            _skillEventHandler = GetComponentInChildren<SkillEventHandler>();
-            if (_skillEventHandler != null)
-            {
-                _skillEventHandler.onSkill += OnSkillEvent;
-                _skillEventHandler.onSkillEnd += OnSkillEndEvent;
-                _isEventSkill = true;
-            }
         }
 
         internal override void Deinitialize()
         {
-            if (_skillEventHandler != null)
-            {
-                _skillEventHandler.onSkill -= OnSkillEvent;
-                _skillEventHandler.onSkillEnd -= OnSkillEndEvent;
-                _isEventSkill = false;
-            }
+
         }
 
         internal override bool IsExecute()
         {
             // 스킬을 사용 중이라면 true
-            return _isSkillActive;
+            return _isExecuteSkill;
         }
 
         #region 스킬 발동
@@ -78,21 +60,26 @@ namespace Temporary.Core
             // 마나가 부족하다면
             if (_manaAbility.TryExecuteSkill(template.needMana) == false) return false;
 
+            // 애니메이션이 있는 스킬인데, 이미 스킬을 사용 중이라면
+            if (template.parameterHash != 0 && _isExecuteSkill) return false;
+
             switch (template.skillType)
             {
-                case EActiveSkillType.Instant:
-                    return TryExecuteInstantSkill(template);
-                case EActiveSkillType.Targeting:
-                    return TryExecuteTargetingSkill(template);
-                case EActiveSkillType.NonTargeting:
-                    return TryExecuteNonTargetingSkill(template);
+                case EActiveSkillType.InstantTargeting:
+                    return TryExecuteInstantTargetingSkill(template);
+                case EActiveSkillType.InstantNonTargeting:
+                    return SkillAnimation(template);
+                case EActiveSkillType.MouseTargeting:
+                    return TryExecuteMouseTargetingSkill(template);
+                case EActiveSkillType.MouseNonTargeting:
+                    return TryExecuteMouseNonTargetingSkill(template);
             }
 
             return false;
         }
 
-        #region 스킬 발동 방식 별 시도 로직
-        private bool TryExecuteInstantSkill(ActiveSkillTemplate template)
+        #region 스킬 발동 방식별 시도 로직
+        private bool TryExecuteInstantTargetingSkill(ActiveSkillTemplate template)
         {
             foreach (var effect in template.effects)
             {
@@ -110,7 +97,7 @@ namespace Temporary.Core
             return false;
         }
 
-        private bool TryExecuteTargetingSkill(ActiveSkillTemplate template)
+        private bool TryExecuteMouseTargetingSkill(ActiveSkillTemplate template)
         {
             LayerMask layerMask;
             switch (template.unitType)
@@ -135,6 +122,7 @@ namespace Temporary.Core
                 if (distance <= template.skillRange)
                 {
                     _targetUnit = hit.collider.GetComponent<Unit>();
+
                     return SkillAnimation(template);
                 }
             }
@@ -142,11 +130,11 @@ namespace Temporary.Core
             return false;
         }
 
-        private bool TryExecuteNonTargetingSkill(ActiveSkillTemplate template)
+        private bool TryExecuteMouseNonTargetingSkill(ActiveSkillTemplate template)
         {
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity))
             {
-                _targetVector = hit.point;
+                _targetVector = hit.point.normalized;
 
                 return SkillAnimation(template);
             }
@@ -157,53 +145,54 @@ namespace Temporary.Core
 
         private bool SkillAnimation(ActiveSkillTemplate template)
         {
-            _template = template;
-
             bool isSuccess = false;
-            if (template.parameterHash != 0 && _isEventSkill)
+            if (template.parameterHash != 0)
             {
                 isSuccess = _unitAnimationAbility.TrySetTrigger(template.parameterHash);
-                _isSkillActive = true;
             }
-            
-            if (isSuccess == false)
+
+            if (isSuccess == true)
             {
-                ExecuteSkill();
+                _unitAnimationAbility.SetSkillID(template.id);
+                _templates[template.id] = template;
+                _isExecuteSkill = true;
+            }
+            else
+            {
+                ExecuteSkill(template);
             }
 
             return true;
         }
 
-        private void OnSkillEvent()
+        internal void ExecuteSkill(int skillTemplateID)
         {
-            ExecuteSkill();
+            ExecuteSkill(_templates[skillTemplateID]);
         }
 
-        private void ExecuteSkill()
+        private void ExecuteSkill(ActiveSkillTemplate template)
         {
-            ExecuteCasterFX(_template);
+            ExecuteCasterFX(template);
 
-            switch (_template.skillType)
+            switch (template.skillType)
             {
-                case EActiveSkillType.Instant:
-                    ExecuteInstantSkill(_template);
+                case EActiveSkillType.InstantTargeting:
+                    ExecuteInstantTargetingSkill(template);
                     break;
-                case EActiveSkillType.Targeting:
-                    ExecuteTargetingSkill(_template);
+                case EActiveSkillType.InstantNonTargeting:
+                    ExecuteInstantNonTargetingSkill(template);
                     break;
-                case EActiveSkillType.NonTargeting:
-                    ExecuteNonTargetingSkill(_template);
+                case EActiveSkillType.MouseTargeting:
+                    ExecuteMouseTargetingSkill(template);
                     break;
-            }
-
-            if (!_isEventSkill)
-            {
-                OnSkillEndEvent();
+                case EActiveSkillType.MouseNonTargeting:
+                    ExecuteMouseNonTargetingSkill(template);
+                    break;
             }
         }
 
         #region 스킬 발동 방식 별 실행 로직
-        private void ExecuteInstantSkill(ActiveSkillTemplate template)
+        private void ExecuteInstantTargetingSkill(ActiveSkillTemplate template)
         {
             foreach (var effect in template.effects)
             {
@@ -222,7 +211,18 @@ namespace Temporary.Core
             }
         }
 
-        private void ExecuteTargetingSkill(ActiveSkillTemplate template)
+        private void ExecuteInstantNonTargetingSkill(ActiveSkillTemplate template)
+        {
+            foreach (var effect in template.effects)
+            {
+                if (effect is PointEffect pointEffect)
+                {
+                    pointEffect.Execute(unit, Vector3.zero);
+                }
+            }
+        }
+
+        private void ExecuteMouseTargetingSkill(ActiveSkillTemplate template)
         {
             foreach (var effect in template.effects)
             {
@@ -231,11 +231,9 @@ namespace Temporary.Core
                     unitEffect.Execute(unit, _targetUnit);
                 }
             }
-
-            ExecuteTargetFX(template, _targetUnit);
         }
 
-        private void ExecuteNonTargetingSkill(ActiveSkillTemplate template)
+        private void ExecuteMouseNonTargetingSkill(ActiveSkillTemplate template)
         {
             foreach (var effect in template.effects)
             {
@@ -244,14 +242,12 @@ namespace Temporary.Core
                     pointEffect.Execute(unit, _targetVector);
                 }
             }
-
-            ExecuteTargetFX(template, _targetVector);
         }
         #endregion
 
-        private void OnSkillEndEvent()
+        internal void EndSkill()
         {
-            _isSkillActive = false;
+            _isExecuteSkill = false;
         }
         #endregion
 
@@ -261,22 +257,6 @@ namespace Temporary.Core
             if (template.casterFX != null)
             {
                 template.casterFX.Play(unit);
-            }
-        }
-
-        private void ExecuteTargetFX(ActiveSkillTemplate template, Unit target)
-        {
-            if (template.targetFX != null)
-            {
-                template.targetFX.Play(target);
-            }
-        }
-
-        private void ExecuteTargetFX(ActiveSkillTemplate template, Vector3 targetVector)
-        {
-            if (template.targetFX != null)
-            {
-                template.targetFX.Play(targetVector);
             }
         }
         #endregion

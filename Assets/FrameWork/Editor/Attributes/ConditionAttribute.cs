@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace FrameWork.Editor
 {
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Struct, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Struct, Inherited = true, AllowMultiple = true)]
     public class ConditionAttribute : PropertyAttribute
     {
         public string ConditionBoolean = "";
