@@ -33,6 +33,7 @@ namespace Temporary.Core
 namespace Temporary.Editor
 {
     using System;
+    using Temporary.Core;
     using UnityEditor;
     using UnityEditorInternal;
 
@@ -55,6 +56,7 @@ namespace Temporary.Editor
                 drawElementCallback = (rect, index, isActive, isFocus) =>
                 {
                     var element = elements[index];
+
                     drawElement(rect, element);
                 }
             };
@@ -87,6 +89,20 @@ namespace Temporary.Editor
             };
 
             return list;
+        }
+
+        protected void DrawScript(Effect effect, Rect rect)
+        {
+            var buttonRect = new Rect(rect.x + rect.width - 50, rect.y, 50, EditorGUIUtility.singleLineHeight);
+
+            if (GUI.Button(buttonRect, "Script"))
+            {
+                MonoScript scriptAsset = MonoScript.FromScriptableObject(effect);
+                if (scriptAsset != null)
+                {
+                    AssetDatabase.OpenAsset(scriptAsset);
+                }
+            }
         }
     }
 }

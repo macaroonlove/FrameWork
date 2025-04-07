@@ -168,6 +168,9 @@ namespace Temporary.Editor
 
                     var label = element.GetDescription();
                     EditorGUI.LabelField(rect, label, EditorStyles.boldLabel);
+
+                    DrawScript(element, rect);
+
                     rect.y += 5;
                     rect.y += EditorGUIUtility.singleLineHeight;
 

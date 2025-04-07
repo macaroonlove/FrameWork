@@ -1,5 +1,129 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5716001724573799901
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f094091aa5456a41a0769b63a7e81c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _applyTypeByAmountDatas: []
+  _getTargetData:
+    _targetType: 2
+    _unitType: 0
+    _rangeType: 2
+    _directionType: 0
+    _range: 0
+    _assistantRange: 0
+    _tileRangeTemplate: {fileID: 0}
+    _numberOfTarget: 0
+--- !u!114 &-4849446334266218938
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e142ffecf24b6e4d903fd26472a3da8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
+  _isInfinity: 0
+  _duration: 0
+  _abnormalStatus: {fileID: 0}
+  _getTargetData:
+    _attackType: 0
+    _targetType: 0
+    _unitType: 0
+    _rangeType: 0
+    _directionType: 0
+    _range: 0
+    _assistantRange: 0
+    _tileRangeTemplate: {fileID: 0}
+    _numberOfTarget: 0
+--- !u!114 &-3074307455058007025
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f3cfed2620ab4e47a983f4794b88fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 0}
+  _spawnPoint: 0
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _damageType: 0
+  _applyTypeByAmountDatas:
+  - applyType: 0
+    amount: 0
+  - applyType: 0
+    amount: 0
+  - applyType: 0
+    amount: 0
+  - applyType: 0
+    amount: 0
+  - applyType: 0
+    amount: 0
+  - applyType: 0
+    amount: 0
+  - applyType: 0
+    amount: 0
+  _getTargetData:
+    _attackType: 0
+    _targetType: 0
+    _unitType: 0
+    _rangeType: 0
+    _directionType: 0
+    _range: 0
+    _assistantRange: 0
+    _tileRangeTemplate: {fileID: 0}
+    _numberOfTarget: 0
+--- !u!114 &-3058611902152871517
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ec03adda36aeb54fa598e3eba4d34f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 0}
+  _spawnPoint: 0
+  _isInfinity: 0
+  _duration: 0
+  _abnormalStatus: {fileID: 0}
+  _getTargetData:
+    _attackType: 0
+    _targetType: 0
+    _unitType: 0
+    _rangeType: 0
+    _directionType: 0
+    _range: 0
+    _assistantRange: 0
+    _tileRangeTemplate: {fileID: 0}
+    _numberOfTarget: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25,3 +149,116 @@ MonoBehaviour:
   _parameterHash: 0
   _casterFX: {fileID: 0}
   effects: []
+--- !u!114 &896017487408071103
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bf036398da929047bd443bde8c4a873, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
+  _isInfinity: 0
+  _duration: 0
+  _buff: {fileID: 0}
+  _getTargetData:
+    _targetType: 0
+    _unitType: 0
+    _rangeType: 0
+    _directionType: 0
+    _range: 0
+    _assistantRange: 0
+    _tileRangeTemplate: {fileID: 0}
+    _numberOfTarget: 0
+--- !u!114 &3060182994784364810
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2468a6a634185654c8ce0ab02e8208f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _damageType: 0
+  _applyTypeByAmountDatas: []
+  _getTargetData:
+    _attackType: 0
+    _targetType: 0
+    _unitType: 0
+    _rangeType: 0
+    _directionType: 0
+    _range: 0
+    _assistantRange: 0
+    _tileRangeTemplate: {fileID: 0}
+    _numberOfTarget: 0
+--- !u!114 &3461941895523958633
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ce747b2fe5a73e4e8460295a224262d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetFX: {fileID: 0}
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _isInfinity: 0
+  _duration: 0
+  _applyTypeByAmountDatas: []
+  _getTargetData:
+    _targetType: 0
+    _unitType: 0
+    _rangeType: 0
+    _directionType: 0
+    _range: 0
+    _assistantRange: 0
+    _tileRangeTemplate: {fileID: 0}
+    _numberOfTarget: 0
+--- !u!114 &7184183054451996038
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f3cfed2620ab4e47a983f4794b88fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 0}
+  _spawnPoint: 0
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _damageType: 0
+  _applyTypeByAmountDatas: []
+  _getTargetData:
+    _attackType: 0
+    _targetType: 0
+    _unitType: 0
+    _rangeType: 0
+    _directionType: 0
+    _range: 0
+    _assistantRange: 0
+    _tileRangeTemplate: {fileID: 0}
+    _numberOfTarget: 0
