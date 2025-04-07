@@ -1,6 +1,7 @@
 using FrameWork.Editor;
 using UnityEngine;
 using UnityEngine.Events;
+using VInspector;
 
 namespace Temporary.Core
 {
@@ -11,6 +12,12 @@ namespace Temporary.Core
 
         [Space]
         [SerializeField, Label("적을 바라볼지 여부")] protected bool _isLookTarget;
+
+        [Space(10)]
+        [SerializeField, Label("범위 적용 여부")] protected bool _isSplash;
+        [ShowIf("_isSplash")]
+        [SerializeField] protected GetTargetData _getTargetData;
+        [EndIf]
 
         protected bool _isInit;
         protected UnityAction<Unit, Unit> _action;

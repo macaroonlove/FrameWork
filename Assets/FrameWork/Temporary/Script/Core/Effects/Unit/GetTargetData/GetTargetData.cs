@@ -1,4 +1,5 @@
 using FrameWork;
+using FrameWork.Editor;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -8,16 +9,34 @@ namespace Temporary.Core
     [System.Serializable]
     public class GetTargetData
     {
+        #region ÇÊµå
         [SerializeField] private ETarget _targetType;
+
+        [EnumCondition("_targetType", (int)ETarget.OneTargetInRange, (int)ETarget.NumTargetInRange, (int)ETarget.AllTargetInRange, (int)ETarget.AllTarget)]
         [SerializeField] private EUnitType _unitType;
+
+        [EnumCondition("_targetType", (int)ETarget.OneTargetInRange, (int)ETarget.NumTargetInRange, (int)ETarget.AllTargetInRange)]
         [SerializeField] private ERangeType _rangeType;
 
+        [EnumCondition("_targetType", (int)ETarget.OneTargetInRange, (int)ETarget.NumTargetInRange, (int)ETarget.AllTargetInRange)]
+        [EnumCondition("_rangeType", (int)ERangeType.Straight, (int)ERangeType.Cone)]
         [SerializeField] private EDirectionType _directionType;
+
+        [EnumCondition("_targetType", (int)ETarget.OneTargetInRange, (int)ETarget.NumTargetInRange, (int)ETarget.AllTargetInRange)]
+        [EnumCondition("_rangeType", (int)ERangeType.Circle, (int)ERangeType.Straight, (int)ERangeType.Cone)]
         [SerializeField] private float _range;
+
+        [EnumCondition("_targetType", (int)ETarget.OneTargetInRange, (int)ETarget.NumTargetInRange, (int)ETarget.AllTargetInRange)]
+        [EnumCondition("_rangeType", (int)ERangeType.Straight, (int)ERangeType.Cone)]
         [SerializeField] private float _assistantRange;
+
+        [EnumCondition("_targetType", (int)ETarget.OneTargetInRange, (int)ETarget.NumTargetInRange, (int)ETarget.AllTargetInRange)]
+        [EnumCondition("_rangeType", (int)ERangeType.Grid)]
         [SerializeField] private TileRangeTemplate _tileRangeTemplate;
 
+        [EnumCondition("_targetType", (int)ETarget.NumTargetInRange)]
         [SerializeField] private int _numberOfTarget;
+        #endregion
 
         public List<Unit> GetTarget(Unit casterUnit)
         {

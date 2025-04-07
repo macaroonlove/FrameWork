@@ -1,6 +1,7 @@
 using FrameWork.Editor;
 using System.Collections;
 using UnityEngine;
+using VInspector;
 
 namespace Temporary.Core
 {
@@ -13,14 +14,16 @@ namespace Temporary.Core
         
         [Space(10)]
         [SerializeField, Label("무한지속 여부")] private bool _isInfinity;
-        [Condition("_isInfinity", false, false)]
+        [HideIf("_isInfinity")]
         [SerializeField, Label("지속 시간")] private float _duration;
+        [EndIf]
 
         [Space(10)]
         [Tooltip("유닛을 대상으로 하였을 때만 적용")]
         [SerializeField, Label("반복 생성 여부")] private bool _isRepeat;
-        [Condition("_isRepeat", true, false)]
+        [ShowIf("_isRepeat")]
         [SerializeField, Label("생성 사이클")] private float _cycle;
+        [EndIf]
 
         [Space(10)]
         [SerializeField, Label("위치 오프셋")] private Vector3 _posOffset;

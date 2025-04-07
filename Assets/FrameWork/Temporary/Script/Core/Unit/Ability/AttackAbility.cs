@@ -20,7 +20,7 @@ namespace Temporary.Core
         private BuffAbility _buffAbility;
         private AbnormalStatusAbility _abnormalStatusAbility;
         private FindTargetAbility _findTargetAbility;
-        private ProjectileAbility _projectileAbility;
+        private EntitySpawnAbility _entitySpawnAbility;
 
         private int _baseATK;
         private float _baseAttackTerm;
@@ -170,7 +170,7 @@ namespace Temporary.Core
             _buffAbility = unit.GetAbility<BuffAbility>();
             _abnormalStatusAbility = unit.GetAbility<AbnormalStatusAbility>();
             _findTargetAbility = unit.GetAbility<FindTargetAbility>();
-            _projectileAbility = unit.GetAbility<ProjectileAbility>();
+            _entitySpawnAbility = unit.GetAbility<EntitySpawnAbility>();
 
             if (unit is AgentUnit agentUnit)
             {
@@ -363,7 +363,7 @@ namespace Temporary.Core
                 // 투사체 생성
                 foreach (var attackTarget in _currentTarget)
                 {
-                    _projectileAbility.SpawnProjectile(_projectilePrefab, _spawnPoint, attackTarget, (caster, target) => { ApplyAction(target); });
+                    _entitySpawnAbility.SpawnProjectile(_projectilePrefab, _spawnPoint, attackTarget, (caster, target) => { ApplyAction(target); });
                 }
             }
             // 즉시 공격일 경우
@@ -427,7 +427,7 @@ namespace Temporary.Core
                 // 투사체 생성
                 foreach (var healTarget in _currentTarget)
                 {
-                    _projectileAbility.SpawnProjectile(_projectilePrefab, _spawnPoint, healTarget, (caster, target) => { ApplyAction(target); });
+                    _entitySpawnAbility.SpawnProjectile(_projectilePrefab, _spawnPoint, healTarget, (caster, target) => { ApplyAction(target); });
                 }
             }
             // 즉시 회복일 경우

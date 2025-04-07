@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 namespace Temporary.Core
 {
-    public class ProjectileAbility : AlwaysAbility
+    public class EntitySpawnAbility : AlwaysAbility
     {
         private PoolSystem _poolSystem;
 
@@ -35,6 +35,13 @@ namespace Temporary.Core
             var projectile = _poolSystem.Spawn(prefab).GetComponent<PointProjectile>();
             projectile.transform.SetPositionAndRotation(spawnPosition, Quaternion.identity);
             projectile.Initialize(unit, targetVector, action);
+        }
+        
+        internal void SpawnTrap(GameObject prefab, Vector3 targetVector, UnityAction<Unit, Unit> action)
+        {
+            var trap = _poolSystem.Spawn(prefab).GetComponent<Trap>();
+            trap.transform.SetPositionAndRotation(targetVector, Quaternion.identity);
+            trap.Initialize(unit, action);
         }
 
         #region 스폰 위치 불러오기

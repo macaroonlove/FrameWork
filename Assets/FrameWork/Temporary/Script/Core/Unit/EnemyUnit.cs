@@ -48,7 +48,7 @@ namespace Temporary.Editor
             menu.AddItem(new GUIContent("추적 이동"), false, AddAbility, typeof(MoveChaseAbility));
             menu.AddItem(new GUIContent("특정 지점 이동"), false, AddAbility, typeof(MoveWayPointAbility));
 
-            menu.AddItem(new GUIContent("투사체"), false, AddAbility, typeof(ProjectileAbility));
+            menu.AddItem(new GUIContent("객체 스폰(투사체, 덫)"), false, AddAbility, typeof(EntitySpawnAbility));
             menu.AddItem(new GUIContent("목표 찾기"), false, AddAbility, typeof(FindTargetAbility));
             menu.AddItem(new GUIContent("FX"), false, AddAbility, typeof(FXAbility));
             menu.AddItem(new GUIContent("애니메이션"), false, AddAbility, typeof(UnitAnimationAbility));

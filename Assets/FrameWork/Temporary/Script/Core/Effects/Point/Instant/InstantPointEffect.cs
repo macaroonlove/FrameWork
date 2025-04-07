@@ -11,6 +11,7 @@ namespace Temporary.Core
         [SerializeField] protected EUnitType _unitType;
         [SerializeField] protected ERangeType _rangeType;
 
+        [SerializeField] protected EControlType _controlType;
         [SerializeField] protected EDirectionType _directionType;
         [SerializeField] protected float _range;
         [SerializeField] protected float _assistantRange;
@@ -83,13 +84,14 @@ namespace Temporary.Core
         private void GetTargetStraight(Unit casterUnit, Vector3 targetVector, int maxCount)
         {
             List<Unit> targets;
-            if (targetVector == Vector3.zero)
+            if (_controlType == EControlType.Instant)
             {
                 targets = casterUnit.GetAbility<FindTargetAbility>().FindTargetInStraight(_directionType, _range, _assistantRange, _unitType, maxCount);
             }
             else
             {
-                targets = casterUnit.GetAbility<FindTargetAbility>().FindTargetInStraight(targetVector, _range, _assistantRange, _unitType, maxCount);
+                var direction = (casterUnit.transform.position - targetVector).normalized;
+                targets = casterUnit.GetAbility<FindTargetAbility>().FindTargetInStraight(direction, _range, _assistantRange, _unitType, maxCount);
             }
 
             foreach (var target in targets)
@@ -103,13 +105,14 @@ namespace Temporary.Core
         private void GetTargetCone(Unit casterUnit, Vector3 targetVector, int maxCount)
         {
             List<Unit> targets;
-            if (targetVector == Vector3.zero)
+            if (_controlType == EControlType.Instant)
             {
                 targets = casterUnit.GetAbility<FindTargetAbility>().FindTargetInCone(_directionType, _range, (int)_assistantRange, _unitType, maxCount);
             }
             else
             {
-                targets = casterUnit.GetAbility<FindTargetAbility>().FindTargetInCone(targetVector, _range, (int)_assistantRange, _unitType, maxCount);
+                var direction = (casterUnit.transform.position - targetVector).normalized;
+                targets = casterUnit.GetAbility<FindTargetAbility>().FindTargetInCone(direction, _range, (int)_assistantRange, _unitType, maxCount);
             }
 
             foreach (var target in targets)
@@ -186,8 +189,16 @@ namespace Temporary.Core
                 {
                     labelRect.y += 20;
                     valueRect.y += 20;
-                    GUI.Label(labelRect, "방향");
-                    _directionType = (EDirectionType)EditorGUI.EnumPopup(valueRect, _directionType);
+                    GUI.Label(labelRect, "스킬 조작 방식");
+                    _controlType = (EControlType)EditorGUI.EnumPopup(valueRect, _controlType);
+
+                    if (_controlType == EControlType.Instant)
+                    {
+                        labelRect.y += 20;
+                        valueRect.y += 20;
+                        GUI.Label(labelRect, "방향");
+                        _directionType = (EDirectionType)EditorGUI.EnumPopup(valueRect, _directionType);
+                    }
 
                     labelRect.y += 20;
                     valueRect.y += 20;
@@ -203,8 +214,16 @@ namespace Temporary.Core
                 {
                     labelRect.y += 20;
                     valueRect.y += 20;
-                    GUI.Label(labelRect, "방향");
-                    _directionType = (EDirectionType)EditorGUI.EnumPopup(valueRect, _directionType);
+                    GUI.Label(labelRect, "스킬 조작 방식");
+                    _controlType = (EControlType)EditorGUI.EnumPopup(valueRect, _controlType);
+
+                    if (_controlType == EControlType.Instant)
+                    {
+                        labelRect.y += 20;
+                        valueRect.y += 20;
+                        GUI.Label(labelRect, "방향");
+                        _directionType = (EDirectionType)EditorGUI.EnumPopup(valueRect, _directionType);
+                    }
 
                     labelRect.y += 20;
                     valueRect.y += 20;
@@ -238,7 +257,7 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 2;
+            int rowNum = 3;
 
             if (_targetType != ETarget.Myself)
             {
@@ -255,10 +274,14 @@ namespace Temporary.Core
                 }
                 else if (_rangeType == ERangeType.Straight)
                 {
+                    if (_controlType == EControlType.Instant) rowNum++;
+
                     rowNum += 3;
                 }
                 else if (_rangeType == ERangeType.Cone)
                 {
+                    if (_controlType == EControlType.Instant) rowNum++;
+
                     rowNum += 3;
                 }
                 else if (_rangeType == ERangeType.Grid)

@@ -47,7 +47,19 @@ namespace Temporary.Core
 
         protected void OnCollision()
         {
-            _action?.Invoke(_caster, _target);
+            if (_isSplash)
+            {
+                var targets = _getTargetData.GetTarget(_target);
+
+                for (int i = 0; i < targets.Count; i++)
+                {
+                    _action?.Invoke(_caster, targets[i]);
+                }
+            }
+            else
+            {
+                _action?.Invoke(_caster, _target);
+            }
 
             ExecuteTargetFX(_target);
 

@@ -30,7 +30,7 @@ namespace Temporary.Core
 
         #region 프로퍼티
         internal int id => _id;
-        internal Vector2Int cellPos => new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.z));
+        internal Vector2Int cellPos => new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
         internal HealthAbility healthAbility => _healthAbility;
         internal bool isDie => !_healthAbility.isAlive;
         #endregion
@@ -189,7 +189,7 @@ namespace Temporary.Editor
             typeof(DamageCalculateAbility),
             typeof(BuffAbility),
             typeof(AbnormalStatusAbility),
-            typeof(ProjectileAbility),
+            typeof(EntitySpawnAbility),
             typeof(FindTargetAbility),
             typeof(UnitAnimationAbility),
             typeof(FXAbility)

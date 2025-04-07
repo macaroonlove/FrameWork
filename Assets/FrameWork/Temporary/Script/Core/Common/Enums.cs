@@ -129,17 +129,22 @@ namespace Temporary.Core
         /// </summary>
         InstantTargeting,
         /// <summary>
-        /// 스킬을 발동하는 유닛의 위치를 기준으로 "위치"에 스킬 발동
-        /// </summary>
-        InstantNonTargeting,
-        /// <summary>
         /// 마우스의 위치를 기준으로 "유닛"에게 스킬 발동
         /// </summary>
         MouseTargeting,
         /// <summary>
-        /// 마우스의 위치를 기준으로 "위치"에 스킬 발동
+        /// "위치"에 스킬 발동
         /// </summary>
-        MouseNonTargeting,
+        NonTargeting,
+    }
+
+    /// <summary>
+    /// 조작 방식
+    /// </summary>
+    public enum EControlType
+    {
+        Instant,
+        Mouse,
     }
 
     /// <summary>

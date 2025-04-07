@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,20 +10,21 @@ namespace FrameWork.Editor
     [CustomPropertyDrawer(typeof(EnumConditionAttribute))]
     public class EnumConditionAttributeDrawer : PropertyDrawer
     {
+        private static Dictionary<string, string> cachedPaths = new Dictionary<string, string>();
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            EnumConditionAttribute enumConditionAttribute = (EnumConditionAttribute)attribute;
-            bool enabled = GetConditionAttributeResult(enumConditionAttribute, property);
+            var attributes = fieldInfo.GetCustomAttributes(typeof(EnumConditionAttribute), true).Cast<EnumConditionAttribute>().ToArray();
+            bool enabled = attributes.All(attr => GetConditionAttributeResult(attr, property));
+
             bool previouslyEnabled = GUI.enabled;
             GUI.enabled = enabled;
-            if (!enumConditionAttribute.Hidden || enabled)
+            if (!attributes[0].Hidden || enabled)
             {
                 EditorGUI.PropertyField(position, property, label, true);
             }
             GUI.enabled = previouslyEnabled;
         }
-
-        private static Dictionary<string, string> cachedPaths = new Dictionary<string, string>();
 
         private bool GetConditionAttributeResult(EnumConditionAttribute enumConditionAttribute, SerializedProperty property)
         {
@@ -32,10 +34,10 @@ namespace FrameWork.Editor
             string enumPropPath = string.Empty;
             string propertyPath = property.propertyPath;
 
-            if (!cachedPaths.TryGetValue(propertyPath, out enumPropPath))
+            if (!cachedPaths.TryGetValue(propertyPath + enumConditionAttribute.ConditionEnum, out enumPropPath))
             {
                 enumPropPath = propertyPath.Replace(property.name, enumConditionAttribute.ConditionEnum);
-                cachedPaths.Add(propertyPath, enumPropPath);
+                cachedPaths[propertyPath + enumConditionAttribute.ConditionEnum] = enumPropPath;
             }
 
             enumProp = property.serializedObject.FindProperty(enumPropPath);

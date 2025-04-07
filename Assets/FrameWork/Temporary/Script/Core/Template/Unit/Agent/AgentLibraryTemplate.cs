@@ -2,6 +2,7 @@ using FrameWork.Editor;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using VInspector;
 
 namespace Temporary.Core
 {
@@ -12,8 +13,9 @@ namespace Temporary.Core
 
         [Header("필터")]
         [Label("모든 유닛"), SerializeField] private bool _isAll;
-        [Condition("_isAll", false)]
+        [HideIf("_isAll")]
         [Label("소유 여부"), SerializeField] private bool _isOwned;
+        [EndIf]
 
         [ContextMenu("필터로 AgentTemplate 찾기")]
         public void FindAllRefresh()

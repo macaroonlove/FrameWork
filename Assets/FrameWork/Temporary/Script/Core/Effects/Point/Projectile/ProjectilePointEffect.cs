@@ -1,4 +1,3 @@
-using FrameWork;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,8 +14,10 @@ namespace Temporary.Core
         [SerializeField] protected GameObject _prefab;
         [SerializeField] protected ESpawnPoint _spawnPoint;
 
+        [SerializeField] protected EControlType _controlType;
         [SerializeField] protected ENontargetProjectileRangeType _rangeType;
         [SerializeField] protected EDirectionType _directionType;
+        [SerializeField] protected bool _isMaxRange;
         [SerializeField] protected float _range;
         [SerializeField] protected float _angleStep;
         [SerializeField] protected int _spawnCount;
@@ -26,37 +27,50 @@ namespace Temporary.Core
             if (casterUnit == null) return;
 
             Vector3 direction;
-            if (targetVector == Vector3.zero)
+            float distance;
+
+            if (_controlType == EControlType.Instant)
             {
                 FindTargetAbility.directionMap.TryGetValue(_directionType, out direction);
+                distance = _range;
             }
             else
             {
                 direction = (targetVector - casterUnit.transform.position).normalized;
+
+                if (_isMaxRange)
+                {
+                    distance = _range;
+                }
+                else
+                {
+                    distance = Vector3.Distance(casterUnit.transform.position, targetVector);
+                    distance = Mathf.Min(distance, _range);
+                }
             }
 
             switch (_rangeType)
             {
                 case ENontargetProjectileRangeType.Straight:
-                    SpawnStraightProjectiles(casterUnit, direction);
+                    SpawnStraightProjectiles(casterUnit, direction, distance);
                     break;
                 case ENontargetProjectileRangeType.Cone:
-                    SpawnConeProjectiles(casterUnit, direction);
+                    SpawnConeProjectiles(casterUnit, direction, distance);
                     break;
             }
         }
 
-        private void SpawnStraightProjectiles(Unit casterUnit, Vector3 direction)
+        private void SpawnStraightProjectiles(Unit casterUnit, Vector3 direction, float distance)
         {
-            Vector3 finalPosition = casterUnit.transform.position + direction * _range;
+            Vector3 finalPosition = casterUnit.transform.position + direction * distance;
 
             SpawnProjectile(casterUnit, finalPosition);
         }
 
-        private void SpawnConeProjectiles(Unit casterUnit, Vector3 direction)
+        private void SpawnConeProjectiles(Unit casterUnit, Vector3 direction, float distance)
         {
             var casterPos = casterUnit.transform.position;
-            
+
             float maxAngle = (_spawnCount - 1) * 0.5f * _angleStep;
 
             for (float angle = -maxAngle; angle <= maxAngle; angle += _angleStep)
@@ -64,7 +78,7 @@ namespace Temporary.Core
                 Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.up);
                 Vector3 finalDirection = rotation * direction;
 
-                Vector3 finalPosition = casterPos + finalDirection * _range;
+                Vector3 finalPosition = casterPos + finalDirection * distance;
 
                 SpawnProjectile(casterUnit, finalPosition);
             }
@@ -72,7 +86,7 @@ namespace Temporary.Core
 
         private void SpawnProjectile(Unit casterUnit, Vector3 finalPosition)
         {
-            casterUnit.GetAbility<ProjectileAbility>().SpawnProjectile(_prefab, _spawnPoint, finalPosition, (caster, target) => { SkillImpact(caster, target); });
+            casterUnit.GetAbility<EntitySpawnAbility>().SpawnProjectile(_prefab, _spawnPoint, finalPosition, (caster, target) => { SkillImpact(caster, target); });
         }
 
         protected abstract void SkillImpact(Unit casterUnit, Unit targetUnit);
@@ -95,13 +109,28 @@ namespace Temporary.Core
 
             labelRect.y += 40;
             valueRect.y += 40;
+            GUI.Label(labelRect, "스킬 조작 방식");
+            _controlType = (EControlType)EditorGUI.EnumPopup(valueRect, _controlType);
+
+            if (_controlType == EControlType.Instant)
+            {
+                labelRect.y += 20;
+                valueRect.y += 20;
+                GUI.Label(labelRect, "방향");
+                _directionType = (EDirectionType)EditorGUI.EnumPopup(valueRect, _directionType);
+            }
+            else if (_controlType == EControlType.Mouse)
+            {
+                labelRect.y += 20;
+                valueRect.y += 20;
+                GUI.Label(labelRect, "최대 범위까지 발사 여부");
+                _isMaxRange = EditorGUI.Toggle(valueRect, _isMaxRange);
+            }
+
+            labelRect.y += 40;
+            valueRect.y += 40;
             GUI.Label(labelRect, "범위 타입");
             _rangeType = (ENontargetProjectileRangeType)EditorGUI.EnumPopup(valueRect, _rangeType);
-
-            labelRect.y += 20;
-            valueRect.y += 20;
-            GUI.Label(labelRect, "방향");
-            _directionType = (EDirectionType)EditorGUI.EnumPopup(valueRect, _directionType);
 
             if (_rangeType == ENontargetProjectileRangeType.Cone)
             {
@@ -126,7 +155,16 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = 6;
+            int rowNum = 8;
+
+            if (_controlType == EControlType.Instant)
+            {
+                rowNum++;
+            }
+            else if (_controlType == EControlType.Mouse)
+            {
+                rowNum++;
+            }
 
             if (_rangeType == ENontargetProjectileRangeType.Cone)
             {

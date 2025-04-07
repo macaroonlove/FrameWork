@@ -1,16 +1,22 @@
 using FrameWork.Editor;
 using UnityEngine;
 using UnityEngine.Events;
+using VInspector;
 
 namespace Temporary.Core
 {
     public abstract class PointProjectile : Projectile
     {
+        [Space(10)]
         [SerializeField, Label("충돌 대상")] private LayerMask _layerMask;
         [SerializeField, Label("관통 여부")] private bool _isPiercing;
-        [SerializeField, Label("무한 관통 여부"), Condition("_isPiercing", true, true)] private bool _isInfinityPiercing;
-        [SerializeField, Label("관통 개수"), Condition("_isPiercing", true, true), Condition("_isInfinityPiercing", false, true)] private int _piercingCount;
-        
+
+        [ShowIf("_isPiercing")]
+        [SerializeField, Label("무한 관통 여부")] private bool _isInfinityPiercing;
+        [HideIf("_isInfinityPiercing")]
+        [SerializeField, Label("관통 개수")] private int _piercingCount;
+        [EndIf]
+
         protected Unit _caster;
         protected Vector3 _targetVector;
         protected int _collisionCount;
@@ -60,7 +66,19 @@ namespace Temporary.Core
 
         private void OnCollision(Unit target)
         {
-            _action?.Invoke(_caster, target);
+            if (_isSplash)
+            {
+                var targets = _getTargetData.GetTarget(target);
+
+                for (int i = 0; i < targets.Count; i++)
+                {
+                    _action?.Invoke(_caster, targets[i]);
+                }
+            }
+            else
+            {
+                _action?.Invoke(_caster, target);
+            }
 
             ExecuteTargetFX(target);
 

@@ -13,7 +13,7 @@ namespace Temporary.Core
             if (casterUnit == null || targetUnit == null) return;
             if (targetUnit.isDie) return;
 
-            casterUnit.GetAbility<ProjectileAbility>().SpawnProjectile(_prefab, _spawnPoint, targetUnit, (caster, target) => { SkillImpact(caster, target); });
+            casterUnit.GetAbility<EntitySpawnAbility>().SpawnProjectile(_prefab, _spawnPoint, targetUnit, (caster, target) => { SkillImpact(caster, target); });
         }
 
         protected abstract void SkillImpact(Unit casterUnit, Unit targetUnit);
@@ -26,7 +26,7 @@ namespace Temporary.Core
             var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
             var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
 
-            GUI.Label(labelRect, "«¡∏Æ∆’");
+            GUI.Label(labelRect, "≈ıªÁ√º «¡∏Æ∆’");
             _prefab = (GameObject)EditorGUI.ObjectField(valueRect, _prefab, typeof(GameObject), false);
 
             labelRect.y += 20;

@@ -5,6 +5,7 @@ namespace Temporary.Core
 {
     public class StraightUnitProjectile : UnitProjectile
     {
+        [Space(10)]
         [SerializeField, Label("¼Óµµ")] private float _speed;
 
         protected override void Move()

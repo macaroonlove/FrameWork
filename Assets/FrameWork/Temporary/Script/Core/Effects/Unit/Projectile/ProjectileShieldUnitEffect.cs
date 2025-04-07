@@ -199,7 +199,7 @@ namespace Temporary.Core
         {
             int rowNum = base.GetNumRows();
 
-            rowNum += 6;
+            rowNum += 7;
 
             if (_isTick)
             {

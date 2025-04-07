@@ -160,14 +160,27 @@ namespace VInspector
 
                         if (endIfAttribute != null) hide = disable = false;
 
+                        var ifAttributes = fieldInfo.GetCustomAttributes<IfAttribute>(true);
+                        foreach (var ifAttribute in ifAttributes)
+                        {
+                            var result = ifAttribute.Evaluate(target);
 
-                        var ifAttribute = fieldInfo.GetCustomAttribute<IfAttribute>();
-
-                        if (ifAttribute is HideIfAttribute) hide = ifAttribute.Evaluate(target);
-                        if (ifAttribute is ShowIfAttribute) hide = !ifAttribute.Evaluate(target);
-                        if (ifAttribute is DisableIfAttribute) disable = ifAttribute.Evaluate(target);
-                        if (ifAttribute is EnableIfAttribute) disable = !ifAttribute.Evaluate(target);
-
+                            switch (ifAttribute)
+                            {
+                                case HideIfAttribute _:
+                                    hide |= result;
+                                    break;
+                                case ShowIfAttribute _:
+                                    hide |= !result;
+                                    break;
+                                case DisableIfAttribute _:
+                                    disable |= result;
+                                    break;
+                                case EnableIfAttribute _:
+                                    disable |= !result;
+                                    break;
+                            }
+                        }
 
                         var curFieldDeclaringType = fieldInfo.DeclaringType;
 

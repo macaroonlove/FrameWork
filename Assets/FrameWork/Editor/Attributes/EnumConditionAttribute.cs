@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
 namespace FrameWork.Editor
 {
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Struct, Inherited = true, AllowMultiple = true)]
     public class EnumConditionAttribute : PropertyAttribute
     {
         public string ConditionEnum = "";
@@ -26,5 +28,4 @@ namespace FrameWork.Editor
             }
         }
     }
-
 }

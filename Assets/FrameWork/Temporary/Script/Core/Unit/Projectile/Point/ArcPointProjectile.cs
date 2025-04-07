@@ -6,6 +6,7 @@ namespace Temporary.Core
 {
     public class ArcPointProjectile : PointProjectile
     {
+        [Space(10)]
         [SerializeField, Label("포물선 최대 높이")] private float _height;
         [SerializeField, Label("속도")] private float _speed;
 

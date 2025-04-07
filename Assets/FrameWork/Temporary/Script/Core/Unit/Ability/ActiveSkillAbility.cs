@@ -67,12 +67,10 @@ namespace Temporary.Core
             {
                 case EActiveSkillType.InstantTargeting:
                     return TryExecuteInstantTargetingSkill(template);
-                case EActiveSkillType.InstantNonTargeting:
-                    return SkillAnimation(template);
                 case EActiveSkillType.MouseTargeting:
                     return TryExecuteMouseTargetingSkill(template);
-                case EActiveSkillType.MouseNonTargeting:
-                    return TryExecuteMouseNonTargetingSkill(template);
+                case EActiveSkillType.NonTargeting:
+                    return TryExecuteNonTargetingSkill(template);
             }
 
             return false;
@@ -130,7 +128,7 @@ namespace Temporary.Core
             return false;
         }
 
-        private bool TryExecuteMouseNonTargetingSkill(ActiveSkillTemplate template)
+        private bool TryExecuteNonTargetingSkill(ActiveSkillTemplate template)
         {
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity))
             {
@@ -179,14 +177,11 @@ namespace Temporary.Core
                 case EActiveSkillType.InstantTargeting:
                     ExecuteInstantTargetingSkill(template);
                     break;
-                case EActiveSkillType.InstantNonTargeting:
-                    ExecuteInstantNonTargetingSkill(template);
-                    break;
                 case EActiveSkillType.MouseTargeting:
                     ExecuteMouseTargetingSkill(template);
                     break;
-                case EActiveSkillType.MouseNonTargeting:
-                    ExecuteMouseNonTargetingSkill(template);
+                case EActiveSkillType.NonTargeting:
+                    ExecuteNonTargetingSkill(template);
                     break;
             }
         }
@@ -211,17 +206,6 @@ namespace Temporary.Core
             }
         }
 
-        private void ExecuteInstantNonTargetingSkill(ActiveSkillTemplate template)
-        {
-            foreach (var effect in template.effects)
-            {
-                if (effect is PointEffect pointEffect)
-                {
-                    pointEffect.Execute(unit, Vector3.zero);
-                }
-            }
-        }
-
         private void ExecuteMouseTargetingSkill(ActiveSkillTemplate template)
         {
             foreach (var effect in template.effects)
@@ -233,7 +217,7 @@ namespace Temporary.Core
             }
         }
 
-        private void ExecuteMouseNonTargetingSkill(ActiveSkillTemplate template)
+        private void ExecuteNonTargetingSkill(ActiveSkillTemplate template)
         {
             foreach (var effect in template.effects)
             {
