@@ -218,21 +218,9 @@ namespace Temporary.Editor
                     break;
                 case (int)EActiveSkillType.InstantTargeting:
                 case (int)EActiveSkillType.MouseTargeting:
-                    menu.AddItem(new GUIContent("즉시 데미지 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantDamageByTargetUnitEffect));
-                    menu.AddItem(new GUIContent("투사체 데미지 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileDamageByTargetUnitEffect));
-                    menu.AddItem(new GUIContent("덫 데미지 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(TrapDamageByTargetUnitEffect));
-                    menu.AddItem(new GUIContent("즉시 회복 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantHealByTargetUnitEffect));
-                    menu.AddItem(new GUIContent("투사체 회복 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileHealByTargetUnitEffect));
-                    menu.AddItem(new GUIContent("덫 회복 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(TrapHealByTargetUnitEffect));
-                    menu.AddItem(new GUIContent("즉시 보호막 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantShieldByTargetUnitEffect));
-                    menu.AddItem(new GUIContent("투사체 보호막 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileShieldByTargetUnitEffect));
-                    menu.AddItem(new GUIContent("덫 보호막 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(TrapShieldByTargetUnitEffect));
-                    menu.AddItem(new GUIContent("즉시 버프 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantBuffByTargetUnitEffect));
-                    menu.AddItem(new GUIContent("투사체 버프 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileBuffByTargetUnitEffect));
-                    menu.AddItem(new GUIContent("덫 버프 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(TrapBuffByTargetUnitEffect));
-                    menu.AddItem(new GUIContent("즉시 상태이상 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantAbnormalStatusByTargetUnitEffect));
-                    menu.AddItem(new GUIContent("투사체 상태이상 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileAbnormalStatusByTargetUnitEffect));
-                    menu.AddItem(new GUIContent("덫 상태이상 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(TrapAbnormalStatusByTargetUnitEffect));
+                    menu.AddItem(new GUIContent("즉시 데미지 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantGetTargetUnitEffect));
+                    menu.AddItem(new GUIContent("투사체 데미지 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileGetTargetUnitEffect));
+                    menu.AddItem(new GUIContent("덫 데미지 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(TrapGetTargetUnitEffect));
                     break;
             }
 
@@ -315,6 +303,10 @@ namespace Temporary.Editor
             if (effect is PointEffect pointEffect)
             {
                 pointEffect.DestroyEffect();
+            }
+            else if (effect is UnitEffect unitEffect)
+            {
+                unitEffect.DestroyEffect();
             }
             DestroyImmediate(_currentEffect, true);
         }

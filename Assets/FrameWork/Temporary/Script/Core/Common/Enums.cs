@@ -147,6 +147,13 @@ namespace Temporary.Core
         Mouse,
     }
 
+    public enum EGetTargetFilter
+    {
+        All,
+        Attackable,
+        Healable,
+    }
+
     /// <summary>
     /// ¿Ø¥÷ ≈∏¿‘
     /// </summary>

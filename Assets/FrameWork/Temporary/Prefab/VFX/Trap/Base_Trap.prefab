@@ -124,6 +124,8 @@ MonoBehaviour:
   _isDespawnCasterDie: 0
   _isSplash: 0
   _getTargetData:
+    _getTargetFilter: 0
+    _attackType: 0
     _targetType: 0
     _unitType: 0
     _rangeType: 0

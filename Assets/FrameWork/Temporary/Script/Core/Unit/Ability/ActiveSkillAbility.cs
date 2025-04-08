@@ -81,9 +81,9 @@ namespace Temporary.Core
         {
             foreach (var effect in template.effects)
             {
-                if (effect is IGetTarget targetEffect)
+                if (effect is GetTargetUnitEffect unitEffect)
                 {
-                    var targets = targetEffect.GetTarget(unit);
+                    var targets = unitEffect.GetTarget(unit);
 
                     if (targets.Count > 0 && targets[0] != null)
                     {
@@ -191,16 +191,13 @@ namespace Temporary.Core
         {
             foreach (var effect in template.effects)
             {
-                if (effect is UnitEffect unitEffect)
+                if (effect is GetTargetUnitEffect unitEffect)
                 {
-                    if (unitEffect is IGetTarget targetEffect)
-                    {
-                        var targets = targetEffect.GetTarget(unit);
+                    var targets = unitEffect.GetTarget(unit);
 
-                        foreach (var target in targets)
-                        {
-                            unitEffect.Execute(unit, target);
-                        }
+                    foreach (var target in targets)
+                    {
+                        unitEffect.Execute(unit, target);
                     }
                 }
             }
