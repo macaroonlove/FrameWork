@@ -1,20 +1,31 @@
 using FrameWork;
+using System;
+using System.Collections.Generic;
+using Temporary.Editor;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Temporary.Core
 {
-    public abstract class TrapPointEffect : PointEffect
+    public class TrapPointEffect : PointEffect
     {
-        [SerializeField] protected GameObject _prefab;
+        [SerializeField] private GameObject _prefab;
 
-        [SerializeField] protected EControlType _controlType;
-        [SerializeField] protected ERangeType _rangeType;
-        [SerializeField] protected EDirectionType _directionType;
-        [SerializeField] protected float _range;
-        [SerializeField] protected int _angle;
+        [SerializeField] private EControlType _controlType;
+        [SerializeField] private ERangeType _rangeType;
+        [SerializeField] private EDirectionType _directionType;
+        [SerializeField] private float _range;
+        [SerializeField] private int _angle;
         [SerializeField] private TileRangeTemplate _tileRangeTemplate;
 
+        public override string GetDescription()
+        {
+            return "µ£ (³íÅ¸°ÙÆÃ)";
+        }
+
+        #region Å¸°Ù Å½»ö
         public override void Execute(Unit casterUnit, Vector3 targetVector)
         {
             if (casterUnit == null) return;
@@ -205,17 +216,14 @@ namespace Temporary.Core
             return casterPos + direction * distance;
         }
         #endregion
+        #endregion
 
         private void SpawnTrap(Unit casterUnit, Vector3 finalPosition)
         {
             casterUnit.GetAbility<EntitySpawnAbility>().SpawnTrap(_prefab, finalPosition, (caster, target) => { SkillImpact(caster, target); });
         }
 
-        protected abstract void SkillImpact(Unit casterUnit, Unit targetUnit);
-
 #if UNITY_EDITOR
-        protected float lastRectY { get; private set; }
-
         public override void Draw(Rect rect)
         {
             var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
@@ -265,12 +273,13 @@ namespace Temporary.Core
                 }
             }
 
-            lastRectY = labelRect.y;
+            var listRect = new Rect(rect.x, labelRect.y + 40, rect.width, rect.height);
+            _effectsList?.DoList(listRect);
         }
 
         public override int GetNumRows()
         {
-            int rowNum = 4;
+            int rowNum = base.GetNumRows() + 4;
 
             if (_rangeType == ERangeType.Grid)
             {
@@ -293,6 +302,8 @@ namespace Temporary.Core
 
             return rowNum;
         }
+
+        
 #endif
     }
 }

@@ -142,7 +142,7 @@ MonoBehaviour:
   _description: 
   _needMana: 0
   _cooldownTime: 0
-  _skillType: 0
+  _skillType: 2
   _unitType: 0
   _skillRange: 0
   _parameterName: 

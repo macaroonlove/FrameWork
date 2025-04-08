@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class InstantHealPointEffect : InstantPointEffect
+    public class HealSkillEffect : SkillEffect
     {
         [SerializeField] private int _repeatCount;
         [SerializeField] private bool _isTick;
@@ -16,7 +16,7 @@ namespace Temporary.Core
 
         public override string GetDescription()
         {
-            return "즉시 회복 (논타겟팅)";
+            return "회복";
         }
 
         public int GetAmount(Unit casterUnit, Unit targetUnit)
@@ -57,7 +57,7 @@ namespace Temporary.Core
             return (int)totalAmount;
         }
 
-        protected override void SkillImpact(Unit casterUnit, Unit targetUnit)
+        internal override void SkillImpact(Unit casterUnit, Unit targetUnit)
         {
             int heal = GetAmount(casterUnit, targetUnit);
 
@@ -109,13 +109,9 @@ namespace Temporary.Core
 #if UNITY_EDITOR
         public override void Draw(Rect rect)
         {
-            base.Draw(rect);
+            var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
+            var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
 
-            var labelRect = new Rect(rect.x, lastRectY, 140, rect.height);
-            var valueRect = new Rect(rect.x + 140, lastRectY, rect.width - 140, rect.height);
-
-            labelRect.y += 40;
-            valueRect.y += 40;
             GUI.Label(labelRect, "회복 횟수");
             _repeatCount = EditorGUI.IntField(valueRect, _repeatCount);
             if (_repeatCount <= 0) _repeatCount = 1;
@@ -147,8 +143,8 @@ namespace Temporary.Core
 
             var half = (rect.width - 24) * 0.5f;
             var applyTypeRect = new Rect(labelRect.x, labelRect.y, half, 20);
-            var amountRect = new Rect(half + 24, labelRect.y, half, 20);
-            var deleteRect = new Rect(rect.width, valueRect.y, 20, 20);
+            var amountRect = new Rect(half + 44, labelRect.y, half, 20);
+            var deleteRect = new Rect(rect.width + 22, valueRect.y, 20, 20);
 
             for (int i = 0; i < _applyTypeByAmountDatas.Count; i++)
             {
@@ -173,14 +169,14 @@ namespace Temporary.Core
         {
             int rowNum = base.GetNumRows();
 
-            rowNum += 6;
+            rowNum += 2;
 
             if (_isTick)
             {
                 rowNum += 2;
             }
 
-            rowNum += (int)(_applyTypeByAmountDatas.Count * 1.2f);
+            rowNum += _applyTypeByAmountDatas.Count;
 
             return rowNum;
         }

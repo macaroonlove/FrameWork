@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class InstantAbnormalStatusPointEffect : InstantPointEffect
+    public class AbnormalStatusSkillEffect : SkillEffect
     {
         [SerializeField] private bool _isInfinity;
         [SerializeField] private float _duration;
@@ -11,10 +11,10 @@ namespace Temporary.Core
 
         public override string GetDescription()
         {
-            return "즉시 상태이상 (논타겟팅)";
+            return "상태이상";
         }
 
-        protected override void SkillImpact(Unit casterUnit, Unit targetUnit)
+        internal override void SkillImpact(Unit casterUnit, Unit targetUnit)
         {
             if (_isInfinity)
             {
@@ -29,13 +29,9 @@ namespace Temporary.Core
 #if UNITY_EDITOR
         public override void Draw(Rect rect)
         {
-            base.Draw(rect);
+            var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
+            var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
 
-            var labelRect = new Rect(rect.x, lastRectY, 140, rect.height);
-            var valueRect = new Rect(rect.x + 140, lastRectY, rect.width - 140, rect.height);
-
-            labelRect.y += 40;
-            valueRect.y += 40;
             GUI.Label(labelRect, "무한지속 사용 여부");
             _isInfinity = EditorGUI.Toggle(valueRect, _isInfinity);
             if (!_isInfinity)
@@ -55,8 +51,6 @@ namespace Temporary.Core
         public override int GetNumRows()
         {
             int rowNum = base.GetNumRows();
-
-            rowNum += 4;
 
             if (!_isInfinity)
             {

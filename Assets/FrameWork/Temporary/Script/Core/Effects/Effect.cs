@@ -17,8 +17,8 @@ namespace Temporary.Core
 
         public virtual float GetHeight()
         {
-            var spacing = EditorGUIUtility.singleLineHeight * 3;
-            return EditorGUIUtility.singleLineHeight * GetNumRows() + spacing;
+            var spacing = 20 * 3;
+            return 20 * GetNumRows() + spacing;
         }
 
         public virtual int GetNumRows()
@@ -91,7 +91,7 @@ namespace Temporary.Editor
             return list;
         }
 
-        protected void DrawScript(Effect effect, Rect rect)
+        public static void DrawScript(Effect effect, Rect rect)
         {
             var buttonRect = new Rect(rect.x + rect.width - 50, rect.y, 50, EditorGUIUtility.singleLineHeight);
 

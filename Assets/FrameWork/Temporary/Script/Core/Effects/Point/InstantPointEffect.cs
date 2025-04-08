@@ -1,26 +1,35 @@
 using FrameWork;
+using System;
 using System.Collections.Generic;
+using Temporary.Editor;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace Temporary.Core
 {
-    public abstract class InstantPointEffect : PointEffect
+    public class InstantPointEffect : PointEffect
     {
-        [SerializeField] protected ETarget _targetType;
-        [SerializeField] protected EUnitType _unitType;
-        [SerializeField] protected ERangeType _rangeType;
+        [SerializeField] private ETarget _targetType;
+        [SerializeField] private EUnitType _unitType;
+        [SerializeField] private ERangeType _rangeType;
 
-        [SerializeField] protected EControlType _controlType;
-        [SerializeField] protected EDirectionType _directionType;
-        [SerializeField] protected float _range;
-        [SerializeField] protected float _assistantRange;
-        [SerializeField] protected TileRangeTemplate _tileRangeTemplate;
+        [SerializeField] private EControlType _controlType;
+        [SerializeField] private EDirectionType _directionType;
+        [SerializeField] private float _range;
+        [SerializeField] private float _assistantRange;
+        [SerializeField] private TileRangeTemplate _tileRangeTemplate;
 
-        [SerializeField] protected int _numberOfTarget;
+        [SerializeField] private int _numberOfTarget;
 
-        [SerializeField] protected FX _targetFX;
+        [SerializeField] private FX _targetFX;
 
+        public override string GetDescription()
+        {
+            return "Áï½Ã (³íÅ¸°ÙÆÃ)";
+        }
+
+        #region Å¸°Ù Å½»ö
         public override void Execute(Unit casterUnit, Vector3 targetVector)
         {
             if (casterUnit == null) return;
@@ -134,8 +143,7 @@ namespace Temporary.Core
                 ExecuteTargetFX(target);
             }
         }
-
-        protected abstract void SkillImpact(Unit casterUnit, Unit targetUnit);
+        #endregion
 
         #region FX
         private void ExecuteTargetFX(Unit target)
@@ -148,8 +156,6 @@ namespace Temporary.Core
         #endregion
 
 #if UNITY_EDITOR
-        protected float lastRectY { get; private set; }
-
         public override void Draw(Rect rect)
         {
             var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
@@ -252,12 +258,13 @@ namespace Temporary.Core
                 _numberOfTarget = EditorGUI.IntField(valueRect, _numberOfTarget);
             }
 
-            lastRectY = labelRect.y;
+            var listRect = new Rect(rect.x, labelRect.y + 40, rect.width, rect.height);
+            _effectsList?.DoList(listRect);
         }
 
         public override int GetNumRows()
         {
-            int rowNum = 3;
+            int rowNum = base.GetNumRows() + 3;
 
             if (_targetType != ETarget.Myself)
             {

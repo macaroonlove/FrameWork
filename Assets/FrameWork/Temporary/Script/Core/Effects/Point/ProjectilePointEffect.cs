@@ -1,9 +1,13 @@
+using System;
+using System.Collections.Generic;
+using Temporary.Editor;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace Temporary.Core
 {
-    public abstract class ProjectilePointEffect : PointEffect
+    public class ProjectilePointEffect : PointEffect
     {
         protected enum ENontargetProjectileRangeType
         {
@@ -11,16 +15,22 @@ namespace Temporary.Core
             Cone,
         }
 
-        [SerializeField] protected GameObject _prefab;
-        [SerializeField] protected ESpawnPoint _spawnPoint;
+        [SerializeField] private GameObject _prefab;
+        [SerializeField] private ESpawnPoint _spawnPoint;
+        [SerializeField] private EControlType _controlType;
+        [SerializeField] private ENontargetProjectileRangeType _rangeType;
+        [SerializeField] private EDirectionType _directionType;
+        [SerializeField] private bool _isMaxRange;
+        [SerializeField] private float _range;
+        [SerializeField] private float _angleStep;
+        [SerializeField] private int _spawnCount;
 
-        [SerializeField] protected EControlType _controlType;
-        [SerializeField] protected ENontargetProjectileRangeType _rangeType;
-        [SerializeField] protected EDirectionType _directionType;
-        [SerializeField] protected bool _isMaxRange;
-        [SerializeField] protected float _range;
-        [SerializeField] protected float _angleStep;
-        [SerializeField] protected int _spawnCount;
+        public override string GetDescription()
+        {
+            return "Åõ»çÃ¼ (³íÅ¸°ÙÆÃ)";
+        }
+
+        #region Å¸°Ù Å½»ö
 
         public override void Execute(Unit casterUnit, Vector3 targetVector)
         {
@@ -37,16 +47,7 @@ namespace Temporary.Core
             else
             {
                 direction = (targetVector - casterUnit.transform.position).normalized;
-
-                if (_isMaxRange)
-                {
-                    distance = _range;
-                }
-                else
-                {
-                    distance = Vector3.Distance(casterUnit.transform.position, targetVector);
-                    distance = Mathf.Min(distance, _range);
-                }
+                distance = _isMaxRange ? _range : Mathf.Min(Vector3.Distance(casterUnit.transform.position, targetVector), _range);
             }
 
             switch (_rangeType)
@@ -63,37 +64,31 @@ namespace Temporary.Core
         private void SpawnStraightProjectiles(Unit casterUnit, Vector3 direction, float distance)
         {
             Vector3 finalPosition = casterUnit.transform.position + direction * distance;
-
             SpawnProjectile(casterUnit, finalPosition);
         }
 
         private void SpawnConeProjectiles(Unit casterUnit, Vector3 direction, float distance)
         {
             var casterPos = casterUnit.transform.position;
-
             float maxAngle = (_spawnCount - 1) * 0.5f * _angleStep;
 
             for (float angle = -maxAngle; angle <= maxAngle; angle += _angleStep)
             {
                 Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.up);
                 Vector3 finalDirection = rotation * direction;
-
                 Vector3 finalPosition = casterPos + finalDirection * distance;
 
                 SpawnProjectile(casterUnit, finalPosition);
             }
         }
+        #endregion
 
         private void SpawnProjectile(Unit casterUnit, Vector3 finalPosition)
         {
             casterUnit.GetAbility<EntitySpawnAbility>().SpawnProjectile(_prefab, _spawnPoint, finalPosition, (caster, target) => { SkillImpact(caster, target); });
         }
 
-        protected abstract void SkillImpact(Unit casterUnit, Unit targetUnit);
-
 #if UNITY_EDITOR
-        protected float lastRectY { get; private set; }
-
         public override void Draw(Rect rect)
         {
             var labelRect = new Rect(rect.x, rect.y, 140, rect.height);
@@ -150,26 +145,19 @@ namespace Temporary.Core
             GUI.Label(labelRect, "¹üÀ§");
             _range = EditorGUI.FloatField(valueRect, _range);
 
-            lastRectY = labelRect.y;
+            var listRect = new Rect(rect.x, labelRect.y + 40, rect.width, rect.height);
+            _effectsList?.DoList(listRect);
         }
 
         public override int GetNumRows()
         {
-            int rowNum = 8;
+            int rowNum = base.GetNumRows() + 7;
 
-            if (_controlType == EControlType.Instant)
-            {
+            if (_controlType == EControlType.Instant || _controlType == EControlType.Mouse)
                 rowNum++;
-            }
-            else if (_controlType == EControlType.Mouse)
-            {
-                rowNum++;
-            }
 
             if (_rangeType == ENontargetProjectileRangeType.Cone)
-            {
                 rowNum += 2;
-            }
 
             return rowNum;
         }
