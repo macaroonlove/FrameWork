@@ -12,7 +12,7 @@ namespace Temporary.Core
     /// </summary>
     public abstract class PointEffect : Effect
     {
-        [SerializeField] private List<SkillEffect> _effects = new List<SkillEffect>();
+        [SerializeField] private List<Effect> _effects = new List<Effect>();
 
         public abstract void Execute(Unit casterUnit, Vector3 targetVector);
 
@@ -20,7 +20,14 @@ namespace Temporary.Core
         {
             foreach (var effect in _effects)
             {
-                effect.SkillImpact(casterUnit, targetUnit);
+                if (effect is SkillEffect skillEffect)
+                {
+                    skillEffect.SkillImpact(casterUnit, targetUnit);
+                }
+                else if (effect is UnitEffect unitEffect)
+                {
+                    unitEffect.Execute(casterUnit, targetUnit);
+                }
             }
         }
 
@@ -79,7 +86,7 @@ namespace Temporary.Core
             }
         }
 
-        private void InitMenu_Effects()
+        protected virtual void InitMenu_Effects()
         {
             var menu = new GenericMenu();
 
@@ -92,9 +99,9 @@ namespace Temporary.Core
             menu.ShowAsContext();
         }
 
-        private void CreateEffectCallback(object obj)
+        protected void CreateEffectCallback(object obj)
         {
-            var effect = ScriptableObject.CreateInstance((Type)obj) as SkillEffect;
+            var effect = ScriptableObject.CreateInstance((Type)obj) as Effect;
 
             if (effect != null)
             {
