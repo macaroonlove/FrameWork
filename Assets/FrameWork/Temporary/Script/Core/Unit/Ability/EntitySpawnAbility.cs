@@ -44,6 +44,13 @@ namespace Temporary.Core
             trap.Initialize(unit, action);
         }
 
+        internal void SpawnTrap(GameObject prefab, Vector3 targetVector, float duration, UnityAction<Unit, Unit> action)
+        {
+            var trap = _poolSystem.Spawn(prefab, duration).GetComponent<Trap>();
+            trap.transform.SetPositionAndRotation(targetVector, Quaternion.identity);
+            trap.Initialize(unit, action);
+        }
+
         #region 스폰 위치 불러오기
         private Vector3 GetSpawnPoint(ESpawnPoint spawnPoint)
         {

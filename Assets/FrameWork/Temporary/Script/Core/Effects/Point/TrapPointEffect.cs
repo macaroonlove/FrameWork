@@ -12,6 +12,8 @@ namespace Temporary.Core
     public class TrapPointEffect : PointEffect
     {
         [SerializeField] private GameObject _prefab;
+        [SerializeField] protected bool _isInfinity;
+        [SerializeField] protected float _duration;
 
         [SerializeField] private EControlType _controlType;
         [SerializeField] private ERangeType _rangeType;
@@ -220,7 +222,14 @@ namespace Temporary.Core
 
         private void SpawnTrap(Unit casterUnit, Vector3 finalPosition)
         {
-            casterUnit.GetAbility<EntitySpawnAbility>().SpawnTrap(_prefab, finalPosition, (caster, target) => { SkillImpact(caster, target); });
+            if (_isInfinity)
+            {
+                casterUnit.GetAbility<EntitySpawnAbility>().SpawnTrap(_prefab, finalPosition, (caster, target) => { SkillImpact(caster, target); });
+            }
+            else
+            {
+                casterUnit.GetAbility<EntitySpawnAbility>().SpawnTrap(_prefab, finalPosition, _duration, (caster, target) => { SkillImpact(caster, target); });
+            }
         }
 
 #if UNITY_EDITOR
@@ -231,6 +240,19 @@ namespace Temporary.Core
 
             GUI.Label(labelRect, "덫 프리팹");
             _prefab = (GameObject)EditorGUI.ObjectField(valueRect, _prefab, typeof(GameObject), false);
+
+            labelRect.y += 20;
+            valueRect.y += 20;
+            GUI.Label(labelRect, "무한 지속 여부");
+            _isInfinity = EditorGUI.Toggle(valueRect, _isInfinity);
+
+            if (_isInfinity)
+            {
+                labelRect.y += 20;
+                valueRect.y += 20;
+                GUI.Label(labelRect, "지속시간");
+                _duration = EditorGUI.FloatField(valueRect, _duration);
+            }
 
             labelRect.y += 40;
             valueRect.y += 40;
@@ -279,7 +301,9 @@ namespace Temporary.Core
 
         public override int GetNumRows()
         {
-            int rowNum = base.GetNumRows() + 4;
+            int rowNum = base.GetNumRows() + 5;
+
+            if (_isInfinity) rowNum++;
 
             if (_rangeType == ERangeType.Grid)
             {

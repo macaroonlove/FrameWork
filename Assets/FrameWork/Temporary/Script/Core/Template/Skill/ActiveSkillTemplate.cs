@@ -304,7 +304,7 @@ namespace Temporary.Editor
             {
                 pointEffect.DestroyEffect();
             }
-            else if (effect is UnitEffect unitEffect)
+            else if (effect is GetTargetUnitEffect unitEffect)
             {
                 unitEffect.DestroyEffect();
             }

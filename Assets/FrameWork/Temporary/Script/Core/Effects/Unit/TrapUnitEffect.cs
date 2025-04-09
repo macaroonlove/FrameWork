@@ -6,6 +6,8 @@ namespace Temporary.Core
     public class TrapUnitEffect : UnitEffect
     {
         [SerializeField] protected GameObject _prefab;
+        [SerializeField] protected bool _isInfinity;
+        [SerializeField] protected float _duration;
 
         public override string GetDescription()
         {
@@ -17,7 +19,14 @@ namespace Temporary.Core
             if (casterUnit == null || targetUnit == null) return;
             if (targetUnit.isDie) return;
 
-            casterUnit.GetAbility<EntitySpawnAbility>().SpawnTrap(_prefab, targetUnit.transform.position, (caster, target) => { SkillImpact(caster, target); });
+            if (_isInfinity)
+            {
+                casterUnit.GetAbility<EntitySpawnAbility>().SpawnTrap(_prefab, targetUnit.transform.position, (caster, target) => { SkillImpact(caster, target); });
+            }
+            else
+            {
+                casterUnit.GetAbility<EntitySpawnAbility>().SpawnTrap(_prefab, targetUnit.transform.position, _duration, (caster, target) => { SkillImpact(caster, target); });
+            }
         }
 
 #if UNITY_EDITOR
@@ -29,8 +38,32 @@ namespace Temporary.Core
             GUI.Label(labelRect, "덫 프리팹");
             _prefab = (GameObject)EditorGUI.ObjectField(valueRect, _prefab, typeof(GameObject), false);
 
-            rect.y += 20;
+            labelRect.y += 20;
+            valueRect.y += 20;
+            GUI.Label(labelRect, "무한 지속 여부");
+            _isInfinity = EditorGUI.Toggle(valueRect, _isInfinity);
+
+            if (_isInfinity)
+            {
+                labelRect.y += 20;
+                valueRect.y += 20;
+                GUI.Label(labelRect, "지속시간");
+                _duration = EditorGUI.FloatField(valueRect, _duration);
+            }
+
+            rect.y = labelRect.y + 40;
             _effectsList?.DoList(rect);
+        }
+
+        public override int GetNumRows()
+        {
+            int rowNum = 2;
+
+            if (_isInfinity) rowNum++;
+
+            rowNum += base.GetNumRows();
+
+            return rowNum;
         }
 #endif
     }
