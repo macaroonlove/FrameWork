@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 918160303976286552}
   - component: {fileID: 8186092584645959296}
   - component: {fileID: 3682183337430348135}
-  - component: {fileID: 5433814399647571600}
+  - component: {fileID: -5312862341648180668}
   m_Layer: 0
-  m_Name: Base_Trap
+  m_Name: Base_AreaTrap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -106,7 +106,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5433814399647571600
+--- !u!114 &-5312862341648180668
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,23 +115,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 3121500931030265869}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4acdb47d12f26b04f8e2bf86e16ee4ed, type: 3}
+  m_Script: {fileID: 11500000, guid: 5d53ff3cd6724db4fa701d8a23b5c12e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _layerMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   _isDespawnCasterDie: 0
-  _isSplash: 0
-  _getTargetData:
-    _getTargetFilter: 0
-    _attackType: 0
-    _targetType: 0
-    _unitType: 0
-    _rangeType: 0
-    _directionType: 0
-    _range: 0
-    _assistantRange: 0
-    _tileRangeTemplate: {fileID: 0}
-    _numberOfTarget: 1
   _collisionFX: {fileID: 0}
+  _tickInterval: 1

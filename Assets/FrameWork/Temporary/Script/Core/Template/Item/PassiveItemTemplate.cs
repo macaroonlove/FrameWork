@@ -258,7 +258,7 @@ namespace Temporary.Editor
                 },
                 (x) =>
                 {
-                    DestroyImmediate(_currentEffect, true);
+                    DestroyEffect(_currentEffect);
                     _currentEffect = null;
                     EditorUtility.SetDirty(target);
                 });
@@ -315,6 +315,15 @@ namespace Temporary.Editor
                 AssetDatabase.AddObjectToAsset(effect, path);
                 EditorUtility.SetDirty(template);
             }
+        }
+
+        private void DestroyEffect(Effect effect)
+        {
+            if (effect is UnitEffect unitEffect)
+            {
+                unitEffect.DestroyEffect();
+            }
+            DestroyImmediate(_currentEffect, true);
         }
         #endregion
     }
