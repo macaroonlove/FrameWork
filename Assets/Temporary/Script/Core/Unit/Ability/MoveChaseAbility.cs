@@ -78,6 +78,7 @@ namespace Temporary.Core
                 if (distance > _chaseFailRange)
                 {
                     _targetPosition = null;
+                    StopMoveAnimation();
                 }
 
                 //// 3D 환경에서 장애물을 피해 이동

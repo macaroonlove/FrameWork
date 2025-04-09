@@ -45,8 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _items: []
-  _debugItems:
-  - {fileID: 11400000, guid: 5988d88c3efa93e4f86f17943d3a7a44, type: 2}
+  _debugItems: []
 --- !u!1 &4328509756142193473
 GameObject:
   m_ObjectHideFlags: 0
@@ -142,8 +141,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _selectedItems: []
   _items: []
-  _debugItems:
-  - {fileID: 11400000, guid: effc7fcefad54874097de3ef0ec566c3, type: 2}
+  _debugItems: []
 --- !u!1 &5424382034223041411
 GameObject:
   m_ObjectHideFlags: 0

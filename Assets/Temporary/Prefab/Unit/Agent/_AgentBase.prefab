@@ -76,6 +76,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3380515255975179997}
   - component: {fileID: 1901533533722062503}
+  - component: {fileID: 4130397316776093745}
   m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
@@ -113,12 +114,39 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.5, y: 0.8, z: 0.1}
   m_Center: {x: 0, y: 0.4, z: 0}
+--- !u!54 &4130397316776093745
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3232377003452084679}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &3675306610776100096
 GameObject:
   m_ObjectHideFlags: 0
@@ -448,6 +476,8 @@ MonoBehaviour:
   _priority: 0
   _baseMoveSpeed: 0
   _chaseRange: 0
+  _chaseFailRange: 0
+  _stoppingDistance: 0
   _targetPosition: {fileID: 0}
 --- !u!1 &8806907120543262263
 GameObject:
