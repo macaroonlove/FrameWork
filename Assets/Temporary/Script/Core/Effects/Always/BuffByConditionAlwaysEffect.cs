@@ -10,15 +10,21 @@ namespace Temporary.Core
 
         public override string GetDescription()
         {
-            string unitLabel = "모든";
-            if (_unitType == EUnitType.Agent)
-            {
-                unitLabel = "아군";
-            }
-            else if (_unitType == EUnitType.Enemy)
-            {
-                unitLabel = "적군";
-            }
+            string unitLabel = "";
+
+            if ((_unitType & EUnitType.Agent) != 0)
+                unitLabel += "아군, ";
+
+            if ((_unitType & EUnitType.Summon) != 0)
+                unitLabel += "소환수, ";
+
+            if ((_unitType & EUnitType.Enemy) != 0)
+                unitLabel += "적군, ";
+
+            if (string.IsNullOrEmpty(unitLabel))
+                unitLabel = "모든";
+            else
+                unitLabel = unitLabel.Substring(0, unitLabel.Length - 2);
 
             return $"{unitLabel} 유닛에게 무한 지속 버프 적용";
         }
@@ -34,18 +40,14 @@ namespace Temporary.Core
 
         private bool UnitCondition(Unit unit)
         {
-            if (_unitType == EUnitType.All)
-            {
+            if ((_unitType & EUnitType.Agent) != 0 && unit is AgentUnit)
                 return true;
-            }
-            if (_unitType == EUnitType.Agent && unit is AgentUnit)
-            {
+
+            if ((_unitType & EUnitType.Summon) != 0 && unit is SummonUnit)
                 return true;
-            }
-            if (_unitType == EUnitType.Enemy && unit is EnemyUnit)
-            {
+
+            if ((_unitType & EUnitType.Enemy) != 0 && unit is EnemyUnit)
                 return true;
-            }
 
             return false;
         }
@@ -57,7 +59,7 @@ namespace Temporary.Core
             var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
 
             GUI.Label(labelRect, "유닛 타입");
-            _unitType = (EUnitType)EditorGUI.EnumPopup(valueRect, _unitType);
+            _unitType = (EUnitType)EditorGUI.EnumFlagsField(valueRect, _unitType);
 
             labelRect.y += 20;
             valueRect.y += 20;

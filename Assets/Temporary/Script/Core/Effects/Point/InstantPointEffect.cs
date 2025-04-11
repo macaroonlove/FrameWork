@@ -174,7 +174,7 @@ namespace Temporary.Core
                 labelRect.y += 20;
                 valueRect.y += 20;
                 GUI.Label(labelRect, "¿Ø¥÷ ≈∏¿‘");
-                _unitType = (EUnitType)EditorGUI.EnumPopup(valueRect, _unitType);
+                _unitType = (EUnitType)EditorGUI.EnumFlagsField(valueRect, _unitType);
             }
 
             if (_targetType != ETarget.Myself && _targetType != ETarget.AllTarget)

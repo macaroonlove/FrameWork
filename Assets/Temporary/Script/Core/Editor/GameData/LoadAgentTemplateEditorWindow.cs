@@ -444,7 +444,7 @@ namespace Temporary.Editor
                         newTemplate.SetManaRecoveryPerSec(manaRecoveryPerSec);
                     }
 
-                    string path = $"Assets/FrameWork/Temporary/GameData/Unit/Agent/Agent_{csvDic["¿Ø¥÷ ¿Ã∏ß"][i]}.asset";
+                    string path = $"Assets/Temporary/GameData/Unit/Agent/Agent_{csvDic["¿Ø¥÷ ¿Ã∏ß"][i]}.asset";
                     AssetDatabase.CreateAsset(newTemplate, path);
                 }
             }

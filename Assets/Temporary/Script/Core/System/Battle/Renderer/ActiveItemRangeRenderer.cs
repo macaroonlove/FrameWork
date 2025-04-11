@@ -10,7 +10,7 @@ namespace Temporary.Core
         private Transform _parent;
         private Transform _circle;
 
-        private AgentSystem _agentSystem;
+        private AllySystem _allySystem;
         private EnemySystem _enemySystem;
 
         private Camera _camera;
@@ -26,7 +26,7 @@ namespace Temporary.Core
 
         public void Initialize()
         {
-            _agentSystem = BattleManager.Instance.GetSubSystem<AgentSystem>();
+            _allySystem = BattleManager.Instance.GetSubSystem<AllySystem>();
             _enemySystem = BattleManager.Instance.GetSubSystem<EnemySystem>();
 
             _camera = Camera.main;
@@ -40,7 +40,7 @@ namespace Temporary.Core
 
         public void Deinitialize()
         {
-            _agentSystem = null;
+            _allySystem = null;
             _enemySystem = null;
         }
 
@@ -132,18 +132,14 @@ namespace Temporary.Core
         {
             List<Unit> units = new List<Unit>();
 
-            switch (_unitType)
+            if ((_unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    units.AddRange(_agentSystem.GetAllAgents());
-                    units.AddRange(_enemySystem.GetAllEnemies());
-                    break;
-                case EUnitType.Agent:
-                    units.AddRange(_agentSystem.GetAllAgents());
-                    break;
-                case EUnitType.Enemy:
-                    units.AddRange(_enemySystem.GetAllEnemies());
-                    break;
+                units.AddRange(_allySystem.GetAllAllies(_unitType));
+            }
+
+            if ((_unitType & EUnitType.Enemy) != 0)
+            {
+                units.AddRange(_enemySystem.GetAllEnemies());
             }
 
             return units;
@@ -153,18 +149,14 @@ namespace Temporary.Core
         {
             List<Unit> units = new List<Unit>();
 
-            switch (_unitType)
+            if ((_unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    units.AddRange(_agentSystem.GetAgentsInCircle(pos, _radius));
-                    units.AddRange(_enemySystem.GetEnemiesInCircle(pos, _radius));
-                    break;
-                case EUnitType.Agent:
-                    units.AddRange(_agentSystem.GetAgentsInCircle(pos, _radius));
-                    break;
-                case EUnitType.Enemy:
-                    units.AddRange(_enemySystem.GetEnemiesInCircle(pos, _radius));
-                    break;
+                units.AddRange(_allySystem.GetAlliesInCircle(pos, _radius, _unitType));
+            }
+
+            if ((_unitType & EUnitType.Enemy) != 0)
+            {
+                units.AddRange(_enemySystem.GetEnemiesInCircle(pos, _radius));
             }
 
             return units;

@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    [CreateAssetMenu(menuName = "Templates/Unit/Agent", fileName = "Agent_", order = 0)]
-    public class AgentTemplate : ScriptableObject
+    [CreateAssetMenu(menuName = "Templates/Unit/Summon", fileName = "Summon_", order = 0)]
+    public class SummonTemplate : ScriptableObject
     {
         [HideInInspector, SerializeField] private int _id;
         [HideInInspector, SerializeField] private RarityTemplate _rarity;
@@ -137,8 +137,8 @@ namespace Temporary.Editor
     using Temporary.Core;
     using UnityEditor;
 
-    [CustomEditor(typeof(AgentTemplate)), CanEditMultipleObjects]
-    public class AgentTemplateEditor : Editor
+    [CustomEditor(typeof(SummonTemplate)), CanEditMultipleObjects]
+    public class SummonTemplateEditor : Editor
     {
         private SerializedProperty _id;
         private SerializedProperty _rarity;

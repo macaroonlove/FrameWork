@@ -57,13 +57,13 @@ namespace Temporary.Core
 
         private void OnBattleInitialize()
         {
-            BattleManager.Instance.GetSubSystem<AgentSystem>().onRegist += ApplyAlwaysEvent;
+            BattleManager.Instance.GetSubSystem<AllySystem>().onRegist += ApplyAlwaysEvent;
             BattleManager.Instance.GetSubSystem<EnemySystem>().onRegist += ApplyAlwaysEvent;
         }
 
         private void OnBattleDeinitialize()
         {
-            BattleManager.Instance.GetSubSystem<AgentSystem>().onRegist -= ApplyAlwaysEvent;
+            BattleManager.Instance.GetSubSystem<AllySystem>().onRegist -= ApplyAlwaysEvent;
             BattleManager.Instance.GetSubSystem<EnemySystem>().onRegist -= ApplyAlwaysEvent;
         }
         #endregion

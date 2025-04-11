@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class AgentCreateSystem : MonoBehaviour, IBattleSystem
+    public class SummonCreateSystem : MonoBehaviour, IBattleSystem
     {
         private AllySystem _allySystem;
         private PoolSystem _poolSystem;
@@ -18,7 +18,7 @@ namespace Temporary.Core
 
         }
 
-        internal bool CreateUnit(AgentTemplate template, Vector3 pos)
+        internal bool CreateUnit(SummonTemplate template, Vector3 pos)
         {
             // 생성할 유닛 불러오기 (선택의 경우 매개변수로 아이디 등을 받음)
             //var templates = GameDataManager.Instance.ownedAgentTemplate;
@@ -34,7 +34,7 @@ namespace Temporary.Core
             // 유닛 위치 정해주기 (위치가 타일과 같을 경우 타일에서 위치 정해주기도 가능)
             obj.transform.SetPositionAndRotation(pos, Quaternion.identity);
 
-            if (obj.TryGetComponent(out AgentUnit unit))
+            if (obj.TryGetComponent(out SummonUnit unit))
             {
                 // 유닛 초기화
                 unit.Initialize(template);

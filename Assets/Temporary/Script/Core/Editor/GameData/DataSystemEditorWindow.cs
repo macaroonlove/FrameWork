@@ -312,7 +312,7 @@ namespace Temporary.Editor
             AgentTemplate newAgent = CreateInstance<AgentTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Temporary/GameData/Unit/Agent";
+            string defaultPath = "Assets/Temporary/GameData/Unit/Agent";
             string path = EditorUtility.SaveFilePanelInProject("아군 유닛 추가", "Agent_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
@@ -446,7 +446,7 @@ namespace Temporary.Editor
             EnemyTemplate newEnemy = CreateInstance<EnemyTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Temporary/GameData/Unit/Enemy";
+            string defaultPath = "Assets/Temporary/GameData/Unit/Enemy";
             string path = EditorUtility.SaveFilePanelInProject("적군 유닛 추가", "Enemy_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
@@ -566,7 +566,7 @@ namespace Temporary.Editor
             BuffTemplate newBuff = CreateInstance<BuffTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Temporary/GameData/Status/BuffStatus";
+            string defaultPath = "Assets/Temporary/GameData/Status/BuffStatus";
             string path = EditorUtility.SaveFilePanelInProject("버프 추가", "BuffStatus_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
@@ -681,7 +681,7 @@ namespace Temporary.Editor
             AbnormalStatusTemplate newAbnormalStatus = CreateInstance<AbnormalStatusTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Temporary/GameData/Status/AbnormalStatus";
+            string defaultPath = "Assets/Temporary/GameData/Status/AbnormalStatus";
             string path = EditorUtility.SaveFilePanelInProject("상태이상 추가", "AbnormalStatus_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
@@ -801,7 +801,7 @@ namespace Temporary.Editor
             GlobalStatusTemplate newGlobalStatus = CreateInstance<GlobalStatusTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Temporary/GameData/Status/GlobalStatus";
+            string defaultPath = "Assets/Temporary/GameData/Status/GlobalStatus";
             string path = EditorUtility.SaveFilePanelInProject("전역 상태 추가", "GlobalStatus_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
@@ -921,7 +921,7 @@ namespace Temporary.Editor
             ActiveSkillTemplate newSkill = CreateInstance<ActiveSkillTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Temporary/GameData/Skill/ActiveSkill";
+            string defaultPath = "Assets/Temporary/GameData/Skill/ActiveSkill";
             string path = EditorUtility.SaveFilePanelInProject("액티브 스킬 추가", "ActiveSkill_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
@@ -1043,7 +1043,7 @@ namespace Temporary.Editor
             PassiveSkillTemplate newSkill = CreateInstance<PassiveSkillTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Temporary/GameData/Skill/PassiveSkill";
+            string defaultPath = "Assets/Temporary/GameData/Skill/PassiveSkill";
             string path = EditorUtility.SaveFilePanelInProject("패시브 스킬 추가", "PassiveSkill_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
@@ -1151,7 +1151,7 @@ namespace Temporary.Editor
             SkillTreeGraph newSkill = CreateInstance<SkillTreeGraph>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Temporary/GameData/Skill/SkillTree";
+            string defaultPath = "Assets/Temporary/GameData/Skill/SkillTree";
             string path = EditorUtility.SaveFilePanelInProject("스킬 트리 추가", "SkillTree_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
@@ -1266,7 +1266,7 @@ namespace Temporary.Editor
             ActiveItemTemplate newItem = CreateInstance<ActiveItemTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Temporary/GameData/Item/ActiveItem";
+            string defaultPath = "Assets/Temporary/GameData/Item/ActiveItem";
             string path = EditorUtility.SaveFilePanelInProject("액티브 아이템 추가", "ActiveItem_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
@@ -1388,7 +1388,7 @@ namespace Temporary.Editor
             PassiveItemTemplate newItem = CreateInstance<PassiveItemTemplate>();
 
             // 에셋 저장
-            string defaultPath = "Assets/FrameWork/Temporary/GameData/Item/PassiveItem";
+            string defaultPath = "Assets/Temporary/GameData/Item/PassiveItem";
             string path = EditorUtility.SaveFilePanelInProject("패시브 아이템 추가", "PassiveItem_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {

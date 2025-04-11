@@ -6,14 +6,14 @@ namespace Temporary.Core
 {
     public class FindTargetAbility : AlwaysAbility
     {
-        private AgentSystem _agentSystem;
+        private AllySystem _allySystem;
         private EnemySystem _enemySystem;
 
         internal override void Initialize(Unit unit)
         {
             base.Initialize(unit);
 
-            _agentSystem = BattleManager.Instance.GetSubSystem<AgentSystem>();
+            _allySystem = BattleManager.Instance.GetSubSystem<AllySystem>();
             _enemySystem = BattleManager.Instance.GetSubSystem<EnemySystem>();
         }
 
@@ -22,18 +22,14 @@ namespace Temporary.Core
         {
             List<Unit> targets = new List<Unit>();
 
-            switch (unitType)
+            if ((unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    targets.AddRange(_agentSystem.GetAllAgents());
-                    targets.AddRange(_enemySystem.GetAllEnemies());
-                    break;
-                case EUnitType.Agent:
-                    targets.AddRange(_agentSystem.GetAllAgents());
-                    break;
-                case EUnitType.Enemy:
-                    targets.AddRange(_enemySystem.GetAllEnemies());
-                    break;
+                targets.AddRange(_allySystem.GetAllAllies(unitType));
+            }
+
+            if ((unitType & EUnitType.Enemy) != 0)
+            {
+                targets.AddRange(_enemySystem.GetAllEnemies());
             }
 
             return targets;
@@ -46,19 +42,19 @@ namespace Temporary.Core
         {
             List<Unit> targets = (maxCount == int.MaxValue) ? new List<Unit>() : new List<Unit>(maxCount);
 
-            switch (unitType)
+            if ((unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    targets.AddRange(_agentSystem.GetAgentsInCircle(transform.position, radius));
-                    targets.AddRange(_enemySystem.GetEnemiesInCircle(transform.position, radius));
-                    if (maxCount != int.MaxValue) GetSortedUnits(targets, transform.position, maxCount);
-                    break;
-                case EUnitType.Agent:
-                    targets.AddRange(_agentSystem.GetAgentsInCircle(transform.position, radius, maxCount));
-                    break;
-                case EUnitType.Enemy:
-                    targets.AddRange(_enemySystem.GetEnemiesInCircle(transform.position, radius, maxCount));
-                    break;
+                targets.AddRange(_allySystem.GetAlliesInCircle(transform.position, radius, unitType, maxCount));
+            }
+
+            if ((unitType & EUnitType.Enemy) != 0)
+            {
+                targets.AddRange(_enemySystem.GetEnemiesInCircle(transform.position, radius, maxCount));
+            }
+
+            if (maxCount != int.MaxValue)
+            {
+                GetSortedUnits(targets, transform.position, maxCount);
             }
 
             return targets;
@@ -81,19 +77,19 @@ namespace Temporary.Core
         {
             List<Unit> targets = (maxCount == int.MaxValue) ? new List<Unit>() : new List<Unit>(maxCount);
 
-            switch (unitType)
+            if ((unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    targets.AddRange(_agentSystem.GetAgentsInStraight(transform.position, direction, range, width));
-                    targets.AddRange(_enemySystem.GetEnemiesInStraight(transform.position, direction, range, width));
-                    if (maxCount != int.MaxValue) GetSortedUnits(targets, transform.position, maxCount);
-                    break;
-                case EUnitType.Agent:
-                    targets.AddRange(_agentSystem.GetAgentsInStraight(transform.position, direction, range, width, maxCount));
-                    break;
-                case EUnitType.Enemy:
-                    targets.AddRange(_enemySystem.GetEnemiesInStraight(transform.position, direction, range, width, maxCount));
-                    break;
+                targets.AddRange(_allySystem.GetAlliesInStraight(transform.position, direction, range, width, unitType, maxCount));
+            }
+
+            if ((unitType & EUnitType.Enemy) != 0)
+            {
+                targets.AddRange(_enemySystem.GetEnemiesInStraight(transform.position, direction, range, width, maxCount));
+            }
+
+            if (maxCount != int.MaxValue)
+            {
+                GetSortedUnits(targets, transform.position, maxCount);
             }
 
             return targets;
@@ -116,19 +112,19 @@ namespace Temporary.Core
         {
             List<Unit> targets = (maxCount == int.MaxValue) ? new List<Unit>() : new List<Unit>(maxCount);
 
-            switch (unitType)
+            if ((unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    targets.AddRange(_agentSystem.GetAgentsInCone(transform.position, direction, range, angle));
-                    targets.AddRange(_enemySystem.GetEnemiesInCone(transform.position, direction, range, angle));
-                    if (maxCount != int.MaxValue) GetSortedUnits(targets, transform.position, maxCount);
-                    break;
-                case EUnitType.Agent:
-                    targets.AddRange(_agentSystem.GetAgentsInCone(transform.position, direction, range, angle, maxCount));
-                    break;
-                case EUnitType.Enemy:
-                    targets.AddRange(_enemySystem.GetEnemiesInCone(transform.position, direction, range, angle, maxCount));
-                    break;
+                targets.AddRange(_allySystem.GetAlliesInCone(transform.position, direction, range, angle, unitType, maxCount));
+            }
+
+            if ((unitType & EUnitType.Enemy) != 0)
+            {
+                targets.AddRange(_enemySystem.GetEnemiesInCone(transform.position, direction, range, angle, maxCount));
+            }
+
+            if (maxCount != int.MaxValue)
+            {
+                GetSortedUnits(targets, transform.position, maxCount);
             }
 
             return targets;
@@ -141,19 +137,19 @@ namespace Temporary.Core
         {
             List<Unit> targets = (maxCount == int.MaxValue) ? new List<Unit>() : new List<Unit>(maxCount);
 
-            switch (unitType)
+            if ((unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    targets.AddRange(_agentSystem.GetAgentsInGrid(unit.cellPos, grid));
-                    targets.AddRange(_enemySystem.GetEnemiesInGrid(unit.cellPos, grid));
-                    if (maxCount != int.MaxValue) GetSortedUnits(targets, transform.position, maxCount);
-                    break;
-                case EUnitType.Agent:
-                    targets.AddRange(_agentSystem.GetAgentsInGrid(unit.cellPos, grid, maxCount));
-                    break;
-                case EUnitType.Enemy:
-                    targets.AddRange(_enemySystem.GetEnemiesInGrid(unit.cellPos, grid, maxCount));
-                    break;
+                targets.AddRange(_allySystem.GetAlliesInGrid(unit.cellPos, grid, unitType, maxCount));
+            }
+
+            if ((unitType & EUnitType.Enemy) != 0)
+            {
+                targets.AddRange(_enemySystem.GetEnemiesInGrid(unit.cellPos, grid, maxCount));
+            }
+
+            if (maxCount != int.MaxValue)
+            {
+                GetSortedUnits(targets, transform.position, maxCount);
             }
 
             return targets;
@@ -182,18 +178,14 @@ namespace Temporary.Core
         {
             List<Unit> targets = new List<Unit>();
 
-            switch (unitType)
+            if ((unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    targets.AddRange(_agentSystem.GetAllAttackableAgents(attackType));
-                    targets.AddRange(_enemySystem.GetAllAttackableEnemies(attackType));
-                    break;
-                case EUnitType.Agent:
-                    targets.AddRange(_agentSystem.GetAllAttackableAgents(attackType));
-                    break;
-                case EUnitType.Enemy:
-                    targets.AddRange(_enemySystem.GetAllAttackableEnemies(attackType));
-                    break;
+                targets.AddRange(_allySystem.GetAllAttackableAllies(attackType, unitType));
+            }
+
+            if ((unitType & EUnitType.Enemy) != 0)
+            {
+                targets.AddRange(_enemySystem.GetAllAttackableEnemies(attackType));
             }
 
             return targets;
@@ -203,19 +195,19 @@ namespace Temporary.Core
         {
             List<Unit> targets = (maxCount == int.MaxValue) ? new List<Unit>() : new List<Unit>(maxCount);
 
-            switch (unitType)
+            if ((unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    targets.AddRange(_agentSystem.GetAttackableAgents(transform.position, radius, attackType));
-                    targets.AddRange(_enemySystem.GetAttackableEnemies(transform.position, radius, attackType));
-                    if (maxCount != int.MaxValue) GetSortedUnits(targets, transform.position, maxCount);
-                    break;
-                case EUnitType.Agent:
-                    targets.AddRange(_agentSystem.GetAttackableAgents(transform.position, radius, attackType, maxCount));
-                    break;
-                case EUnitType.Enemy:
-                    targets.AddRange(_enemySystem.GetAttackableEnemies(transform.position, radius, attackType, maxCount));
-                    break;
+                targets.AddRange(_allySystem.GetAttackableAllies(transform.position, radius, attackType, unitType, maxCount));
+            }
+
+            if ((unitType & EUnitType.Enemy) != 0)
+            {
+                targets.AddRange(_enemySystem.GetAttackableEnemies(transform.position, radius, attackType, maxCount));
+            }
+
+            if (maxCount != int.MaxValue)
+            {
+                GetSortedUnits(targets, transform.position, maxCount);
             }
 
             return targets;
@@ -232,19 +224,19 @@ namespace Temporary.Core
         {
             List<Unit> targets = (maxCount == int.MaxValue) ? new List<Unit>() : new List<Unit>(maxCount);
 
-            switch (unitType)
+            if ((unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    targets.AddRange(_agentSystem.GetAttackableAgents(transform.position, direction, range, width, attackType));
-                    targets.AddRange(_enemySystem.GetAttackableEnemies(transform.position, direction, range, width, attackType));
-                    if (maxCount != int.MaxValue) GetSortedUnits(targets, transform.position, maxCount);
-                    break;
-                case EUnitType.Agent:
-                    targets.AddRange(_agentSystem.GetAttackableAgents(transform.position, direction, range, width, attackType, maxCount));
-                    break;
-                case EUnitType.Enemy:
-                    targets.AddRange(_enemySystem.GetAttackableEnemies(transform.position, direction, range, width, attackType, maxCount));
-                    break;
+                targets.AddRange(_allySystem.GetAttackableAllies(transform.position, direction, range, width, attackType, unitType, maxCount));
+            }
+
+            if ((unitType & EUnitType.Enemy) != 0)
+            {
+                targets.AddRange(_enemySystem.GetAttackableEnemies(transform.position, direction, range, width, attackType, maxCount));
+            }
+
+            if (maxCount != int.MaxValue)
+            {
+                GetSortedUnits(targets, transform.position, maxCount);
             }
 
             return targets;
@@ -261,19 +253,19 @@ namespace Temporary.Core
         {
             List<Unit> targets = (maxCount == int.MaxValue) ? new List<Unit>() : new List<Unit>(maxCount);
 
-            switch (unitType)
+            if ((unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    targets.AddRange(_agentSystem.GetAttackableAgents(transform.position, direction, range, angle, attackType));
-                    targets.AddRange(_enemySystem.GetAttackableEnemies(transform.position, direction, range, angle, attackType));
-                    if (maxCount != int.MaxValue) GetSortedUnits(targets, transform.position, maxCount);
-                    break;
-                case EUnitType.Agent:
-                    targets.AddRange(_agentSystem.GetAttackableAgents(transform.position, direction, range, angle, attackType, maxCount));
-                    break;
-                case EUnitType.Enemy:
-                    targets.AddRange(_enemySystem.GetAttackableEnemies(transform.position, direction, range, angle, attackType, maxCount));
-                    break;
+                targets.AddRange(_allySystem.GetAttackableAllies(transform.position, direction, range, angle, attackType, unitType, maxCount));
+            }
+
+            if ((unitType & EUnitType.Enemy) != 0)
+            {
+                targets.AddRange(_enemySystem.GetAttackableEnemies(transform.position, direction, range, angle, attackType, maxCount));
+            }
+
+            if (maxCount != int.MaxValue)
+            {
+                GetSortedUnits(targets, transform.position, maxCount);
             }
 
             return targets;
@@ -283,19 +275,19 @@ namespace Temporary.Core
         {
             List<Unit> targets = (maxCount == int.MaxValue) ? new List<Unit>() : new List<Unit>(maxCount);
 
-            switch (unitType)
+            if ((unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    targets.AddRange(_agentSystem.GetAttackableAgents(unit.cellPos, grid, attackType));
-                    targets.AddRange(_enemySystem.GetAttackableEnemies(unit.cellPos, grid, attackType));
-                    if (maxCount != int.MaxValue) GetSortedUnits(targets, transform.position, maxCount);
-                    break;
-                case EUnitType.Agent:
-                    targets.AddRange(_agentSystem.GetAttackableAgents(unit.cellPos, grid, attackType, maxCount));
-                    break;
-                case EUnitType.Enemy:
-                    targets.AddRange(_enemySystem.GetAttackableEnemies(unit.cellPos, grid, attackType, maxCount));
-                    break;
+                targets.AddRange(_allySystem.GetAttackableAllies(unit.cellPos, grid, attackType, unitType, maxCount));
+            }
+
+            if ((unitType & EUnitType.Enemy) != 0)
+            {
+                targets.AddRange(_enemySystem.GetAttackableEnemies(unit.cellPos, grid, attackType, maxCount));
+            }
+
+            if (maxCount != int.MaxValue)
+            {
+                GetSortedUnits(targets, transform.position, maxCount);
             }
 
             return targets;
@@ -324,18 +316,14 @@ namespace Temporary.Core
         {
             List<Unit> targets = new List<Unit>();
 
-            switch (unitType)
+            if ((unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    targets.AddRange(_agentSystem.GetAllHealableAgents());
-                    targets.AddRange(_enemySystem.GetAllHealableEnemies());
-                    break;
-                case EUnitType.Agent:
-                    targets.AddRange(_agentSystem.GetAllHealableAgents());
-                    break;
-                case EUnitType.Enemy:
-                    targets.AddRange(_enemySystem.GetAllHealableEnemies());
-                    break;
+                targets.AddRange(_allySystem.GetAllHealableAllies(unitType));
+            }
+
+            if ((unitType & EUnitType.Enemy) != 0)
+            {
+                targets.AddRange(_enemySystem.GetAllHealableEnemies());
             }
 
             return targets;
@@ -345,19 +333,19 @@ namespace Temporary.Core
         {
             List<Unit> targets = (maxCount == int.MaxValue) ? new List<Unit>() : new List<Unit>(maxCount);
 
-            switch (unitType)
+            if ((unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    targets.AddRange(_agentSystem.GetHealableAgents(transform.position, radius));
-                    targets.AddRange(_enemySystem.GetHealableEnemies(transform.position, radius));
-                    if (maxCount != int.MaxValue) GetSortedUnits(targets, transform.position, maxCount);
-                    break;
-                case EUnitType.Agent:
-                    targets.AddRange(_agentSystem.GetHealableAgents(transform.position, radius, maxCount));
-                    break;
-                case EUnitType.Enemy:
-                    targets.AddRange(_enemySystem.GetHealableEnemies(transform.position, radius, maxCount));
-                    break;
+                targets.AddRange(_allySystem.GetHealableAllies(transform.position, radius, unitType, maxCount));
+            }
+
+            if ((unitType & EUnitType.Enemy) != 0)
+            {
+                targets.AddRange(_enemySystem.GetHealableEnemies(transform.position, radius, maxCount));
+            }
+
+            if (maxCount != int.MaxValue)
+            {
+                GetSortedUnits(targets, transform.position, maxCount);
             }
 
             return targets;
@@ -374,19 +362,19 @@ namespace Temporary.Core
         {
             List<Unit> targets = (maxCount == int.MaxValue) ? new List<Unit>() : new List<Unit>(maxCount);
 
-            switch (unitType)
+            if ((unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    targets.AddRange(_agentSystem.GetHealableAgents(transform.position, direction, range, width));
-                    targets.AddRange(_enemySystem.GetHealableEnemies(transform.position, direction, range, width));
-                    if (maxCount != int.MaxValue) GetSortedUnits(targets, transform.position, maxCount);
-                    break;
-                case EUnitType.Agent:
-                    targets.AddRange(_agentSystem.GetHealableAgents(transform.position, direction, range, width, maxCount));
-                    break;
-                case EUnitType.Enemy:
-                    targets.AddRange(_enemySystem.GetHealableEnemies(transform.position, direction, range, width, maxCount));
-                    break;
+                targets.AddRange(_allySystem.GetHealableAllies(transform.position, direction, range, width, unitType, maxCount));
+            }
+
+            if ((unitType & EUnitType.Enemy) != 0)
+            {
+                targets.AddRange(_enemySystem.GetHealableEnemies(transform.position, direction, range, width, maxCount));
+            }
+
+            if (maxCount != int.MaxValue)
+            {
+                GetSortedUnits(targets, transform.position, maxCount);
             }
 
             return targets;
@@ -403,19 +391,19 @@ namespace Temporary.Core
         {
             List<Unit> targets = (maxCount == int.MaxValue) ? new List<Unit>() : new List<Unit>(maxCount);
 
-            switch (unitType)
+            if ((unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    targets.AddRange(_agentSystem.GetHealableAgents(transform.position, direction, range, angle));
-                    targets.AddRange(_enemySystem.GetHealableEnemies(transform.position, direction, range, angle));
-                    if (maxCount != int.MaxValue) GetSortedUnits(targets, transform.position, maxCount);
-                    break;
-                case EUnitType.Agent:
-                    targets.AddRange(_agentSystem.GetHealableAgents(transform.position, direction, range, angle, maxCount));
-                    break;
-                case EUnitType.Enemy:
-                    targets.AddRange(_enemySystem.GetHealableEnemies(transform.position, direction, range, angle, maxCount));
-                    break;
+                targets.AddRange(_allySystem.GetHealableAllies(transform.position, direction, range, angle, unitType, maxCount));
+            }
+
+            if ((unitType & EUnitType.Enemy) != 0)
+            {
+                targets.AddRange(_enemySystem.GetHealableEnemies(transform.position, direction, range, angle, maxCount));
+            }
+
+            if (maxCount != int.MaxValue)
+            {
+                GetSortedUnits(targets, transform.position, maxCount);
             }
 
             return targets;
@@ -425,19 +413,19 @@ namespace Temporary.Core
         {
             List<Unit> targets = (maxCount == int.MaxValue) ? new List<Unit>() : new List<Unit>(maxCount);
 
-            switch (unitType)
+            if ((unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                case EUnitType.All:
-                    targets.AddRange(_agentSystem.GetHealableAgents(unit.cellPos, grid));
-                    targets.AddRange(_enemySystem.GetHealableEnemies(unit.cellPos, grid));
-                    if (maxCount != int.MaxValue) GetSortedUnits(targets, transform.position, maxCount);
-                    break;
-                case EUnitType.Agent:
-                    targets.AddRange(_agentSystem.GetHealableAgents(unit.cellPos, grid, maxCount));
-                    break;
-                case EUnitType.Enemy:
-                    targets.AddRange(_enemySystem.GetHealableEnemies(unit.cellPos, grid, maxCount));
-                    break;
+                targets.AddRange(_allySystem.GetHealableAllies(unit.cellPos, grid, unitType, maxCount));
+            }
+
+            if ((unitType & EUnitType.Enemy) != 0)
+            {
+                targets.AddRange(_enemySystem.GetHealableEnemies(unit.cellPos, grid, maxCount));
+            }
+
+            if (maxCount != int.MaxValue)
+            {
+                GetSortedUnits(targets, transform.position, maxCount);
             }
 
             return targets;

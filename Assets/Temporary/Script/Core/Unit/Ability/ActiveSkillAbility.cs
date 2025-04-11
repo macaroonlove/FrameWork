@@ -97,20 +97,26 @@ namespace Temporary.Core
 
         private bool TryExecuteMouseTargetingSkill(ActiveSkillTemplate template)
         {
-            LayerMask layerMask;
-            switch (template.unitType)
+            LayerMask layerMask = 0;
+
+            if ((template.unitType & EUnitType.Agent) != 0)
             {
-                case EUnitType.All:
-                    layerMask = LayerMask.GetMask("Agent", "Enemy");
-                    break;
-                case EUnitType.Agent:
-                    layerMask = LayerMask.GetMask("Agent");
-                    break;
-                case EUnitType.Enemy:
-                    layerMask = LayerMask.GetMask("Enemy");
-                    break;
-                default:
-                    return false;
+                layerMask |= LayerMask.GetMask("Agent");
+            }
+
+            if ((template.unitType & EUnitType.Summon) != 0)
+            {
+                layerMask |= LayerMask.GetMask("Summon");
+            }
+
+            if ((template.unitType & EUnitType.Enemy) != 0)
+            {
+                layerMask |= LayerMask.GetMask("Enemy");
+            }
+
+            if (layerMask == 0)
+            {
+                return false;
             }
 
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, layerMask))

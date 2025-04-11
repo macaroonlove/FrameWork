@@ -49,7 +49,7 @@ namespace Temporary.Core
                 }
                 else if (unit is EnemyUnit)
                 {
-                    var target = BattleManager.Instance.GetSubSystem<AgentSystem>().GetNearestAgent(unit.transform.position, _chaseRange);
+                    var target = BattleManager.Instance.GetSubSystem<AllySystem>().GetNearestAlly(unit.transform.position, _chaseRange);
 
                     if (target != null)
                     {

@@ -14,15 +14,21 @@ namespace Temporary.Core
 
         public override string GetDescription()
         {
-            string unitLabel = "모든";
-            if (_unitType == EUnitType.Agent)
-            {
-                unitLabel = "아군";
-            }
-            else if (_unitType == EUnitType.Enemy)
-            {
-                unitLabel = "적군";
-            }
+            string unitLabel = "";
+
+            if ((_unitType & EUnitType.Agent) != 0)
+                unitLabel += "아군, ";
+
+            if ((_unitType & EUnitType.Summon) != 0)
+                unitLabel += "소환수, ";
+
+            if ((_unitType & EUnitType.Enemy) != 0)
+                unitLabel += "적군, ";
+
+            if (string.IsNullOrEmpty(unitLabel))
+                unitLabel = "모든";
+            else
+                unitLabel = unitLabel.Substring(0, unitLabel.Length - 2);
 
             return $"{unitLabel} 유닛에게 무한 지속 버프 적용";
         }
@@ -31,12 +37,12 @@ namespace Temporary.Core
         {
             List<Unit> units = new List<Unit>();
 
-            if (_unitType == EUnitType.All || _unitType == EUnitType.Agent)
+            if ((_unitType & (EUnitType.Agent | EUnitType.Summon)) != 0)
             {
-                units.AddRange(BattleManager.Instance.GetSubSystem<AgentSystem>().GetAllAgents());
+                units.AddRange(BattleManager.Instance.GetSubSystem<AllySystem>().GetAllAllies(_unitType));
             }
 
-            if (_unitType == EUnitType.All || _unitType == EUnitType.Enemy)
+            if ((_unitType & EUnitType.Enemy) != 0)
             {
                 units.AddRange(BattleManager.Instance.GetSubSystem<EnemySystem>().GetAllEnemies());
             }
@@ -64,7 +70,7 @@ namespace Temporary.Core
             var valueRect = new Rect(rect.x + 140, rect.y, rect.width - 140, rect.height);
 
             GUI.Label(labelRect, "유닛 타입");
-            _unitType = (EUnitType)EditorGUI.EnumPopup(valueRect, _unitType);
+            _unitType = (EUnitType)EditorGUI.EnumFlagsField(valueRect, _unitType);
 
             labelRect.y += 20;
             valueRect.y += 20;

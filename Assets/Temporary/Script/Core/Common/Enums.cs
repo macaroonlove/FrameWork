@@ -157,12 +157,13 @@ namespace Temporary.Core
     /// <summary>
     /// ¿Ø¥÷ ≈∏¿‘
     /// </summary>
+    [System.Flags]
     public enum EUnitType
     {
-        All,
-        Agent,
-        Enemy,
-        None,
+        None = 0,
+        Agent = 1 << 0,
+        Summon = 1 << 1,
+        Enemy = 1 << 2,
     }
 
     /// <summary>

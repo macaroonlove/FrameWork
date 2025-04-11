@@ -2,14 +2,14 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class AgentUnit : AllyUnit
+    public class SummonUnit : AllyUnit
     {
-        private AgentTemplate _template;
+        private SummonTemplate _template;
 
-        internal AgentTemplate template => _template;
+        internal SummonTemplate template => _template;
         internal override EMoveType moveType => _template.MoveType;
 
-        internal void Initialize(AgentTemplate template)
+        internal void Initialize(SummonTemplate template)
         {
             _id = template.id;
             _template = template;
@@ -25,8 +25,8 @@ namespace Temporary.Editor
     using Temporary.Core;
     using UnityEditor;
 
-    [CustomEditor(typeof(AgentUnit))]
-    public class AgentUnitEditor : UnitEditor
+    [CustomEditor(typeof(SummonUnit))]
+    public class SummonUnitEditor : UnitEditor
     {
         protected override void AddAbilityMenu()
         {
