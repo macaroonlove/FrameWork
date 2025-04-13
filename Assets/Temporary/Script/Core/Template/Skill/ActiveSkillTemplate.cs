@@ -223,6 +223,7 @@ namespace Temporary.Editor
                     menu.AddItem(new GUIContent("즉시 스킬(논타겟팅)"), false, CreateEffectCallback, typeof(InstantPointEffect));
                     menu.AddItem(new GUIContent("투사체 스킬(논타겟팅)"), false, CreateEffectCallback, typeof(ProjectilePointEffect));
                     menu.AddItem(new GUIContent("덫 스킬(논타겟팅)"), false, CreateEffectCallback, typeof(TrapPointEffect));
+                    menu.AddItem(new GUIContent("소환수 소환 스킬(논타겟팅)"), false, CreateEffectCallback, typeof(SpawnSummonPointEffect));
                     break;
             }
 
