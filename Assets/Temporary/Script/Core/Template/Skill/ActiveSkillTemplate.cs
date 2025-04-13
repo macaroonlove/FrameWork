@@ -211,16 +211,18 @@ namespace Temporary.Editor
 
             switch (_skillType.enumValueIndex)
             {
+                case (int)EActiveSkillType.InstantTargeting:
+                    menu.AddItem(new GUIContent("즉시 스킬 (탐색 타겟팅)"), false, CreateEffectCallback, typeof(InstantGetTargetUnitEffect));
+                    menu.AddItem(new GUIContent("투사체 스킬 (탐색 타겟팅)"), false, CreateEffectCallback, typeof(ProjectileGetTargetUnitEffect));
+                    break;
+                case (int)EActiveSkillType.MouseTargeting:
+                    menu.AddItem(new GUIContent("즉시 스킬 (마우스 타겟팅)"), false, CreateEffectCallback, typeof(InstantMouseTargetUnitEffect));
+                    menu.AddItem(new GUIContent("투사체 스킬 (마우스 타겟팅)"), false, CreateEffectCallback, typeof(ProjectileMouseTargetUnitEffect));
+                    break;
                 case (int)EActiveSkillType.NonTargeting:
                     menu.AddItem(new GUIContent("즉시 스킬(논타겟팅)"), false, CreateEffectCallback, typeof(InstantPointEffect));
                     menu.AddItem(new GUIContent("투사체 스킬(논타겟팅)"), false, CreateEffectCallback, typeof(ProjectilePointEffect));
                     menu.AddItem(new GUIContent("덫 스킬(논타겟팅)"), false, CreateEffectCallback, typeof(TrapPointEffect));
-                    break;
-                case (int)EActiveSkillType.InstantTargeting:
-                case (int)EActiveSkillType.MouseTargeting:
-                    menu.AddItem(new GUIContent("즉시 데미지 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(InstantGetTargetUnitEffect));
-                    menu.AddItem(new GUIContent("투사체 데미지 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(ProjectileGetTargetUnitEffect));
-                    menu.AddItem(new GUIContent("덫 데미지 스킬 (타겟팅)"), false, CreateEffectCallback, typeof(TrapGetTargetUnitEffect));
                     break;
             }
 

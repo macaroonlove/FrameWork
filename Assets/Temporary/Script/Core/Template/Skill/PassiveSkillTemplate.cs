@@ -188,7 +188,6 @@ namespace Temporary.Editor
             {
                 menu.AddItem(new GUIContent("즉시 스킬"), false, CreateEffectCallback, typeof(InstantUnitEffect));
                 menu.AddItem(new GUIContent("투사체 스킬"), false, CreateEffectCallback, typeof(ProjectileUnitEffect));
-                menu.AddItem(new GUIContent("덫 스킬"), false, CreateEffectCallback, typeof(TrapUnitEffect));
             }
 
             menu.ShowAsContext();

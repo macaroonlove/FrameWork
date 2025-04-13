@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
-    public class InstantUnitEffect : UnitEffect
+    public class InstantMouseTargetUnitEffect : MouseTargetUnitEffect
     {
         [SerializeField] protected FX _targetFX;
 
         public override string GetDescription()
         {
-            return "즉시";
+            return "즉시 (마우스 타겟팅)";
         }
 
         public override void Execute(Unit casterUnit, Unit targetUnit)
@@ -41,8 +41,13 @@ namespace Temporary.Core
             GUI.Label(labelRect, "대상자 FX");
             _targetFX = (FX)EditorGUI.ObjectField(valueRect, _targetFX, typeof(FX), false);
 
-            rect.y += 20;
+            rect.y += 40;
             _effectsList?.DoList(rect);
+        }
+
+        public override int GetNumRows()
+        {
+            return base.GetNumRows() + 1;
         }
 
         protected override void InitMenu_Effects()
@@ -54,6 +59,7 @@ namespace Temporary.Core
             menu.AddItem(new GUIContent("보호막 스킬"), false, CreateEffectCallback, typeof(ShieldSkillEffect));
             menu.AddItem(new GUIContent("버프 스킬"), false, CreateEffectCallback, typeof(BuffSkillEffect));
             menu.AddItem(new GUIContent("상태이상 스킬"), false, CreateEffectCallback, typeof(AbnormalStatusSkillEffect));
+            menu.AddItem(new GUIContent("소환수 소환 스킬"), false, CreateEffectCallback, typeof(SpawnSummonSkillEffect));
             menu.AddItem(new GUIContent("덫 스킬"), false, CreateEffectCallback, typeof(TrapUnitEffect));
 
             menu.ShowAsContext();

@@ -10,7 +10,7 @@ namespace Temporary.Core
 
         public override string GetDescription()
         {
-            return "투사체 (타겟팅)";
+            return "투사체 (탐색 타겟팅)";
         }
 
         public override void Execute(Unit casterUnit, Unit targetUnit)
@@ -55,6 +55,7 @@ namespace Temporary.Core
             menu.AddItem(new GUIContent("보호막 스킬"), false, CreateEffectCallback, typeof(ShieldSkillEffect));
             menu.AddItem(new GUIContent("버프 스킬"), false, CreateEffectCallback, typeof(BuffSkillEffect));
             menu.AddItem(new GUIContent("상태이상 스킬"), false, CreateEffectCallback, typeof(AbnormalStatusSkillEffect));
+            menu.AddItem(new GUIContent("소환수 소환 스킬"), false, CreateEffectCallback, typeof(SpawnSummonSkillEffect));
             menu.AddItem(new GUIContent("덫 스킬"), false, CreateEffectCallback, typeof(TrapUnitEffect));
 
             menu.ShowAsContext();

@@ -124,6 +124,31 @@ MonoBehaviour:
     _assistantRange: 0
     _tileRangeTemplate: {fileID: 0}
     _numberOfTarget: 0
+--- !u!114 &-1419131587174818595
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3012cfd102b50094b870ab094792a71b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _effects: []
+  _getTargetData:
+    _getTargetFilter: 0
+    _attackType: 0
+    _targetType: 0
+    _unitType: 0
+    _rangeType: 0
+    _directionType: 0
+    _range: 0
+    _assistantRange: 0
+    _tileRangeTemplate: {fileID: 0}
+    _numberOfTarget: 0
+  _targetFX: {fileID: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149,6 +174,22 @@ MonoBehaviour:
   _parameterHash: 0
   _casterFX: {fileID: 0}
   effects: []
+--- !u!114 &825267460032081863
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0623572b61417049817a1c10a86464a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isInfinity: 0
+  _duration: 0
+  _offset: {x: 0, y: 0, z: 0}
+  _summon: {fileID: 0}
 --- !u!114 &896017487408071103
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -174,6 +215,21 @@ MonoBehaviour:
     _assistantRange: 0
     _tileRangeTemplate: {fileID: 0}
     _numberOfTarget: 0
+--- !u!114 &2321073185796533323
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddec58ca0b0942348af9b573e4f50a17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _effects: []
+  _prefab: {fileID: 0}
+  _spawnPoint: 0
 --- !u!114 &2720642891049609312
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -313,3 +369,31 @@ MonoBehaviour:
     _assistantRange: 0
     _tileRangeTemplate: {fileID: 0}
     _numberOfTarget: 0
+--- !u!114 &7285446077726509064
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15d781365b774104ba81de85b4aadc45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _effects: []
+  _currentEffect: {fileID: 0}
+  _getTargetData:
+    _getTargetFilter: 0
+    _attackType: 0
+    _targetType: 0
+    _unitType: 0
+    _rangeType: 0
+    _directionType: 0
+    _range: 0
+    _assistantRange: 0
+    _tileRangeTemplate: {fileID: 0}
+    _numberOfTarget: 0
+  _prefab: {fileID: 0}
+  _isInfinity: 0
+  _duration: 0

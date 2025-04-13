@@ -234,7 +234,6 @@ namespace Temporary.Editor
                     {
                         menu.AddItem(new GUIContent("즉시 효과"), false, CreateEffectCallback, typeof(InstantUnitEffect));
                         menu.AddItem(new GUIContent("투사체 효과"), false, CreateEffectCallback, typeof(ProjectileUnitEffect));
-                        menu.AddItem(new GUIContent("덫 효과"), false, CreateEffectCallback, typeof(TrapUnitEffect));
                     }
                 }
             }
