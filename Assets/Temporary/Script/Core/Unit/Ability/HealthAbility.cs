@@ -476,7 +476,6 @@ namespace Temporary.Core
                     break;
             }
 
-            popup?.SetFollowedTarget(transform);
             popup?.SetScale(0.5f);
         }
 
@@ -486,7 +485,6 @@ namespace Temporary.Core
 
             DamageNumber popup = _healPopup?.Spawn(transform.position, heal);
 
-            popup?.SetFollowedTarget(transform);
             popup?.SetScale(0.5f);
         }
 
@@ -496,7 +494,6 @@ namespace Temporary.Core
 
             DamageNumber popup = _shieldPopup?.Spawn(transform.position, absorption);
 
-            popup?.SetFollowedTarget(transform);
             popup?.SetScale(0.5f);
         }
         #endregion

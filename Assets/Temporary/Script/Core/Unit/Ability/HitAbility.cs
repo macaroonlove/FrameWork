@@ -261,7 +261,6 @@ namespace Temporary.Core
 
             DamageNumber popup = _missPopup?.Spawn(transform.position);
 
-            popup?.SetFollowedTarget(transform);
             popup?.SetScale(0.5f);
         }
         #endregion
