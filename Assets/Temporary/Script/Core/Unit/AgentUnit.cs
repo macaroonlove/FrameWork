@@ -16,6 +16,15 @@ namespace Temporary.Core
 
             base.Initialize(this);
         }
+
+        protected override void OnDeath()
+        {
+            base.OnDeath();
+
+            var allySystem = BattleManager.Instance.GetSubSystem<AllySystem>();
+
+            allySystem.Deregist(this);
+        }
     }
 }
 

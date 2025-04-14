@@ -5,16 +5,31 @@ namespace Temporary.Core
     public class SummonUnit : AllyUnit
     {
         private SummonTemplate _template;
+        private Unit _summoner;
 
         internal SummonTemplate template => _template;
         internal override EMoveType moveType => _template.MoveType;
 
-        internal void Initialize(SummonTemplate template)
+        internal void Initialize(SummonTemplate template, Unit summoner)
         {
             _id = template.id;
             _template = template;
+            _summoner = summoner;
+
+            summoner.healthAbility.onDeath += OnDeath;
 
             base.Initialize(this);
+        }
+
+        protected override void OnDeath()
+        {
+            base.OnDeath();
+
+            var allySystem = BattleManager.Instance.GetSubSystem<AllySystem>();
+
+            allySystem.Deregist(this);
+
+            _summoner.healthAbility.onDeath -= OnDeath;
         }
     }
 }

@@ -72,6 +72,7 @@ namespace Temporary.Core
                 }
                 else
                 {
+                    _targetPosition = null;
                     StopMoveAnimation();
                 }
 

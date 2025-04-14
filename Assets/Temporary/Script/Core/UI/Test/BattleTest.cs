@@ -22,6 +22,8 @@ namespace Temporary.Core
             BattleManager.Instance.GetSubSystem<AgentCreateSystem>().CreateUnit(_agentTemplate, Vector3.zero);
             BattleManager.Instance.GetSubSystem<AgentCreateSystem>().CreateUnit(_agentTemplate2, new Vector3(-3, 0, 0));
             BattleManager.Instance.GetSubSystem<EnemySpawnSystem>().SpawnUnit(_enemyTemplate, new Vector3(3, 0, 0));
+            BattleManager.Instance.GetSubSystem<EnemySpawnSystem>().SpawnUnit(_enemyTemplate, new Vector3(3, 0, 1));
+            BattleManager.Instance.GetSubSystem<EnemySpawnSystem>().SpawnUnit(_enemyTemplate, new Vector3(3, 0, -1));
 
             BattleManager.Instance.GetSubSystem<UnitRayCastSystem>().onCast += (Unit unit) =>
             {

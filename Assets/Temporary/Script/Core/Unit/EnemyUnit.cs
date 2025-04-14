@@ -17,6 +17,15 @@ namespace Temporary.Core
 
             base.Initialize(this);
         }
+
+        protected override void OnDeath()
+        {
+            base.OnDeath();
+
+            var enemySystem = BattleManager.Instance.GetSubSystem<EnemySystem>();
+
+            enemySystem.Deregist(this);
+        }
     }
 }
 

@@ -222,11 +222,11 @@ namespace Temporary.Core
 
             if (_isInfinity)
             {
-                summonCreateSystem.CreateUnit(_summon, finalPosition);
+                summonCreateSystem.CreateUnit(_summon, finalPosition, summoner: casterUnit);
             }
             else
             {
-                summonCreateSystem.CreateUnit(_summon, finalPosition, _duration);
+                summonCreateSystem.CreateUnit(_summon, finalPosition, _duration, casterUnit);
             }
         }
 

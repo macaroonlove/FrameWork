@@ -18,7 +18,7 @@ namespace Temporary.Core
 
         }
 
-        internal bool CreateUnit(SummonTemplate template, Vector3 pos, float duration = float.MaxValue)
+        internal bool CreateUnit(SummonTemplate template, Vector3 pos, float duration = float.MaxValue, Unit summoner = null)
         {
             GameObject obj;
 
@@ -35,7 +35,7 @@ namespace Temporary.Core
 
             if (obj.TryGetComponent(out SummonUnit unit))
             {
-                unit.Initialize(template);
+                unit.Initialize(template, summoner);
 
                 _allySystem.Regist(unit);
             }
