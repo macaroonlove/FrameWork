@@ -26,6 +26,12 @@ namespace Temporary.Editor
         private Vector2 agentScrollPosition;
         private List<Tuple<AgentTemplate, Texture2D>> agentTemplates = new List<Tuple<AgentTemplate, Texture2D>>();
         #endregion
+        #region 소환수 유닛
+        private UnityEditor.Editor summonEditor;
+        private int selectedSummonIndex = 0;
+        private Vector2 summonScrollPosition;
+        private List<Tuple<SummonTemplate, Texture2D>> summonTemplates = new List<Tuple<SummonTemplate, Texture2D>>();
+        #endregion
         #region 적군 유닛
         private UnityEditor.Editor enemyEditor;
         private int selectedEnemyIndex = 0;
@@ -171,12 +177,14 @@ namespace Temporary.Editor
         {
             GUILayout.BeginHorizontal();
             if (GUILayout.Toggle(selectedUnitTitle == 0, "아군 유닛", "Button")) selectedUnitTitle = 0;
-            if (GUILayout.Toggle(selectedUnitTitle == 1, "적 유닛", "Button")) selectedUnitTitle = 1;
+            if (GUILayout.Toggle(selectedUnitTitle == 1, "소환수 유닛", "Button")) selectedUnitTitle = 1;
+            if (GUILayout.Toggle(selectedUnitTitle == 2, "적 유닛", "Button")) selectedUnitTitle = 2;
             GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
 
             if (selectedUnitTitle == 0) DrawAgentTab();
+            else if (selectedUnitTitle == 1) DrawSummonTab();
             else DrawEnemyTab();
         }
 
@@ -354,6 +362,140 @@ namespace Temporary.Editor
             }
 
             agentTemplates = agentTemplates.OrderBy(tuple => tuple.Item1.id).ToList();
+        }
+        #endregion
+
+        #region 소환수 유닛
+        private void DrawSummonTab()
+        {
+            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
+            GUILayout.BeginVertical(GUILayout.Width(200));
+            if (GUILayout.Button("소환수 유닛 불러오기 창"))
+            {
+                LoadSummonTemplateWindow();
+            }
+            if (GUILayout.Button("소환수 유닛 추가"))
+            {
+                AddSummonTemplate();
+            }
+            if (GUILayout.Button("소환수 유닛 삭제"))
+            {
+                DeleteSelectedSummonTemplate();
+            }
+            if (GUILayout.Button("소환수 유닛 탐색"))
+            {
+                LoadSummonTemplates();
+            }
+
+            DrawLine();
+
+            summonScrollPosition = GUILayout.BeginScrollView(summonScrollPosition, false, true);
+
+            var summonCatalog = new GUIStyle(GUI.skin.button);
+            summonCatalog.alignment = TextAnchor.MiddleLeft;
+            summonCatalog.padding = new RectOffset(5, 5, 5, 5);
+            summonCatalog.margin = new RectOffset(5, 5, -2, -2);
+            summonCatalog.border = new RectOffset(0, 0, 0, 0);
+            summonCatalog.fixedWidth = GUI.skin.box.fixedWidth;
+            summonCatalog.fixedHeight = GUI.skin.box.fixedHeight;
+
+            for (int i = 0; i < summonTemplates.Count; i++)
+            {
+                bool isSelected = (selectedSummonIndex == i);
+
+                var text = "  " + summonTemplates[i].Item1.displayName;
+                text = text.Substring(0, Mathf.Min(text.Length, 13));
+                GUIContent content = new GUIContent(text, summonTemplates[i].Item2);
+
+                if (GUILayout.Toggle(isSelected, content, summonCatalog))
+                {
+                    if (selectedSummonIndex != i)
+                    {
+                        selectedSummonIndex = i;
+
+                        GUI.FocusControl(null);
+                    }
+                }
+            }
+            GUILayout.EndScrollView();
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+
+            if (summonTemplates.Count > 0 && selectedSummonIndex < summonTemplates.Count)
+            {
+                SummonTemplate selectedSummon = summonTemplates[selectedSummonIndex].Item1;
+
+                if (summonEditor == null || summonEditor.target != selectedSummon)
+                {
+                    summonEditor = UnityEditor.Editor.CreateEditor(selectedSummon);
+                }
+
+                contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
+                summonEditor.OnInspectorGUI();
+                GUILayout.EndScrollView();
+            }
+
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+        }
+
+        private void LoadSummonTemplateWindow()
+        {
+            var window = GetWindow<LoadSummonTemplateEditorWindow>();
+            window.titleContent = new GUIContent("소환수 유닛 불러오기");
+            window.minSize = new Vector2(300, 100);
+            window.maxSize = new Vector2(300, 100);
+        }
+
+        private void AddSummonTemplate()
+        {
+            // 아군 유닛 템플릿 생성
+            SummonTemplate newSummon = CreateInstance<SummonTemplate>();
+
+            // 에셋 저장
+            string defaultPath = "Assets/Temporary/GameData/Unit/Summon";
+            string path = EditorUtility.SaveFilePanelInProject("소환수 유닛 추가", "Summon_", "asset", "", defaultPath);
+            if (!string.IsNullOrEmpty(path))
+            {
+                newSummon.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("Summon_", ""));
+
+                AssetDatabase.CreateAsset(newSummon, path);
+                AssetDatabase.SaveAssets();
+                LoadSummonTemplates();
+            }
+        }
+
+        private void DeleteSelectedSummonTemplate()
+        {
+            if (summonTemplates.Count > 0)
+            {
+                SummonTemplate selectedSummon = summonTemplates[selectedSummonIndex].Item1;
+                string assetPath = AssetDatabase.GetAssetPath(selectedSummon);
+                summonTemplates.RemoveAt(selectedSummonIndex);
+                AssetDatabase.DeleteAsset(assetPath);
+                AssetDatabase.SaveAssets();
+            }
+        }
+
+        private void LoadSummonTemplates()
+        {
+            if (emptyTexture2D == null) emptyTexture2D = CreateTexture(Color.gray);
+
+            summonTemplates.Clear();
+            string[] guids = AssetDatabase.FindAssets("t:SummonTemplate");
+            foreach (var guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                SummonTemplate summon = AssetDatabase.LoadAssetAtPath<SummonTemplate>(path);
+
+                var texture = (summon.sprite == null) ? emptyTexture2D : summon.sprite.texture;
+                texture = texture.ResizeTexture(30, 30);
+
+                summonTemplates.Add(new Tuple<SummonTemplate, Texture2D>(summon, texture));
+            }
+
+            summonTemplates = summonTemplates.OrderBy(tuple => tuple.Item1.id).ToList();
         }
         #endregion
 
