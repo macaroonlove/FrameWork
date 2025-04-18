@@ -13,7 +13,7 @@ namespace Temporary.Core
 
         [SerializeField] private GameObject _prefab;
         [SerializeField] private ESpawnPoint _spawnPoint;
-        [SerializeField] private EControlType _controlType;
+        [SerializeField] private EActiveSkillControlType _controlType;
         [SerializeField] private ENontargetProjectileRangeType _rangeType;
         [SerializeField] private EDirectionType _directionType;
         [SerializeField] private bool _isMaxRange;
@@ -35,7 +35,7 @@ namespace Temporary.Core
             Vector3 direction;
             float distance;
 
-            if (_controlType == EControlType.Instant)
+            if (_controlType == EActiveSkillControlType.Instant)
             {
                 FindTargetAbility.directionMap.TryGetValue(_directionType, out direction);
                 distance = _range;
@@ -101,16 +101,16 @@ namespace Temporary.Core
             labelRect.y += 40;
             valueRect.y += 40;
             GUI.Label(labelRect, "스킬 조작 방식");
-            _controlType = (EControlType)EditorGUI.EnumPopup(valueRect, _controlType);
+            _controlType = (EActiveSkillControlType)EditorGUI.EnumPopup(valueRect, _controlType);
 
-            if (_controlType == EControlType.Instant)
+            if (_controlType == EActiveSkillControlType.Instant)
             {
                 labelRect.y += 20;
                 valueRect.y += 20;
                 GUI.Label(labelRect, "방향");
                 _directionType = (EDirectionType)EditorGUI.EnumPopup(valueRect, _directionType);
             }
-            else if (_controlType == EControlType.Mouse)
+            else if (_controlType == EActiveSkillControlType.Mouse)
             {
                 labelRect.y += 20;
                 valueRect.y += 20;
@@ -149,7 +149,7 @@ namespace Temporary.Core
         {
             int rowNum = base.GetNumRows() + 7;
 
-            if (_controlType == EControlType.Instant || _controlType == EControlType.Mouse)
+            if (_controlType == EActiveSkillControlType.Instant || _controlType == EActiveSkillControlType.Mouse)
                 rowNum++;
 
             if (_rangeType == ENontargetProjectileRangeType.Cone)

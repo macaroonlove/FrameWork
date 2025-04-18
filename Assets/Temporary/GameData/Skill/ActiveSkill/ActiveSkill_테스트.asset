@@ -53,6 +53,26 @@ MonoBehaviour:
     _assistantRange: 0
     _tileRangeTemplate: {fileID: 0}
     _numberOfTarget: 0
+--- !u!114 &-3220820996035066804
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb5da10aee7cedc469a0d3587776beb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _damageType: 1
+  _applyTypeByAmountDatas:
+  - applyType: 0
+    amount: 20
 --- !u!114 &-3074307455058007025
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -161,19 +181,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5093661109052b9438d278789d9e23d4, type: 3}
   m_Name: "ActiveSkill_\uD14C\uC2A4\uD2B8"
   m_EditorClassIdentifier: 
-  _sprite: {fileID: 0}
+  _sprite: {fileID: 21300000, guid: 08c71e4e0565fe4469d1e0a593047156, type: 3}
   _id: 0
   _displayName: "\uD14C\uC2A4\uD2B8"
   _description: 
-  _needMana: 0
-  _cooldownTime: 0
-  _skillType: 0
+  _skillTriggerType: 0
+  _skillTargetingType: 0
   _unitType: 0
   _skillRange: 0
+  _skillPayType: 1
+  _payAmount: 100
+  _cooldownTime: 3
   _parameterName: 
   _parameterHash: 0
   _casterFX: {fileID: 0}
-  effects: []
+  effects:
+  - {fileID: 6523944441996527388}
+--- !u!114 &294334351840631536
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 441fb29f73bd1264a9f34e8c595ab963, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _applyTypeByAmountDatas: []
 --- !u!114 &825267460032081863
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -314,6 +354,32 @@ MonoBehaviour:
     _assistantRange: 0
     _tileRangeTemplate: {fileID: 0}
     _numberOfTarget: 0
+--- !u!114 &6523944441996527388
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3012cfd102b50094b870ab094792a71b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _effects:
+  - {fileID: -3220820996035066804}
+  _getTargetData:
+    _getTargetFilter: 0
+    _attackType: 0
+    _targetType: 1
+    _unitType: 4
+    _rangeType: 1
+    _directionType: 0
+    _range: 1
+    _assistantRange: 0
+    _tileRangeTemplate: {fileID: 0}
+    _numberOfTarget: 0
+  _targetFX: {fileID: 0}
 --- !u!114 &6959334682610724460
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -397,3 +463,37 @@ MonoBehaviour:
   _prefab: {fileID: 0}
   _isInfinity: 0
   _duration: 0
+--- !u!114 &7414941888399878774
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d934e4aaa61627488725dae04e1d3c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isInfinity: 0
+  _duration: 0
+  _buff: {fileID: 0}
+--- !u!114 &8859208496082841620
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef160fe98c529a428e0f0033293414b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _repeatCount: 1
+  _isTick: 0
+  _tickCycle: 0
+  _tickCount: 0
+  _isInfinity: 0
+  _duration: 0
+  _applyTypeByAmountDatas: []

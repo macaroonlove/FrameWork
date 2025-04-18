@@ -16,7 +16,7 @@ namespace Temporary.Core
         private Unit _targetUnit;
         private Vector3 _targetVector;
 
-        private Dictionary<int, ActiveSkillTemplate> _templates = new Dictionary<int, ActiveSkillTemplate>();
+        private Dictionary<int, ActiveSkillInstance> _skills = new Dictionary<int, ActiveSkillInstance>();
 
         #region 스탯 계산
         private bool finalIsSkillAble
@@ -38,38 +38,97 @@ namespace Temporary.Core
             _unitAnimationAbility = unit.GetAbility<UnitAnimationAbility>();
             _manaAbility = unit.GetAbility<ManaAbility>();
             _abnormalStatusAbility = unit.GetAbility<AbnormalStatusAbility>();
+
+            InitializeActiveSkillInstance();
         }
+
+        #region 스킬 인스턴스 관리
+        private void InitializeActiveSkillInstance()
+        {
+            if (unit is AgentUnit agentUnit && agentUnit.template.skillTreeGraph != null)
+            {
+                InitializeActiveSkillInstance(agentUnit.template.skillTreeGraph);
+            }
+            else if (unit is SummonUnit summonUnit && summonUnit.template.skillTreeGraph != null)
+            {
+                InitializeActiveSkillInstance(summonUnit.template.skillTreeGraph);
+            }
+            else if (unit is EnemyUnit enemyUnit && enemyUnit.template.skillTreeGraph != null)
+            {
+                InitializeActiveSkillInstance(enemyUnit.template.skillTreeGraph);
+            }
+        }
+
+        private void InitializeActiveSkillInstance(SkillTreeGraph skillTree)
+        {
+            foreach (var node in skillTree.nodes)
+            {
+                if (node is ActiveSkillNode skill)
+                {
+                    _skills[skill.skillTemplate.id] = (new ActiveSkillInstance(skill.skillTemplate, this, _manaAbility));
+                }
+            }
+        }
+
+        internal ActiveSkillInstance GetSkillInstance(ActiveSkillTemplate template)
+        {
+            return _skills[template.id];
+        }
+        #endregion
 
         internal override void Deinitialize()
         {
+            foreach (var skill in _skills.Values)
+            {
+                skill.Deinitialize();
+            }
 
+            _skills.Clear();
         }
 
         internal override bool IsExecute()
         {
+            ActiveSkillCooldown();
+
             // 스킬을 사용 중이라면 true
             return _isExecuteSkill;
+        }
+
+        private void ActiveSkillCooldown()
+        {
+            var deltaTime = Time.deltaTime;
+
+            foreach (var skill in _skills.Values)
+            {
+                skill.Update(deltaTime);
+            }
         }
 
         #region 스킬 발동
         internal bool TryExecuteSkill(ActiveSkillTemplate template)
         {
-            // 스킬 사용이 불가능하다면
+            return TryExecuteSkill(_skills[template.id]);
+        }
+
+        internal bool TryExecuteSkill(ActiveSkillInstance skillInstance)
+        {
+            // 스킬 사용이 불가능한 상태라면
             if (finalIsSkillAble == false) return false;
 
-            // 마나가 부족하다면
-            if (_manaAbility.TryExecuteSkill(template.needMana) == false) return false;
-
             // 애니메이션이 있는 스킬인데, 이미 스킬을 사용 중이라면
-            if (template.parameterHash != 0 && _isExecuteSkill) return false;
+            if (skillInstance.template.parameterHash != 0 && _isExecuteSkill) return false;
 
-            switch (template.skillType)
+            // 스킬 사용 가능 여부
+            if (skillInstance.CanExecute() == false) return false;
+
+            var template = skillInstance.template;
+            switch (template.skillTargetingType)
             {
-                case EActiveSkillType.InstantTargeting:
+                case EActiveSkillTargetingType.InstantTargeting:
                     return TryExecuteInstantTargetingSkill(template);
-                case EActiveSkillType.MouseTargeting:
+                case EActiveSkillTargetingType.MouseTargeting:
                     return TryExecuteMouseTargetingSkill(template);
-                case EActiveSkillType.NonTargeting:
+                case EActiveSkillTargetingType.NonTargeting:
                     return TryExecuteNonTargetingSkill(template);
             }
 
@@ -149,6 +208,9 @@ namespace Temporary.Core
 
         private bool SkillAnimation(ActiveSkillTemplate template)
         {
+            // 스킬 소모 자원 지불
+            if (_skills[template.id].TryExecute() == false) return false;
+
             bool isSuccess = false;
             if (template.parameterHash != 0)
             {
@@ -158,7 +220,6 @@ namespace Temporary.Core
             if (isSuccess == true)
             {
                 _unitAnimationAbility.SetSkillID(template.id);
-                _templates[template.id] = template;
                 _isExecuteSkill = true;
             }
             else
@@ -171,22 +232,22 @@ namespace Temporary.Core
 
         internal void ExecuteSkill(int skillTemplateID)
         {
-            ExecuteSkill(_templates[skillTemplateID]);
+            ExecuteSkill(_skills[skillTemplateID].template);
         }
 
         private void ExecuteSkill(ActiveSkillTemplate template)
         {
             ExecuteCasterFX(template);
 
-            switch (template.skillType)
+            switch (template.skillTargetingType)
             {
-                case EActiveSkillType.InstantTargeting:
+                case EActiveSkillTargetingType.InstantTargeting:
                     ExecuteInstantTargetingSkill(template);
                     break;
-                case EActiveSkillType.MouseTargeting:
+                case EActiveSkillTargetingType.MouseTargeting:
                     ExecuteMouseTargetingSkill(template);
                     break;
-                case EActiveSkillType.NonTargeting:
+                case EActiveSkillTargetingType.NonTargeting:
                     ExecuteNonTargetingSkill(template);
                     break;
             }

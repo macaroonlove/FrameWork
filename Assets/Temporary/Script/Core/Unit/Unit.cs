@@ -46,7 +46,6 @@ namespace Temporary.Core
         internal void Initialize(Unit unit)
         {
             _healthAbility = GetComponent<HealthAbility>();
-            if (_healthAbility != null) _healthAbility.onDeath += OnDeath;
 
             var alwaysAbilities = GetComponents<AlwaysAbility>();
             var conditionAbilities = GetComponents<ConditionAbility>();
@@ -86,11 +85,9 @@ namespace Temporary.Core
             }
 
             onAbilityDeinitialize?.Invoke();
-
-            if (_healthAbility != null) _healthAbility.onDeath -= OnDeath;
         }
 
-        protected virtual void OnDeath()
+        internal virtual void OnDeath()
         {
             Deinitialize();
             CoreManager.Instance.GetSubSystem<PoolSystem>().DeSpawn(gameObject);

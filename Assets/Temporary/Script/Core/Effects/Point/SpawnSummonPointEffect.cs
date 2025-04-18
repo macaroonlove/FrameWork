@@ -11,7 +11,7 @@ namespace Temporary.Core
         [SerializeField] protected bool _isInfinity;
         [SerializeField] protected float _duration;
 
-        [SerializeField] private EControlType _controlType;
+        [SerializeField] private EActiveSkillControlType _controlType;
         [SerializeField] private ERangeType _rangeType;
         [SerializeField] private EDirectionType _directionType;
         [SerializeField] private float _range;
@@ -48,7 +48,7 @@ namespace Temporary.Core
         #region Circle
         private void SpawnCircleTrap(Unit casterUnit, Vector3 targetVector)
         {
-            if (_controlType == EControlType.Instant)
+            if (_controlType == EActiveSkillControlType.Instant)
             {
                 // 범위 내 랜덤한 위치에 생성
                 var finalPosition = GetRandomFinalPositionInCircle(casterUnit);
@@ -73,7 +73,7 @@ namespace Temporary.Core
         #region Straight
         private void SpawnStraightTrap(Unit casterUnit, Vector3 targetVector)
         {
-            if (_controlType == EControlType.Instant)
+            if (_controlType == EActiveSkillControlType.Instant)
             {
                 // 범위 내 랜덤한 위치에 생성
                 var finalPosition = GetRandomFinalPositionInStraight(casterUnit);
@@ -102,7 +102,7 @@ namespace Temporary.Core
         #region Cone
         private void SpawnConeTrap(Unit casterUnit, Vector3 targetVector)
         {
-            if (_controlType == EControlType.Instant)
+            if (_controlType == EActiveSkillControlType.Instant)
             {
                 // 범위 내 랜덤한 위치에 생성
                 var finalPosition = GetRandomFinalPositionInCone(casterUnit);
@@ -134,7 +134,7 @@ namespace Temporary.Core
         #region Grid
         private void SpawnGridTrap(Unit casterUnit, Vector3 targetVector)
         {
-            if (_controlType == EControlType.Instant)
+            if (_controlType == EActiveSkillControlType.Instant)
             {
                 // 범위 내 랜덤한 위치에 생성
                 var finalPosition = GetRandomFinalPositionInGrid();
@@ -255,7 +255,7 @@ namespace Temporary.Core
             labelRect.y += 40;
             valueRect.y += 40;
             GUI.Label(labelRect, "스킬 조작 방식");
-            _controlType = (EControlType)EditorGUI.EnumPopup(valueRect, _controlType);
+            _controlType = (EActiveSkillControlType)EditorGUI.EnumPopup(valueRect, _controlType);
 
             labelRect.y += 20;
             valueRect.y += 20;
@@ -276,7 +276,7 @@ namespace Temporary.Core
                 GUI.Label(labelRect, "범위");
                 _range = EditorGUI.FloatField(valueRect, _range);
 
-                if (_controlType == EControlType.Instant)
+                if (_controlType == EActiveSkillControlType.Instant)
                 {
                     labelRect.y += 20;
                     valueRect.y += 20;
@@ -311,7 +311,7 @@ namespace Temporary.Core
             {
                 rowNum++;
 
-                if (_controlType == EControlType.Instant)
+                if (_controlType == EActiveSkillControlType.Instant)
                 {
                     rowNum++;
 

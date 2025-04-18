@@ -12,12 +12,16 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private string _displayName;
         [HideInInspector, SerializeField] private string _description;
 
-        [HideInInspector, SerializeField] private int _needMana;
-        [HideInInspector, SerializeField] private float _cooldownTime;
+        [HideInInspector, SerializeField] private EActiveSkillTriggerType _skillTriggerType;
 
-        [HideInInspector, SerializeField] private EActiveSkillType _skillType;
+        [HideInInspector, SerializeField] private EActiveSkillTargetingType _skillTargetingType;
         [HideInInspector, SerializeField] private EUnitType _unitType;
         [HideInInspector, SerializeField] private float _skillRange;
+
+        [HideInInspector, SerializeField] private EActiveSkillPayType _skillPayType;
+        [HideInInspector, SerializeField] private int _payAmount;
+
+        [HideInInspector, SerializeField] private float _cooldownTime;
 
         [HideInInspector, SerializeField] private string _parameterName;
         [HideInInspector, SerializeField] private int _parameterHash;
@@ -34,12 +38,16 @@ namespace Temporary.Core
         public string displayName => _displayName;
         public string description => _description;
 
-        public int needMana => _needMana;
-        public float cooldownTime => _cooldownTime;
+        public EActiveSkillTriggerType skillTriggerType => _skillTriggerType;
 
-        public EActiveSkillType skillType => _skillType;
+        public EActiveSkillTargetingType skillTargetingType => _skillTargetingType;
         public EUnitType unitType => _unitType;
         public float skillRange => _skillRange;
+
+        public EActiveSkillPayType skillPayType => _skillPayType;
+        public int payAmount => _payAmount;
+
+        public float cooldownTime => _cooldownTime;
 
         public int parameterHash => _parameterHash;
 
@@ -72,11 +80,18 @@ namespace Temporary.Editor
         private SerializedProperty _id;
         private SerializedProperty _displayName;
         private SerializedProperty _description;
-        private SerializedProperty _needMana;
-        private SerializedProperty _cooldownTime;
-        private SerializedProperty _skillType;
+
+        private SerializedProperty _skillTriggerType;
+
+        private SerializedProperty _skillTargetingType;
         private SerializedProperty _unitType;
         private SerializedProperty _skillRange;
+
+        private SerializedProperty _skillPayType;
+        private SerializedProperty _payAmount;
+
+        private SerializedProperty _cooldownTime;
+
         private SerializedProperty _parameterName;
         private SerializedProperty _parameterHash;
         private SerializedProperty _casterFX;
@@ -92,11 +107,18 @@ namespace Temporary.Editor
             _id = serializedObject.FindProperty("_id");
             _displayName = serializedObject.FindProperty("_displayName");
             _description = serializedObject.FindProperty("_description");
-            _needMana = serializedObject.FindProperty("_needMana");
-            _cooldownTime = serializedObject.FindProperty("_cooldownTime");
-            _skillType = serializedObject.FindProperty("_skillType");
+
+            _skillTriggerType = serializedObject.FindProperty("_skillTriggerType");
+
+            _skillTargetingType = serializedObject.FindProperty("_skillTargetingType");
             _unitType = serializedObject.FindProperty("_unitType");
             _skillRange = serializedObject.FindProperty("_skillRange");
+
+            _skillPayType = serializedObject.FindProperty("_skillPayType");
+            _payAmount = serializedObject.FindProperty("_payAmount");
+
+            _cooldownTime = serializedObject.FindProperty("_cooldownTime");
+
             _parameterName = serializedObject.FindProperty("_parameterName");
             _parameterHash = serializedObject.FindProperty("_parameterHash");
             _casterFX = serializedObject.FindProperty("_casterFX");
@@ -136,23 +158,16 @@ namespace Temporary.Editor
             GUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("소모 마나량", GUILayout.Width(192));
-            EditorGUILayout.PropertyField(_needMana, GUIContent.none);
+            GUILayout.Label("스킬 발동 방식", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_skillTriggerType, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("쿨타임", GUILayout.Width(192));
-            EditorGUILayout.PropertyField(_cooldownTime, GUIContent.none);
+            GUILayout.Label("스킬 타겟팅 방식", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_skillTargetingType, GUIContent.none);
             GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("스킬 방식", GUILayout.Width(192));
-            EditorGUILayout.PropertyField(_skillType, GUIContent.none);
-            GUILayout.EndHorizontal();
-
-            var skillType = _skillType.enumValueIndex;
-
-            if (skillType == (int)EActiveSkillType.MouseTargeting)
+            if (_skillTargetingType.intValue == (int)EActiveSkillTargetingType.MouseTargeting)
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("마우스가 인식할 스킬 범위", GUILayout.Width(192));
@@ -164,6 +179,24 @@ namespace Temporary.Editor
                 EditorGUILayout.PropertyField(_unitType, GUIContent.none);
                 GUILayout.EndHorizontal();
             }
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("소모 자원", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_skillPayType, GUIContent.none);
+            GUILayout.EndHorizontal();
+
+            if (_skillPayType.intValue != (int)EActiveSkillPayType.None)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("소모량", GUILayout.Width(192));
+                EditorGUILayout.PropertyField(_payAmount, GUIContent.none);
+                GUILayout.EndHorizontal();
+            }
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("쿨타임", GUILayout.Width(192));
+            EditorGUILayout.PropertyField(_cooldownTime, GUIContent.none);
+            GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
 
@@ -209,17 +242,17 @@ namespace Temporary.Editor
         {
             var menu = new GenericMenu();
 
-            switch (_skillType.enumValueIndex)
+            switch (_skillTargetingType.enumValueIndex)
             {
-                case (int)EActiveSkillType.InstantTargeting:
+                case (int)EActiveSkillTargetingType.InstantTargeting:
                     menu.AddItem(new GUIContent("즉시 스킬 (탐색 타겟팅)"), false, CreateEffectCallback, typeof(InstantGetTargetUnitEffect));
                     menu.AddItem(new GUIContent("투사체 스킬 (탐색 타겟팅)"), false, CreateEffectCallback, typeof(ProjectileGetTargetUnitEffect));
                     break;
-                case (int)EActiveSkillType.MouseTargeting:
+                case (int)EActiveSkillTargetingType.MouseTargeting:
                     menu.AddItem(new GUIContent("즉시 스킬 (마우스 타겟팅)"), false, CreateEffectCallback, typeof(InstantMouseTargetUnitEffect));
                     menu.AddItem(new GUIContent("투사체 스킬 (마우스 타겟팅)"), false, CreateEffectCallback, typeof(ProjectileMouseTargetUnitEffect));
                     break;
-                case (int)EActiveSkillType.NonTargeting:
+                case (int)EActiveSkillTargetingType.NonTargeting:
                     menu.AddItem(new GUIContent("즉시 스킬(논타겟팅)"), false, CreateEffectCallback, typeof(InstantPointEffect));
                     menu.AddItem(new GUIContent("투사체 스킬(논타겟팅)"), false, CreateEffectCallback, typeof(ProjectilePointEffect));
                     menu.AddItem(new GUIContent("덫 스킬(논타겟팅)"), false, CreateEffectCallback, typeof(TrapPointEffect));

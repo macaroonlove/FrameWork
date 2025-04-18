@@ -17,7 +17,7 @@ namespace Temporary.Core
             base.Initialize(this);
         }
 
-        protected override void OnDeath()
+        internal override void OnDeath()
         {
             base.OnDeath();
 

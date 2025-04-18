@@ -193,7 +193,7 @@ namespace Temporary.Core
         /// </summary>
         internal bool CheckMana(int needMana)
         {
-            return _currentMana > needMana;
+            return _currentMana >= needMana;
         }
         #endregion
     }

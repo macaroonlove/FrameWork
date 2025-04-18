@@ -15,6 +15,7 @@ namespace Temporary.Core
         {
             Icon,
             CooldownTimeImage,
+            LackPayAmountImage,
         }
         enum Texts
         {
@@ -36,42 +37,18 @@ namespace Temporary.Core
 
         [SerializeField] private EActionType _actionType;
 
-        private Image _cooldownTimeImage;
-
+        private Image _lackPayAmountImage;
+        private Image _coolDownTimeImage;
         private TextMeshProUGUI _coolDownTimeText;
 
         private InputSystem _inputSystem;
-        private ManaAbility _manaAbility;
 
         private Unit _unit;
         private ActiveSkillTemplate _template;
+        private ActiveSkillInstance _skillInstance;
 
-        private float _inverseMaxCoolDownTime;
-        private float _currentCoolDownTime;
-
-        private bool _isInteractable;
-
-        #region 프로퍼티
-        private bool IsInteractable
-        {
-            get
-            {
-                if (_isInteractable == false) return false;
-
-                return true;
-            }
-        }
-
-        private float finalCoolDownTime
-        {
-            get
-            {
-                float result = _template.cooldownTime;
-
-                return result;
-            }
-        }
-        #endregion
+        private bool _isCoolDownVisible;
+        private float _coolDownRatio;
 
         protected override void Initialize()
         {
@@ -79,10 +56,11 @@ namespace Temporary.Core
             BindText(typeof(Texts));
             BindButton(typeof(Buttons));
 
-            _cooldownTimeImage = GetImage((int)Images.CooldownTimeImage);
+            _lackPayAmountImage = GetImage((int)Images.LackPayAmountImage);
+            _coolDownTimeImage = GetImage((int)Images.CooldownTimeImage);
             _coolDownTimeText = GetText((int)Texts.CooldownTimeText);
 
-            _cooldownTimeImage.gameObject.SetActive(false);
+            _lackPayAmountImage.gameObject.SetActive(false);
 
             GetButton((int)Buttons.ActiveSkillButton).onClick.AddListener(ExecuteSkill);
         }
@@ -95,15 +73,19 @@ namespace Temporary.Core
             GetImage((int)Images.Icon).sprite = template.sprite;
 
             _inputSystem = BattleManager.Instance.GetSubSystem<InputSystem>();
-            _manaAbility = _unit.GetAbility<ManaAbility>();
-            _manaAbility.onChangedMana += OnChangeMana;
+            if (_inputSystem != null)
+            {
+                InputBinding();
+            }
 
-            CalcMaxCoolDownTime();
-            _currentCoolDownTime = 0;
+            _skillInstance = unit.GetAbility<ActiveSkillAbility>().GetSkillInstance(template);
+            if (_skillInstance != null)
+            {
+                _skillInstance.onChangedIsEnoughPayAmount += OnChangedIsEnoughPayAmount;
+            }
 
-            CheckInteractable();
-
-            InputBinding();
+            _isCoolDownVisible = true;
+            CalcCoolDownTimeRatio();
         }
 
         internal void Hide()
@@ -111,11 +93,16 @@ namespace Temporary.Core
             _unit = null;
             _template = null;
 
-            _manaAbility.onChangedMana -= OnChangeMana;
-            _manaAbility = null;
+            if (_inputSystem != null)
+            {
+                InputCancelBinding();
+                _inputSystem = null;
+            }
 
-            InputCancelBinding();
-            _inputSystem = null;
+            if (_skillInstance != null)
+            {
+                _skillInstance.onChangedIsEnoughPayAmount -= OnChangedIsEnoughPayAmount;
+            }
         }
 
         #region Input Binding
@@ -158,82 +145,68 @@ namespace Temporary.Core
         }
         #endregion
 
-        private void OnChangeMana(int mana)
-        {
-            CheckInteractable();
-        }
-
         #region 쿨타임
-        private void CalcMaxCoolDownTime()
+        private void CalcCoolDownTimeRatio()
         {
+            var finalCoolDownTime = _skillInstance.finalCoolDownTime;
+
             if (finalCoolDownTime == 0)
             {
-                _inverseMaxCoolDownTime = 0;
+                _coolDownRatio = 0;
             }
             else
             {
-                _inverseMaxCoolDownTime = 1 / finalCoolDownTime;
+                _coolDownRatio = 1 / finalCoolDownTime;
             }
         }
 
         private void UpdateCoolDownTime()
         {
-            if (_currentCoolDownTime == 0) return;
+            float currentCooldownTime = _skillInstance.coolDownTime;
 
-            _currentCoolDownTime -= Time.deltaTime;
-
-            if (_currentCoolDownTime < 0)
+            if (currentCooldownTime <= 0)
             {
-                _currentCoolDownTime = 0;
-                _cooldownTimeImage.gameObject.SetActive(false);
-                CheckInteractable();
+                SetCoolDownVisibility(false);
+                return;
             }
-            else
+
+            SetCoolDownVisibility(true);
+            _coolDownTimeText.text = currentCooldownTime.ToString("F1");
+            _coolDownTimeImage.fillAmount = currentCooldownTime * _coolDownRatio;
+        }
+
+        private void SetCoolDownVisibility(bool isVisible)
+        {
+            if (isVisible != _isCoolDownVisible)
             {
-                _coolDownTimeText.text = _currentCoolDownTime.ToString("F1");
-                _cooldownTimeImage.fillAmount = _currentCoolDownTime * _inverseMaxCoolDownTime;
+                _coolDownTimeImage.gameObject.SetActive(isVisible);
+                _isCoolDownVisible = isVisible;
             }
         }
         #endregion
 
-        private void CheckInteractable()
+        #region 소모 자원
+        private void OnChangedIsEnoughPayAmount(bool isOn)
         {
-            bool isInteractable = true;
-            if (_currentCoolDownTime > 0)
-            {
-                isInteractable = false;
-                _isInteractable = false;
-                _cooldownTimeImage.gameObject.SetActive(true);
-            }
-            if (_manaAbility.CheckMana(_template.needMana) == false)
-            {
-                isInteractable = false;
-                _isInteractable = false;
-            }
-
-            if (isInteractable == true)
-            {
-                _isInteractable = true;
-                _cooldownTimeImage.gameObject.SetActive(false);
-            }
+            _lackPayAmountImage.gameObject.SetActive(isOn);
         }
+        #endregion
 
         private void Update()
         {
+            if (_skillInstance == null) return;
+
             UpdateCoolDownTime();
         }
 
-        internal void ExecuteSkill()
+        private void ExecuteSkill()
         {
-            if (IsInteractable == false) return;
-            
+            if (_skillInstance.CanExecute() == false) return;
+
             if (_unit.GetAbility<ActiveSkillAbility>().TryExecuteSkill(_template))
             {
                 // 쿨타임 적용
-                _currentCoolDownTime = finalCoolDownTime;
-                CalcMaxCoolDownTime();
-
-                CheckInteractable();
+                CalcCoolDownTimeRatio();
             }
         }
     }

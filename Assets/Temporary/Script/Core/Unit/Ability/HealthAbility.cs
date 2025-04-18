@@ -320,6 +320,7 @@ namespace Temporary.Core
             if (_currentHP == 0)
             {
                 onDeath?.Invoke();
+                unit.OnDeath();
                 return;
             }
             onChangedHealth?.Invoke(_currentHP);
@@ -495,6 +496,28 @@ namespace Temporary.Core
             DamageNumber popup = _shieldPopup?.Spawn(transform.position, absorption);
 
             popup?.SetScale(0.5f);
+        }
+        #endregion
+
+        #region 스킬 사용
+        internal bool TryExecuteSkill(int needHP)
+        {
+            // 필요한 마나보다 현재 마나가 적다면
+            if (_currentHP < needHP) return false;
+
+            int finalHP = _currentHP - needHP;
+
+            SetHP(finalHP);
+
+            return true;
+        }
+
+        /// <summary>
+        /// 체력이 충분하다면 True, 충분하지 않다면 False
+        /// </summary>
+        internal bool CheckHP(int needHP)
+        {
+            return _currentHP >= needHP;
         }
         #endregion
     }

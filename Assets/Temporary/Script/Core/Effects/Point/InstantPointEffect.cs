@@ -11,7 +11,7 @@ namespace Temporary.Core
         [SerializeField] private EUnitType _unitType;
         [SerializeField] private ERangeType _rangeType;
 
-        [SerializeField] private EControlType _controlType;
+        [SerializeField] private EActiveSkillControlType _controlType;
         [SerializeField] private EDirectionType _directionType;
         [SerializeField] private float _range;
         [SerializeField] private float _assistantRange;
@@ -90,7 +90,7 @@ namespace Temporary.Core
         private void GetTargetStraight(Unit casterUnit, Vector3 targetVector, int maxCount)
         {
             List<Unit> targets;
-            if (_controlType == EControlType.Instant)
+            if (_controlType == EActiveSkillControlType.Instant)
             {
                 targets = casterUnit.GetAbility<FindTargetAbility>().FindTargetInStraight(_directionType, _range, _assistantRange, _unitType, maxCount);
             }
@@ -111,7 +111,7 @@ namespace Temporary.Core
         private void GetTargetCone(Unit casterUnit, Vector3 targetVector, int maxCount)
         {
             List<Unit> targets;
-            if (_controlType == EControlType.Instant)
+            if (_controlType == EActiveSkillControlType.Instant)
             {
                 targets = casterUnit.GetAbility<FindTargetAbility>().FindTargetInCone(_directionType, _range, (int)_assistantRange, _unitType, maxCount);
             }
@@ -193,9 +193,9 @@ namespace Temporary.Core
                     labelRect.y += 20;
                     valueRect.y += 20;
                     GUI.Label(labelRect, "스킬 조작 방식");
-                    _controlType = (EControlType)EditorGUI.EnumPopup(valueRect, _controlType);
+                    _controlType = (EActiveSkillControlType)EditorGUI.EnumPopup(valueRect, _controlType);
 
-                    if (_controlType == EControlType.Instant)
+                    if (_controlType == EActiveSkillControlType.Instant)
                     {
                         labelRect.y += 20;
                         valueRect.y += 20;
@@ -218,9 +218,9 @@ namespace Temporary.Core
                     labelRect.y += 20;
                     valueRect.y += 20;
                     GUI.Label(labelRect, "스킬 조작 방식");
-                    _controlType = (EControlType)EditorGUI.EnumPopup(valueRect, _controlType);
+                    _controlType = (EActiveSkillControlType)EditorGUI.EnumPopup(valueRect, _controlType);
 
-                    if (_controlType == EControlType.Instant)
+                    if (_controlType == EActiveSkillControlType.Instant)
                     {
                         labelRect.y += 20;
                         valueRect.y += 20;
@@ -278,13 +278,13 @@ namespace Temporary.Core
                 }
                 else if (_rangeType == ERangeType.Straight)
                 {
-                    if (_controlType == EControlType.Instant) rowNum++;
+                    if (_controlType == EActiveSkillControlType.Instant) rowNum++;
 
                     rowNum += 3;
                 }
                 else if (_rangeType == ERangeType.Cone)
                 {
-                    if (_controlType == EControlType.Instant) rowNum++;
+                    if (_controlType == EActiveSkillControlType.Instant) rowNum++;
 
                     rowNum += 3;
                 }

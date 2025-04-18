@@ -42,6 +42,6 @@ MonoBehaviour:
   _maxMana: 100
   _startMana: 0
   _manaRecoveryPerSec: 25
-  _skillTreeGraph: {fileID: 11400000, guid: ca706e233ac782f4d8225868d92fef80, type: 2}
+  _skillTreeGraph: {fileID: 11400000, guid: 3f5919f2736bcec4f994e58d719c0215, type: 2}
   _casterFX: {fileID: 0}
   _targetFX: {fileID: 0}

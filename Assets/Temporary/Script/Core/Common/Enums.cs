@@ -118,11 +118,12 @@ namespace Temporary.Core
         Grid,
     }
 
+    #region 액티브 스킬
     /// <summary>
-    /// 액티브 스킬 타입
+    /// 액티브 스킬 타겟팅 방식
     /// <para>※ 타겟팅은 적이 있어야만 스킬 발동이 가능합니다.</para>
     /// </summary>
-    public enum EActiveSkillType
+    public enum EActiveSkillTargetingType
     {
         /// <summary>
         /// 스킬을 발동하는 유닛의 위치를 기준으로 "유닛"에게 스킬 발동
@@ -139,13 +140,35 @@ namespace Temporary.Core
     }
 
     /// <summary>
-    /// 조작 방식
+    /// 액티브 스킬 조작 방식
     /// </summary>
-    public enum EControlType
+    public enum EActiveSkillControlType
     {
         Instant,
         Mouse,
     }
+
+    /// <summary>
+    /// 액티브 스킬 발동 방식
+    /// </summary>
+    public enum EActiveSkillTriggerType
+    {
+        Automatic,
+        Manual,
+        Spawn,
+        Death,
+    }
+
+    /// <summary>
+    /// 액티브 스킬 사용 시, 지불할 자원 타입
+    /// </summary>
+    public enum EActiveSkillPayType
+    {
+        None,
+        Health,
+        Mana,
+    }
+    #endregion
 
     public enum EGetTargetFilter
     {
