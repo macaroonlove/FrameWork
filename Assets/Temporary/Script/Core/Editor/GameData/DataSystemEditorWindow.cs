@@ -6,6 +6,7 @@ using System.Linq;
 using Temporary.Core;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 using XNodeEditor;
 
 namespace Temporary.Editor
@@ -13,9 +14,9 @@ namespace Temporary.Editor
     public class DataSystemEditorWindow : EditorWindow
     {
         private int selectedTab = 0;
-        private Texture2D emptyTexture2D;
-
         private Vector2 contentScrollPosition;
+        //private List<Texture2D> resizedTextures = new List<Texture2D>();
+        private Dictionary<string, List<Texture2D>> resizedTextures = new Dictionary<string, List<Texture2D>>();
 
         #region 유닛
         private int selectedUnitTitle = 0;
@@ -24,19 +25,19 @@ namespace Temporary.Editor
         private UnityEditor.Editor agentEditor;
         private int selectedAgentIndex = 0;
         private Vector2 agentScrollPosition;
-        private List<Tuple<AgentTemplate, Texture2D>> agentTemplates = new List<Tuple<AgentTemplate, Texture2D>>();
+        private List<AgentTemplate> agentTemplates = new List<AgentTemplate>();
         #endregion
         #region 소환수 유닛
         private UnityEditor.Editor summonEditor;
         private int selectedSummonIndex = 0;
         private Vector2 summonScrollPosition;
-        private List<Tuple<SummonTemplate, Texture2D>> summonTemplates = new List<Tuple<SummonTemplate, Texture2D>>();
+        private List<SummonTemplate> summonTemplates = new List<SummonTemplate>();
         #endregion
         #region 적군 유닛
         private UnityEditor.Editor enemyEditor;
         private int selectedEnemyIndex = 0;
         private Vector2 enemyScrollPosition;
-        private List<Tuple<EnemyTemplate, Texture2D>> enemyTemplates = new List<Tuple<EnemyTemplate, Texture2D>>();
+        private List<EnemyTemplate> enemyTemplates = new List<EnemyTemplate>();
         #endregion
         #endregion
 
@@ -52,13 +53,13 @@ namespace Temporary.Editor
         private UnityEditor.Editor abnormalStatusEditor;
         private int selectedAbnormalStatusIndex = 0;
         private Vector2 abnormalStatusScrollPosition;
-        private List<Tuple<AbnormalStatusTemplate, Texture2D>> abnormalStatusTemplates = new List<Tuple<AbnormalStatusTemplate, Texture2D>>();
+        private List<AbnormalStatusTemplate> abnormalStatusTemplates = new List<AbnormalStatusTemplate>();
         #endregion
-        #region 상태이상
+        #region 전역 상태
         private UnityEditor.Editor globalStatusEditor;
         private int selectedGlobalStatusIndex = 0;
         private Vector2 globalStatusScrollPosition;
-        private List<Tuple<GlobalStatusTemplate, Texture2D>> globalStatusTemplates = new List<Tuple<GlobalStatusTemplate, Texture2D>>();
+        private List<GlobalStatusTemplate> globalStatusTemplates = new List<GlobalStatusTemplate>();
         #endregion
         #endregion
 
@@ -68,13 +69,13 @@ namespace Temporary.Editor
         private UnityEditor.Editor activeSkillEditor;
         private int selectedActiveSkillIndex = 0;
         private Vector2 activeSkillScrollPosition;
-        private List<Tuple<ActiveSkillTemplate, Texture2D>> activeSkillTemplates = new List<Tuple<ActiveSkillTemplate, Texture2D>>();
+        private List<ActiveSkillTemplate> activeSkillTemplates = new List<ActiveSkillTemplate>();
         #endregion
         #region 패시브 스킬
         private UnityEditor.Editor passiveSkillEditor;
         private int selectedPassiveSkillIndex = 0;
         private Vector2 passiveSkillScrollPosition;
-        private List<Tuple<PassiveSkillTemplate, Texture2D>> passiveSkillTemplates = new List<Tuple<PassiveSkillTemplate, Texture2D>>();
+        private List<PassiveSkillTemplate> passiveSkillTemplates = new List<PassiveSkillTemplate>();
         #endregion
         #region 스킬 트리
         private int selectedSkillTreeIndex = 0;
@@ -89,13 +90,13 @@ namespace Temporary.Editor
         private UnityEditor.Editor activeItemEditor;
         private int selectedActiveItemIndex = 0;
         private Vector2 activeItemScrollPosition;
-        private List<Tuple<ActiveItemTemplate, Texture2D>> activeItemTemplates = new List<Tuple<ActiveItemTemplate, Texture2D>>();
+        private List<ActiveItemTemplate> activeItemTemplates = new List<ActiveItemTemplate>();
         #endregion
         #region 패시브 아이템
         private UnityEditor.Editor passiveItemEditor;
         private int selectedPassiveItemIndex = 0;
         private Vector2 passiveItemScrollPosition;
-        private List<Tuple<PassiveItemTemplate, Texture2D>> passiveItemTemplates = new List<Tuple<PassiveItemTemplate, Texture2D>>();
+        private List<PassiveItemTemplate> passiveItemTemplates = new List<PassiveItemTemplate>();
         #endregion
         #endregion
 
@@ -231,1006 +232,137 @@ namespace Temporary.Editor
             else DrawPassiveItemTab();
         }
 
-        #region 아군 유닛
+        #region 유닛
         private void DrawAgentTab()
         {
-            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
-            GUILayout.BeginVertical(GUILayout.Width(200));
-            if (GUILayout.Button("아군 유닛 불러오기 창"))
-            {
-                LoadAgentTemplateWindow();
-            }
-            if (GUILayout.Button("아군 유닛 추가"))
-            {
-                AddAgentTemplate();
-            }
-            if (GUILayout.Button("아군 유닛 삭제"))
-            {
-                DeleteSelectedAgentTemplate();
-            }
-            if (GUILayout.Button("아군 유닛 탐색"))
-            {
-                LoadAgentTemplates();
-            }
-
-            DrawLine();
-
-            agentScrollPosition = GUILayout.BeginScrollView(agentScrollPosition, false, true);
-
-            var agentCatalog = new GUIStyle(GUI.skin.button);
-            agentCatalog.alignment = TextAnchor.MiddleLeft;
-            agentCatalog.padding = new RectOffset(5, 5, 5, 5);
-            agentCatalog.margin = new RectOffset(5, 5, -2, -2);
-            agentCatalog.border = new RectOffset(0, 0, 0, 0);
-            agentCatalog.fixedWidth = GUI.skin.box.fixedWidth;
-            agentCatalog.fixedHeight = GUI.skin.box.fixedHeight;
-
-            for (int i = 0; i < agentTemplates.Count; i++)
-            {
-                bool isSelected = (selectedAgentIndex == i);
-
-                var text = "  " + agentTemplates[i].Item1.displayName;
-                text = text.Substring(0, Mathf.Min(text.Length, 13));
-                GUIContent content = new GUIContent(text, agentTemplates[i].Item2);
-
-                if (GUILayout.Toggle(isSelected, content, agentCatalog))
+            DrawTemplateTab<AgentTemplate>(
+                ref agentTemplates,
+                ref selectedAgentIndex,
+                ref agentScrollPosition,
+                ref agentEditor,
+                "아군",
+                "Assets/Temporary/GameData/Unit/Agent",
+                "Agent",
+                () =>
                 {
-                    if (selectedAgentIndex != i)
-                    {
-                        selectedAgentIndex = i;
-
-                        GUI.FocusControl(null);
-                    }
+                    var window = GetWindow<LoadAgentTemplateEditorWindow>();
+                    window.titleContent = new GUIContent("아군 유닛 불러오기");
+                    window.minSize = new Vector2(300, 100);
+                    window.maxSize = new Vector2(300, 100);
                 }
-            }
-            GUILayout.EndScrollView();
-            GUILayout.EndVertical();
-
-            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-
-            if (agentTemplates.Count > 0 && selectedAgentIndex < agentTemplates.Count)
-            {
-                AgentTemplate selectedAgent = agentTemplates[selectedAgentIndex].Item1;
-
-                if (agentEditor == null || agentEditor.target != selectedAgent)
-                {
-                    agentEditor = UnityEditor.Editor.CreateEditor(selectedAgent);
-                }
-
-                contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
-                agentEditor.OnInspectorGUI();
-                GUILayout.EndScrollView();
-            }
-
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
+            );
         }
 
-        private void LoadAgentTemplateWindow()
-        {
-            var window = GetWindow<LoadAgentTemplateEditorWindow>();
-            window.titleContent = new GUIContent("아군 유닛 불러오기");
-            window.minSize = new Vector2(300, 100);
-            window.maxSize = new Vector2(300, 100);
-        }
-
-        private void AddAgentTemplate()
-        {
-            // 아군 유닛 템플릿 생성
-            AgentTemplate newAgent = CreateInstance<AgentTemplate>();
-
-            // 에셋 저장
-            string defaultPath = "Assets/Temporary/GameData/Unit/Agent";
-            string path = EditorUtility.SaveFilePanelInProject("아군 유닛 추가", "Agent_", "asset", "", defaultPath);
-            if (!string.IsNullOrEmpty(path))
-            {
-                newAgent.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("Agent_", ""));
-
-                AssetDatabase.CreateAsset(newAgent, path);
-                AssetDatabase.SaveAssets();
-                LoadAgentTemplates();
-            }
-        }
-
-        private void DeleteSelectedAgentTemplate()
-        {
-            if (agentTemplates.Count > 0)
-            {
-                AgentTemplate selectedAgent = agentTemplates[selectedAgentIndex].Item1;
-                string assetPath = AssetDatabase.GetAssetPath(selectedAgent);
-                agentTemplates.RemoveAt(selectedAgentIndex);
-                AssetDatabase.DeleteAsset(assetPath);
-                AssetDatabase.SaveAssets();
-            }
-        }
-
-        private void LoadAgentTemplates()
-        {
-            if (emptyTexture2D == null) emptyTexture2D = CreateTexture(Color.gray);
-
-            agentTemplates.Clear();
-            string[] guids = AssetDatabase.FindAssets("t:AgentTemplate");
-            foreach (var guid in guids)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                AgentTemplate agent = AssetDatabase.LoadAssetAtPath<AgentTemplate>(path);
-
-                var texture = (agent.sprite == null) ? emptyTexture2D : agent.sprite.texture;
-                texture = texture.ResizeTexture(30, 30);
-
-                agentTemplates.Add(new Tuple<AgentTemplate, Texture2D>(agent, texture));
-            }
-
-            agentTemplates = agentTemplates.OrderBy(tuple => tuple.Item1.id).ToList();
-        }
-        #endregion
-
-        #region 소환수 유닛
         private void DrawSummonTab()
         {
-            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
-            GUILayout.BeginVertical(GUILayout.Width(200));
-            if (GUILayout.Button("소환수 유닛 불러오기 창"))
-            {
-                LoadSummonTemplateWindow();
-            }
-            if (GUILayout.Button("소환수 유닛 추가"))
-            {
-                AddSummonTemplate();
-            }
-            if (GUILayout.Button("소환수 유닛 삭제"))
-            {
-                DeleteSelectedSummonTemplate();
-            }
-            if (GUILayout.Button("소환수 유닛 탐색"))
-            {
-                LoadSummonTemplates();
-            }
-
-            DrawLine();
-
-            summonScrollPosition = GUILayout.BeginScrollView(summonScrollPosition, false, true);
-
-            var summonCatalog = new GUIStyle(GUI.skin.button);
-            summonCatalog.alignment = TextAnchor.MiddleLeft;
-            summonCatalog.padding = new RectOffset(5, 5, 5, 5);
-            summonCatalog.margin = new RectOffset(5, 5, -2, -2);
-            summonCatalog.border = new RectOffset(0, 0, 0, 0);
-            summonCatalog.fixedWidth = GUI.skin.box.fixedWidth;
-            summonCatalog.fixedHeight = GUI.skin.box.fixedHeight;
-
-            for (int i = 0; i < summonTemplates.Count; i++)
-            {
-                bool isSelected = (selectedSummonIndex == i);
-
-                var text = "  " + summonTemplates[i].Item1.displayName;
-                text = text.Substring(0, Mathf.Min(text.Length, 13));
-                GUIContent content = new GUIContent(text, summonTemplates[i].Item2);
-
-                if (GUILayout.Toggle(isSelected, content, summonCatalog))
+            DrawTemplateTab<SummonTemplate>(
+                ref summonTemplates,
+                ref selectedSummonIndex,
+                ref summonScrollPosition,
+                ref summonEditor,
+                "소환수",
+                "Assets/Temporary/GameData/Unit/Summon",
+                "Summon",
+                () =>
                 {
-                    if (selectedSummonIndex != i)
-                    {
-                        selectedSummonIndex = i;
-
-                        GUI.FocusControl(null);
-                    }
+                    var window = GetWindow<LoadSummonTemplateEditorWindow>();
+                    window.titleContent = new GUIContent("소환수 유닛 불러오기");
+                    window.minSize = new Vector2(300, 100);
+                    window.maxSize = new Vector2(300, 100);
                 }
-            }
-            GUILayout.EndScrollView();
-            GUILayout.EndVertical();
-
-            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-
-            if (summonTemplates.Count > 0 && selectedSummonIndex < summonTemplates.Count)
-            {
-                SummonTemplate selectedSummon = summonTemplates[selectedSummonIndex].Item1;
-
-                if (summonEditor == null || summonEditor.target != selectedSummon)
-                {
-                    summonEditor = UnityEditor.Editor.CreateEditor(selectedSummon);
-                }
-
-                contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
-                summonEditor.OnInspectorGUI();
-                GUILayout.EndScrollView();
-            }
-
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
+            );
         }
 
-        private void LoadSummonTemplateWindow()
-        {
-            var window = GetWindow<LoadSummonTemplateEditorWindow>();
-            window.titleContent = new GUIContent("소환수 유닛 불러오기");
-            window.minSize = new Vector2(300, 100);
-            window.maxSize = new Vector2(300, 100);
-        }
-
-        private void AddSummonTemplate()
-        {
-            // 아군 유닛 템플릿 생성
-            SummonTemplate newSummon = CreateInstance<SummonTemplate>();
-
-            // 에셋 저장
-            string defaultPath = "Assets/Temporary/GameData/Unit/Summon";
-            string path = EditorUtility.SaveFilePanelInProject("소환수 유닛 추가", "Summon_", "asset", "", defaultPath);
-            if (!string.IsNullOrEmpty(path))
-            {
-                newSummon.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("Summon_", ""));
-
-                AssetDatabase.CreateAsset(newSummon, path);
-                AssetDatabase.SaveAssets();
-                LoadSummonTemplates();
-            }
-        }
-
-        private void DeleteSelectedSummonTemplate()
-        {
-            if (summonTemplates.Count > 0)
-            {
-                SummonTemplate selectedSummon = summonTemplates[selectedSummonIndex].Item1;
-                string assetPath = AssetDatabase.GetAssetPath(selectedSummon);
-                summonTemplates.RemoveAt(selectedSummonIndex);
-                AssetDatabase.DeleteAsset(assetPath);
-                AssetDatabase.SaveAssets();
-            }
-        }
-
-        private void LoadSummonTemplates()
-        {
-            if (emptyTexture2D == null) emptyTexture2D = CreateTexture(Color.gray);
-
-            summonTemplates.Clear();
-            string[] guids = AssetDatabase.FindAssets("t:SummonTemplate");
-            foreach (var guid in guids)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                SummonTemplate summon = AssetDatabase.LoadAssetAtPath<SummonTemplate>(path);
-
-                var texture = (summon.sprite == null) ? emptyTexture2D : summon.sprite.texture;
-                texture = texture.ResizeTexture(30, 30);
-
-                summonTemplates.Add(new Tuple<SummonTemplate, Texture2D>(summon, texture));
-            }
-
-            summonTemplates = summonTemplates.OrderBy(tuple => tuple.Item1.id).ToList();
-        }
-        #endregion
-
-        #region 적 유닛
         private void DrawEnemyTab()
         {
-            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
-            GUILayout.BeginVertical(GUILayout.Width(200));
-            if (GUILayout.Button("적군 유닛 불러오기 창"))
-            {
-                LoadEnemyTemplateWindow();
-            }
-            if (GUILayout.Button("적 유닛 추가"))
-            {
-                AddEnemyTemplate();
-            }
-            if (GUILayout.Button("적 유닛 삭제"))
-            {
-                DeleteSelectedEnemyTemplate();
-            }
-            if (GUILayout.Button("적 유닛 탐색"))
-            {
-                LoadEnemyTemplates();
-            }
-
-            DrawLine();
-
-            agentScrollPosition = GUILayout.BeginScrollView(agentScrollPosition, false, true);
-
-            var enemyCatalog = new GUIStyle(GUI.skin.button);
-            enemyCatalog.alignment = TextAnchor.MiddleLeft;
-            enemyCatalog.padding = new RectOffset(5, 5, 5, 5);
-            enemyCatalog.margin = new RectOffset(5, 5, -2, -2);
-            enemyCatalog.border = new RectOffset(0, 0, 0, 0);
-            enemyCatalog.fixedWidth = GUI.skin.box.fixedWidth;
-            enemyCatalog.fixedHeight = GUI.skin.box.fixedHeight;
-
-            for (int i = 0; i < enemyTemplates.Count; i++)
-            {
-                bool isSelected = (selectedEnemyIndex == i);
-
-                var text = "  " + enemyTemplates[i].Item1.displayName;
-                text = text.Substring(0, Mathf.Min(text.Length, 13));
-                GUIContent content = new GUIContent(text, enemyTemplates[i].Item2);
-
-                if (GUILayout.Toggle(isSelected, content, enemyCatalog))
+            DrawTemplateTab<EnemyTemplate>(
+                ref enemyTemplates,
+                ref selectedEnemyIndex,
+                ref enemyScrollPosition,
+                ref enemyEditor,
+                "적",
+                "Assets/Temporary/GameData/Unit/Enemy",
+                "Enemy",
+                () =>
                 {
-                    if (selectedEnemyIndex != i)
-                    {
-                        selectedEnemyIndex = i;
-
-                        GUI.FocusControl(null);
-                    }
+                    var window = GetWindow<LoadEnemyTemplateEditorWindow>();
+                    window.titleContent = new GUIContent("적 유닛 불러오기");
+                    window.minSize = new Vector2(300, 100);
+                    window.maxSize = new Vector2(300, 100);
                 }
-            }
-            GUILayout.EndScrollView();
-            GUILayout.EndVertical();
-
-            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-
-            if (enemyTemplates.Count > 0 && selectedEnemyIndex < enemyTemplates.Count)
-            {
-                EnemyTemplate selectedEnemy = enemyTemplates[selectedEnemyIndex].Item1;
-
-                if (enemyEditor == null || enemyEditor.target != selectedEnemy)
-                {
-                    enemyEditor = UnityEditor.Editor.CreateEditor(selectedEnemy);
-                }
-
-                contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
-                enemyEditor.OnInspectorGUI();
-                GUILayout.EndScrollView();
-            }
-
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
-        }
-
-        private void LoadEnemyTemplateWindow()
-        {
-            var window = GetWindow<LoadEnemyTemplateEditorWindow>();
-            window.titleContent = new GUIContent("적군 유닛 불러오기");
-            window.minSize = new Vector2(300, 100);
-            window.maxSize = new Vector2(300, 100);
-        }
-
-        private void AddEnemyTemplate()
-        {
-            // 적 유닛 템플릿 생성
-            EnemyTemplate newEnemy = CreateInstance<EnemyTemplate>();
-
-            // 에셋 저장
-            string defaultPath = "Assets/Temporary/GameData/Unit/Enemy";
-            string path = EditorUtility.SaveFilePanelInProject("적군 유닛 추가", "Enemy_", "asset", "", defaultPath);
-            if (!string.IsNullOrEmpty(path))
-            {
-                newEnemy.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("Enemy_", ""));
-
-                AssetDatabase.CreateAsset(newEnemy, path);
-                AssetDatabase.SaveAssets();
-                LoadEnemyTemplates();
-            }
-        }
-
-        private void DeleteSelectedEnemyTemplate()
-        {
-            if (enemyTemplates.Count > 0)
-            {
-                EnemyTemplate selectedEnemy = enemyTemplates[selectedEnemyIndex].Item1;
-                string assetPath = AssetDatabase.GetAssetPath(selectedEnemy);
-                enemyTemplates.RemoveAt(selectedEnemyIndex);
-                AssetDatabase.DeleteAsset(assetPath);
-                AssetDatabase.SaveAssets();
-            }
-        }
-
-        private void LoadEnemyTemplates()
-        {
-            if (emptyTexture2D == null) emptyTexture2D = CreateTexture(Color.gray);
-
-            enemyTemplates.Clear();
-            string[] guids = AssetDatabase.FindAssets("t:EnemyTemplate");
-            foreach (var guid in guids)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                EnemyTemplate enemy = AssetDatabase.LoadAssetAtPath<EnemyTemplate>(path);
-
-                var texture = (enemy.sprite == null) ? emptyTexture2D : enemy.sprite.texture;
-                texture = texture.ResizeTexture(30, 30);
-
-                enemyTemplates.Add(new Tuple<EnemyTemplate, Texture2D>(enemy, texture));
-            }
-
-            enemyTemplates = enemyTemplates.OrderBy(tuple => tuple.Item1.id).ToList();
+            );
         }
         #endregion
 
-        #region 버프
+        #region 상태
         private void DrawBuffTab()
         {
-            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
-            GUILayout.BeginVertical(GUILayout.Width(200));
-            if (GUILayout.Button("버프 추가"))
-            {
-                AddBuffTemplate();
-            }
-            if (GUILayout.Button("버프 삭제"))
-            {
-                DeleteSelectedBuffTemplate();
-            }
-            if (GUILayout.Button("버프 탐색"))
-            {
-                LoadBuffTemplates();
-            }
-
-            DrawLine();
-
-            buffScrollPosition = GUILayout.BeginScrollView(buffScrollPosition, false, true);
-
-            var buffCatalog = new GUIStyle(GUI.skin.button);
-            buffCatalog.alignment = TextAnchor.MiddleLeft;
-            buffCatalog.padding = new RectOffset(5, 5, 5, 5);
-            buffCatalog.margin = new RectOffset(5, 5, -2, -2);
-            buffCatalog.border = new RectOffset(0, 0, 0, 0);
-            buffCatalog.fixedWidth = GUI.skin.box.fixedWidth;
-            buffCatalog.fixedHeight = GUI.skin.box.fixedHeight;
-
-            for (int i = 0; i < buffTemplates.Count; i++)
-            {
-                bool isSelected = (selectedBuffIndex == i);
-
-                var text = "  " + buffTemplates[i].displayName;
-                text = text.Substring(0, Mathf.Min(text.Length, 13));
-
-                if (GUILayout.Toggle(isSelected, text, buffCatalog))
-                {
-                    if (selectedBuffIndex != i)
-                    {
-                        selectedBuffIndex = i;
-
-                        GUI.FocusControl(null);
-                    }
-                }
-            }
-            GUILayout.EndScrollView();
-            GUILayout.EndVertical();
-
-            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-
-            if (buffTemplates.Count > 0 && selectedBuffIndex < buffTemplates.Count)
-            {
-                BuffTemplate selectedbuff = buffTemplates[selectedBuffIndex];
-
-                if (buffEditor == null || buffEditor.target != selectedbuff)
-                {
-                    buffEditor = UnityEditor.Editor.CreateEditor(selectedbuff);
-                }
-                contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
-                buffEditor.OnInspectorGUI();
-                GUILayout.EndScrollView();
-            }
-
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
+            DrawTemplateTab<BuffTemplate>(
+                ref buffTemplates,
+                ref selectedBuffIndex,
+                ref buffScrollPosition,
+                ref buffEditor,
+                "버프",
+                "Assets/Temporary/GameData/Status/BuffStatus",
+                "BuffStatus"
+            );
         }
 
-        private void AddBuffTemplate()
-        {
-            // 버프 템플릿 생성
-            BuffTemplate newBuff = CreateInstance<BuffTemplate>();
-
-            // 에셋 저장
-            string defaultPath = "Assets/Temporary/GameData/Status/BuffStatus";
-            string path = EditorUtility.SaveFilePanelInProject("버프 추가", "BuffStatus_", "asset", "", defaultPath);
-            if (!string.IsNullOrEmpty(path))
-            {
-                newBuff.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("BuffStatus_", ""));
-
-                AssetDatabase.CreateAsset(newBuff, path);
-                AssetDatabase.SaveAssets();
-                LoadBuffTemplates();
-            }
-        }
-
-        private void DeleteSelectedBuffTemplate()
-        {
-            if (buffTemplates.Count > 0)
-            {
-                BuffTemplate selectedBuff = buffTemplates[selectedBuffIndex];
-                string assetPath = AssetDatabase.GetAssetPath(selectedBuff);
-                buffTemplates.RemoveAt(selectedBuffIndex);
-                AssetDatabase.DeleteAsset(assetPath);
-                AssetDatabase.SaveAssets();
-            }
-        }
-
-        private void LoadBuffTemplates()
-        {
-            buffTemplates.Clear();
-            string[] guids = AssetDatabase.FindAssets("t:BuffTemplate");
-            foreach (var guid in guids)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                BuffTemplate buff = AssetDatabase.LoadAssetAtPath<BuffTemplate>(path);
-
-                buffTemplates.Add(buff);
-            }
-        }
-        #endregion
-
-        #region 상태이상
         private void DrawAbnormalStatusTab()
         {
-            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
-            GUILayout.BeginVertical(GUILayout.Width(200));
-            if (GUILayout.Button("상태이상 추가"))
-            {
-                AddAbnormalStatusTemplate();
-            }
-            if (GUILayout.Button("상태이상 삭제"))
-            {
-                DeleteSelectedAbnormalStatusTemplate();
-            }
-            if (GUILayout.Button("상태이상 탐색"))
-            {
-                LoadAbnormalStatusTemplates();
-            }
-
-            DrawLine();
-
-            abnormalStatusScrollPosition = GUILayout.BeginScrollView(abnormalStatusScrollPosition, false, true);
-
-            var abnormalStatusCatalog = new GUIStyle(GUI.skin.button);
-            abnormalStatusCatalog.alignment = TextAnchor.MiddleLeft;
-            abnormalStatusCatalog.padding = new RectOffset(5, 5, 5, 5);
-            abnormalStatusCatalog.margin = new RectOffset(5, 5, -2, -2);
-            abnormalStatusCatalog.border = new RectOffset(0, 0, 0, 0);
-            abnormalStatusCatalog.fixedWidth = GUI.skin.box.fixedWidth;
-            abnormalStatusCatalog.fixedHeight = GUI.skin.box.fixedHeight;
-
-            for (int i = 0; i < abnormalStatusTemplates.Count; i++)
-            {
-                bool isSelected = (selectedAbnormalStatusIndex == i);
-
-                var text = "  " + abnormalStatusTemplates[i].Item1.displayName;
-                text = text.Substring(0, Mathf.Min(text.Length, 13));
-                GUIContent content = new GUIContent(text, abnormalStatusTemplates[i].Item2);
-
-                if (GUILayout.Toggle(isSelected, content, abnormalStatusCatalog))
-                {
-                    if (selectedAbnormalStatusIndex != i)
-                    {
-                        selectedAbnormalStatusIndex = i;
-
-                        GUI.FocusControl(null);
-                    }
-                }
-            }
-            GUILayout.EndScrollView();
-            GUILayout.EndVertical();
-
-            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-
-            if (abnormalStatusTemplates.Count > 0 && selectedAbnormalStatusIndex < abnormalStatusTemplates.Count)
-            {
-                AbnormalStatusTemplate selectedabnormalStatus = abnormalStatusTemplates[selectedAbnormalStatusIndex].Item1;
-
-                if (abnormalStatusEditor == null || abnormalStatusEditor.target != selectedabnormalStatus)
-                {
-                    abnormalStatusEditor = UnityEditor.Editor.CreateEditor(selectedabnormalStatus);
-                }
-
-                contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
-                abnormalStatusEditor.OnInspectorGUI();
-                GUILayout.EndScrollView();
-            }
-
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
+            DrawTemplateTab<AbnormalStatusTemplate>(
+                ref abnormalStatusTemplates,
+                ref selectedAbnormalStatusIndex,
+                ref abnormalStatusScrollPosition,
+                ref abnormalStatusEditor,
+                "상태이상",
+                "Assets/Temporary/GameData/Status/AbnormalStatus",
+                "AbnormalStatus"
+            );
         }
 
-        private void AddAbnormalStatusTemplate()
-        {
-            // 상태이상 템플릿 생성
-            AbnormalStatusTemplate newAbnormalStatus = CreateInstance<AbnormalStatusTemplate>();
-
-            // 에셋 저장
-            string defaultPath = "Assets/Temporary/GameData/Status/AbnormalStatus";
-            string path = EditorUtility.SaveFilePanelInProject("상태이상 추가", "AbnormalStatus_", "asset", "", defaultPath);
-            if (!string.IsNullOrEmpty(path))
-            {
-                newAbnormalStatus.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("AbnormalStatus_", ""));
-
-                AssetDatabase.CreateAsset(newAbnormalStatus, path);
-                AssetDatabase.SaveAssets();
-                LoadAbnormalStatusTemplates();
-            }
-        }
-
-        private void DeleteSelectedAbnormalStatusTemplate()
-        {
-            if (abnormalStatusTemplates.Count > 0)
-            {
-                AbnormalStatusTemplate selectedAbnormalStatus = abnormalStatusTemplates[selectedAbnormalStatusIndex].Item1;
-                string assetPath = AssetDatabase.GetAssetPath(selectedAbnormalStatus);
-                abnormalStatusTemplates.RemoveAt(selectedAbnormalStatusIndex);
-                AssetDatabase.DeleteAsset(assetPath);
-                AssetDatabase.SaveAssets();
-            }
-        }
-
-        private void LoadAbnormalStatusTemplates()
-        {
-            if (emptyTexture2D == null) emptyTexture2D = CreateTexture(Color.gray);
-
-            abnormalStatusTemplates.Clear();
-            string[] guids = AssetDatabase.FindAssets("t:AbnormalStatusTemplate");
-            foreach (var guid in guids)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                AbnormalStatusTemplate abnormalStatus = AssetDatabase.LoadAssetAtPath<AbnormalStatusTemplate>(path);
-
-                var texture = (abnormalStatus.sprite == null) ? emptyTexture2D : abnormalStatus.sprite.texture;
-                texture = texture.ResizeTexture(30, 30);
-
-                abnormalStatusTemplates.Add(new Tuple<AbnormalStatusTemplate, Texture2D>(abnormalStatus, texture));
-            }
-        }
-        #endregion
-
-        #region 전역 상태
         private void DrawGlobalStatusTab()
         {
-            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
-            GUILayout.BeginVertical(GUILayout.Width(200));
-            if (GUILayout.Button("전역 상태 추가"))
-            {
-                AddGlobalStatusTemplate();
-            }
-            if (GUILayout.Button("전역 상태 삭제"))
-            {
-                DeleteSelectedGlobalStatusTemplate();
-            }
-            if (GUILayout.Button("전역 상태 탐색"))
-            {
-                LoadGlobalStatusTemplates();
-            }
-
-            DrawLine();
-
-            globalStatusScrollPosition = GUILayout.BeginScrollView(globalStatusScrollPosition, false, true);
-
-            var abnormalStatusCatalog = new GUIStyle(GUI.skin.button);
-            abnormalStatusCatalog.alignment = TextAnchor.MiddleLeft;
-            abnormalStatusCatalog.padding = new RectOffset(5, 5, 5, 5);
-            abnormalStatusCatalog.margin = new RectOffset(5, 5, -2, -2);
-            abnormalStatusCatalog.border = new RectOffset(0, 0, 0, 0);
-            abnormalStatusCatalog.fixedWidth = GUI.skin.box.fixedWidth;
-            abnormalStatusCatalog.fixedHeight = GUI.skin.box.fixedHeight;
-
-            for (int i = 0; i < globalStatusTemplates.Count; i++)
-            {
-                bool isSelected = (selectedGlobalStatusIndex == i);
-
-                var text = "  " + globalStatusTemplates[i].Item1.displayName;
-                text = text.Substring(0, Mathf.Min(text.Length, 13));
-                GUIContent content = new GUIContent(text, globalStatusTemplates[i].Item2);
-
-                if (GUILayout.Toggle(isSelected, content, abnormalStatusCatalog))
-                {
-                    if (selectedGlobalStatusIndex != i)
-                    {
-                        selectedGlobalStatusIndex = i;
-
-                        GUI.FocusControl(null);
-                    }
-                }
-            }
-            GUILayout.EndScrollView();
-            GUILayout.EndVertical();
-
-            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-
-            if (globalStatusTemplates.Count > 0 && selectedGlobalStatusIndex < globalStatusTemplates.Count)
-            {
-                GlobalStatusTemplate selectedGlobalStatus = globalStatusTemplates[selectedGlobalStatusIndex].Item1;
-
-                if (globalStatusEditor == null || globalStatusEditor.target != selectedGlobalStatus)
-                {
-                    globalStatusEditor = UnityEditor.Editor.CreateEditor(selectedGlobalStatus);
-                }
-
-                contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
-                globalStatusEditor.OnInspectorGUI();
-                GUILayout.EndScrollView();
-            }
-
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
-        }
-
-        private void AddGlobalStatusTemplate()
-        {
-            // 상태이상 템플릿 생성
-            GlobalStatusTemplate newGlobalStatus = CreateInstance<GlobalStatusTemplate>();
-
-            // 에셋 저장
-            string defaultPath = "Assets/Temporary/GameData/Status/GlobalStatus";
-            string path = EditorUtility.SaveFilePanelInProject("전역 상태 추가", "GlobalStatus_", "asset", "", defaultPath);
-            if (!string.IsNullOrEmpty(path))
-            {
-                newGlobalStatus.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("GlobalStatus_", ""));
-
-                AssetDatabase.CreateAsset(newGlobalStatus, path);
-                AssetDatabase.SaveAssets();
-                LoadGlobalStatusTemplates();
-            }
-        }
-
-        private void DeleteSelectedGlobalStatusTemplate()
-        {
-            if (globalStatusTemplates.Count > 0)
-            {
-                GlobalStatusTemplate selectedGlobalStatus = globalStatusTemplates[selectedGlobalStatusIndex].Item1;
-                string assetPath = AssetDatabase.GetAssetPath(selectedGlobalStatus);
-                globalStatusTemplates.RemoveAt(selectedGlobalStatusIndex);
-                AssetDatabase.DeleteAsset(assetPath);
-                AssetDatabase.SaveAssets();
-            }
-        }
-
-        private void LoadGlobalStatusTemplates()
-        {
-            if (emptyTexture2D == null) emptyTexture2D = CreateTexture(Color.gray);
-
-            globalStatusTemplates.Clear();
-            string[] guids = AssetDatabase.FindAssets("t:GlobalStatusTemplate");
-            foreach (var guid in guids)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                GlobalStatusTemplate globalStatus = AssetDatabase.LoadAssetAtPath<GlobalStatusTemplate>(path);
-
-                var texture = (globalStatus.sprite == null) ? emptyTexture2D : globalStatus.sprite.texture;
-                texture = texture.ResizeTexture(30, 30);
-
-                globalStatusTemplates.Add(new Tuple<GlobalStatusTemplate, Texture2D>(globalStatus, texture));
-            }
+            DrawTemplateTab<GlobalStatusTemplate>(
+                ref globalStatusTemplates,
+                ref selectedGlobalStatusIndex,
+                ref globalStatusScrollPosition,
+                ref globalStatusEditor,
+                "전역 상태",
+                "Assets/Temporary/GameData/Status/GlobalStatus",
+                "GlobalStatus"
+            );
         }
         #endregion
 
-        #region 액티브 스킬
+        #region 스킬
         private void DrawActiveSkillTab()
         {
-            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
-            GUILayout.BeginVertical(GUILayout.Width(200));
-            if (GUILayout.Button("스킬 추가"))
-            {
-                AddActiveSkillTemplate();
-            }
-            if (GUILayout.Button("스킬 삭제"))
-            {
-                DeleteSelectedActiveSkillTemplate();
-            }
-            if (GUILayout.Button("스킬 탐색"))
-            {
-                LoadActiveSkillTemplates();
-            }
-
-            DrawLine();
-
-            activeSkillScrollPosition = GUILayout.BeginScrollView(activeSkillScrollPosition, false, true);
-
-            var skillCatalog = new GUIStyle(GUI.skin.button);
-            skillCatalog.alignment = TextAnchor.MiddleLeft;
-            skillCatalog.padding = new RectOffset(5, 5, 5, 5);
-            skillCatalog.margin = new RectOffset(5, 5, -2, -2);
-            skillCatalog.border = new RectOffset(0, 0, 0, 0);
-            skillCatalog.fixedWidth = GUI.skin.box.fixedWidth;
-            skillCatalog.fixedHeight = GUI.skin.box.fixedHeight;
-
-            for (int i = 0; i < activeSkillTemplates.Count; i++)
-            {
-                bool isSelected = (selectedActiveSkillIndex == i);
-
-                var text = "  " + activeSkillTemplates[i].Item1.displayName;
-                text = text.Substring(0, Mathf.Min(text.Length, 13));
-                GUIContent content = new GUIContent(text, activeSkillTemplates[i].Item2);
-
-                if (GUILayout.Toggle(isSelected, content, skillCatalog))
-                {
-                    if (selectedActiveSkillIndex != i)
-                    {
-                        selectedActiveSkillIndex = i;
-
-                        GUI.FocusControl(null);
-                    }
-                }
-            }
-            GUILayout.EndScrollView();
-            GUILayout.EndVertical();
-
-            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-
-            if (activeSkillTemplates.Count > 0 && selectedActiveSkillIndex < activeSkillTemplates.Count)
-            {
-                ActiveSkillTemplate selectedSkill = activeSkillTemplates[selectedActiveSkillIndex].Item1;
-
-                if (activeSkillEditor == null || activeSkillEditor.target != selectedSkill)
-                {
-                    activeSkillEditor = UnityEditor.Editor.CreateEditor(selectedSkill);
-                }
-
-                contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
-                activeSkillEditor.OnInspectorGUI();
-                GUILayout.EndScrollView();
-            }
-
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
+            DrawTemplateTab<ActiveSkillTemplate>(
+                ref activeSkillTemplates,
+                ref selectedActiveSkillIndex,
+                ref activeSkillScrollPosition,
+                ref activeSkillEditor,
+                "액티브 스킬",
+                "Assets/Temporary/GameData/Skill/ActiveSkill",
+                "ActiveSkill"
+            );
         }
 
-        private void AddActiveSkillTemplate()
-        {
-            // 스킬 템플릿 생성
-            ActiveSkillTemplate newSkill = CreateInstance<ActiveSkillTemplate>();
-
-            // 에셋 저장
-            string defaultPath = "Assets/Temporary/GameData/Skill/ActiveSkill";
-            string path = EditorUtility.SaveFilePanelInProject("액티브 스킬 추가", "ActiveSkill_", "asset", "", defaultPath);
-            if (!string.IsNullOrEmpty(path))
-            {
-                newSkill.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("ActiveSkill_", ""));
-
-                AssetDatabase.CreateAsset(newSkill, path);
-                AssetDatabase.SaveAssets();
-                LoadActiveSkillTemplates();
-            }
-        }
-
-        private void DeleteSelectedActiveSkillTemplate()
-        {
-            if (activeSkillTemplates.Count > 0)
-            {
-                ActiveSkillTemplate selectedSkill = activeSkillTemplates[selectedActiveSkillIndex].Item1;
-                string assetPath = AssetDatabase.GetAssetPath(selectedSkill);
-                activeSkillTemplates.RemoveAt(selectedActiveSkillIndex);
-                AssetDatabase.DeleteAsset(assetPath);
-                AssetDatabase.SaveAssets();
-            }
-        }
-
-        private void LoadActiveSkillTemplates()
-        {
-            if (emptyTexture2D == null) emptyTexture2D = CreateTexture(Color.gray);
-
-            activeSkillTemplates.Clear();
-            string[] guids = AssetDatabase.FindAssets("t:ActiveSkillTemplate");
-            foreach (var guid in guids)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                ActiveSkillTemplate skill = AssetDatabase.LoadAssetAtPath<ActiveSkillTemplate>(path);
-
-                var texture = (skill.sprite == null) ? emptyTexture2D : skill.sprite.texture;
-                texture = texture.ResizeTexture(30, 30);
-
-                activeSkillTemplates.Add(new Tuple<ActiveSkillTemplate, Texture2D>(skill, texture));
-            }
-
-            activeSkillTemplates = activeSkillTemplates.OrderBy(tuple => tuple.Item1.id).ToList();
-        }
-        #endregion
-
-        #region 패시브 스킬
         private void DrawPassiveSkillTab()
         {
-            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
-            GUILayout.BeginVertical(GUILayout.Width(200));
-            if (GUILayout.Button("스킬 추가"))
-            {
-                AddPassiveSkillTemplate();
-            }
-            if (GUILayout.Button("스킬 삭제"))
-            {
-                DeleteSelectedPassiveSkillTemplate();
-            }
-            if (GUILayout.Button("스킬 탐색"))
-            {
-                LoadPassiveSkillTemplates();
-            }
-
-            DrawLine();
-
-            passiveSkillScrollPosition = GUILayout.BeginScrollView(passiveSkillScrollPosition, false, true);
-
-            var skillCatalog = new GUIStyle(GUI.skin.button);
-            skillCatalog.alignment = TextAnchor.MiddleLeft;
-            skillCatalog.padding = new RectOffset(5, 5, 5, 5);
-            skillCatalog.margin = new RectOffset(5, 5, -2, -2);
-            skillCatalog.border = new RectOffset(0, 0, 0, 0);
-            skillCatalog.fixedWidth = GUI.skin.box.fixedWidth;
-            skillCatalog.fixedHeight = GUI.skin.box.fixedHeight;
-
-            for (int i = 0; i < passiveSkillTemplates.Count; i++)
-            {
-                bool isSelected = (selectedPassiveSkillIndex == i);
-
-                var text = "  " + passiveSkillTemplates[i].Item1.displayName;
-                text = text.Substring(0, Mathf.Min(text.Length, 13));
-                GUIContent content = new GUIContent(text, passiveSkillTemplates[i].Item2);
-
-                if (GUILayout.Toggle(isSelected, content, skillCatalog))
-                {
-                    if (selectedPassiveSkillIndex != i)
-                    {
-                        selectedPassiveSkillIndex = i;
-
-                        GUI.FocusControl(null);
-                    }
-                }
-            }
-            GUILayout.EndScrollView();
-            GUILayout.EndVertical();
-
-            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-
-            if (passiveSkillTemplates.Count > 0 && selectedPassiveSkillIndex < passiveSkillTemplates.Count)
-            {
-                PassiveSkillTemplate selectedSkill = passiveSkillTemplates[selectedPassiveSkillIndex].Item1;
-
-                if (passiveSkillEditor == null || passiveSkillEditor.target != selectedSkill)
-                {
-                    passiveSkillEditor = UnityEditor.Editor.CreateEditor(selectedSkill);
-                }
-
-                contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
-                passiveSkillEditor.OnInspectorGUI();
-                GUILayout.EndScrollView();
-            }
-
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
+            DrawTemplateTab<PassiveSkillTemplate>(
+                ref passiveSkillTemplates,
+                ref selectedPassiveSkillIndex,
+                ref passiveSkillScrollPosition,
+                ref passiveSkillEditor,
+                "패시브 스킬",
+                "Assets/Temporary/GameData/Skill/PassiveSkill",
+                "PassiveSkill"
+            );
         }
 
-        private void AddPassiveSkillTemplate()
-        {
-            // 스킬 템플릿 생성
-            PassiveSkillTemplate newSkill = CreateInstance<PassiveSkillTemplate>();
-
-            // 에셋 저장
-            string defaultPath = "Assets/Temporary/GameData/Skill/PassiveSkill";
-            string path = EditorUtility.SaveFilePanelInProject("패시브 스킬 추가", "PassiveSkill_", "asset", "", defaultPath);
-            if (!string.IsNullOrEmpty(path))
-            {
-                newSkill.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("PassiveSkill_", ""));
-
-                AssetDatabase.CreateAsset(newSkill, path);
-                AssetDatabase.SaveAssets();
-                LoadPassiveSkillTemplates();
-            }
-        }
-
-        private void DeleteSelectedPassiveSkillTemplate()
-        {
-            if (passiveSkillTemplates.Count > 0)
-            {
-                PassiveSkillTemplate selectedSkill = passiveSkillTemplates[selectedPassiveSkillIndex].Item1;
-                string assetPath = AssetDatabase.GetAssetPath(selectedSkill);
-                passiveSkillTemplates.RemoveAt(selectedPassiveSkillIndex);
-                AssetDatabase.DeleteAsset(assetPath);
-                AssetDatabase.SaveAssets();
-            }
-        }
-
-        private void LoadPassiveSkillTemplates()
-        {
-            if (emptyTexture2D == null) emptyTexture2D = CreateTexture(Color.gray);
-
-            passiveSkillTemplates.Clear();
-            string[] guids = AssetDatabase.FindAssets("t:PassiveSkillTemplate");
-            foreach (var guid in guids)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                PassiveSkillTemplate skill = AssetDatabase.LoadAssetAtPath<PassiveSkillTemplate>(path);
-
-                var texture = (skill.sprite == null) ? emptyTexture2D : skill.sprite.texture;
-                texture = texture.ResizeTexture(30, 30);
-
-                passiveSkillTemplates.Add(new Tuple<PassiveSkillTemplate, Texture2D>(skill, texture));
-            }
-
-            passiveSkillTemplates = passiveSkillTemplates.OrderBy(tuple => tuple.Item1.id).ToList();
-        }
-        #endregion
-
-        #region 스킬트리
+        #region 스킬 트리
         private void DrawSkillTreeTab()
         {
             GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
@@ -1307,6 +439,8 @@ namespace Temporary.Editor
 
         private void DeleteSelectedSkillTreeTemplate()
         {
+            if (!EditorUtility.DisplayDialog("경고!", "이 템플릿을 삭제하시겠습니까?", "네", "아니요")) return;
+
             if (skillTreeTemplates.Count > 0)
             {
                 SkillTreeGraph selectedSkill = skillTreeTemplates[selectedSkillTreeIndex];
@@ -1330,173 +464,91 @@ namespace Temporary.Editor
             }
         }
         #endregion
+        #endregion
 
-        #region 액티브 아이템
+        #region 아이템
         private void DrawActiveItemTab()
         {
-            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
-            GUILayout.BeginVertical(GUILayout.Width(200));
-            if (GUILayout.Button("아이템 추가"))
-            {
-                AddActiveItemTemplate();
-            }
-            if (GUILayout.Button("아이템 삭제"))
-            {
-                DeleteSelectedActiveItemTemplate();
-            }
-            if (GUILayout.Button("아이템 탐색"))
-            {
-                LoadActiveItemTemplates();
-            }
-
-            DrawLine();
-
-            activeItemScrollPosition = GUILayout.BeginScrollView(activeItemScrollPosition, false, true);
-
-            var skillCatalog = new GUIStyle(GUI.skin.button);
-            skillCatalog.alignment = TextAnchor.MiddleLeft;
-            skillCatalog.padding = new RectOffset(5, 5, 5, 5);
-            skillCatalog.margin = new RectOffset(5, 5, -2, -2);
-            skillCatalog.border = new RectOffset(0, 0, 0, 0);
-            skillCatalog.fixedWidth = GUI.skin.box.fixedWidth;
-            skillCatalog.fixedHeight = GUI.skin.box.fixedHeight;
-
-            for (int i = 0; i < activeItemTemplates.Count; i++)
-            {
-                bool isSelected = (selectedActiveSkillIndex == i);
-
-                var text = "  " + activeItemTemplates[i].Item1.displayName;
-                text = text.Substring(0, Mathf.Min(text.Length, 13));
-                GUIContent content = new GUIContent(text, activeItemTemplates[i].Item2);
-
-                if (GUILayout.Toggle(isSelected, content, skillCatalog))
-                {
-                    if (selectedActiveItemIndex != i)
-                    {
-                        selectedActiveItemIndex = i;
-
-                        GUI.FocusControl(null);
-                    }
-                }
-            }
-            GUILayout.EndScrollView();
-            GUILayout.EndVertical();
-
-            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-
-            if (activeItemTemplates.Count > 0 && selectedActiveItemIndex < activeItemTemplates.Count)
-            {
-                ActiveItemTemplate selectedItem = activeItemTemplates[selectedActiveItemIndex].Item1;
-
-                if (activeItemEditor == null || activeItemEditor.target != selectedItem)
-                {
-                    activeItemEditor = UnityEditor.Editor.CreateEditor(selectedItem);
-                }
-
-                contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
-                activeItemEditor.OnInspectorGUI();
-                GUILayout.EndScrollView();
-            }
-
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
+            DrawTemplateTab<ActiveItemTemplate>(
+                ref activeItemTemplates,
+                ref selectedActiveItemIndex,
+                ref activeItemScrollPosition,
+                ref activeItemEditor,
+                "아이템",
+                "Assets/Temporary/GameData/Item/ActiveItem",
+                "ActiveItem"
+            );
         }
 
-        private void AddActiveItemTemplate()
-        {
-            // 아이템 템플릿 생성
-            ActiveItemTemplate newItem = CreateInstance<ActiveItemTemplate>();
-
-            // 에셋 저장
-            string defaultPath = "Assets/Temporary/GameData/Item/ActiveItem";
-            string path = EditorUtility.SaveFilePanelInProject("액티브 아이템 추가", "ActiveItem_", "asset", "", defaultPath);
-            if (!string.IsNullOrEmpty(path))
-            {
-                newItem.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("ActiveItem_", ""));
-
-                AssetDatabase.CreateAsset(newItem, path);
-                AssetDatabase.SaveAssets();
-                LoadActiveItemTemplates();
-            }
-        }
-
-        private void DeleteSelectedActiveItemTemplate()
-        {
-            if (activeItemTemplates.Count > 0)
-            {
-                ActiveItemTemplate selectedItem = activeItemTemplates[selectedActiveItemIndex].Item1;
-                string assetPath = AssetDatabase.GetAssetPath(selectedItem);
-                activeItemTemplates.RemoveAt(selectedActiveItemIndex);
-                AssetDatabase.DeleteAsset(assetPath);
-                AssetDatabase.SaveAssets();
-            }
-        }
-
-        private void LoadActiveItemTemplates()
-        {
-            if (emptyTexture2D == null) emptyTexture2D = CreateTexture(Color.gray);
-
-            activeItemTemplates.Clear();
-            string[] guids = AssetDatabase.FindAssets("t:ActiveItemTemplate");
-            foreach (var guid in guids)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                ActiveItemTemplate item = AssetDatabase.LoadAssetAtPath<ActiveItemTemplate>(path);
-
-                var texture = (item.sprite == null) ? emptyTexture2D : item.sprite.texture;
-                texture = texture.ResizeTexture(30, 30);
-
-                activeItemTemplates.Add(new Tuple<ActiveItemTemplate, Texture2D>(item, texture));
-            }
-
-            activeItemTemplates = activeItemTemplates.OrderBy(tuple => tuple.Item1.id).ToList();
-        }
-        #endregion
-
-        #region 패시브 스킬
         private void DrawPassiveItemTab()
         {
+            DrawTemplateTab<PassiveItemTemplate>(
+                ref passiveItemTemplates,
+                ref selectedPassiveItemIndex,
+                ref passiveItemScrollPosition,
+                ref passiveItemEditor,
+                "아이템",
+                "Assets/Temporary/GameData/Item/PassiveItem",
+                "PassiveItem"
+            );
+        }
+        #endregion
+
+        #region 템플릿 관리
+        private void DrawTemplateTab<T>(ref List<T> templates, ref int selectedIndex, ref Vector2 scrollPosition, ref UnityEditor.Editor editor, string titleText, string defaultPath, string assetPrefix, UnityAction action = null) where T : ScriptableObject, IDataWindowEntry
+        {
             GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
             GUILayout.BeginVertical(GUILayout.Width(200));
-            if (GUILayout.Button("아이템 추가"))
+
+            if (action != null && GUILayout.Button($"{titleText} 불러오기 창"))
             {
-                AddPassiveItemTemplate();
+                action?.Invoke();
             }
-            if (GUILayout.Button("아이템 삭제"))
+            if (GUILayout.Button($"{titleText} 추가"))
             {
-                DeleteSelectedPassiveItemTemplate();
+                AddTemplate(defaultPath, assetPrefix, ref templates);
             }
-            if (GUILayout.Button("아이템 탐색"))
+            if (GUILayout.Button($"{titleText} 삭제"))
             {
-                LoadPassiveItemTemplates();
+                DeleteTemplate(ref templates, ref selectedIndex);
+            }
+            if (GUILayout.Button($"{titleText} 탐색"))
+            {
+                LoadTemplates(ref templates, assetPrefix);
             }
 
             DrawLine();
 
-            passiveItemScrollPosition = GUILayout.BeginScrollView(passiveItemScrollPosition, false, true);
+            scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, true);
 
-            var skillCatalog = new GUIStyle(GUI.skin.button);
-            skillCatalog.alignment = TextAnchor.MiddleLeft;
-            skillCatalog.padding = new RectOffset(5, 5, 5, 5);
-            skillCatalog.margin = new RectOffset(5, 5, -2, -2);
-            skillCatalog.border = new RectOffset(0, 0, 0, 0);
-            skillCatalog.fixedWidth = GUI.skin.box.fixedWidth;
-            skillCatalog.fixedHeight = GUI.skin.box.fixedHeight;
-
-            for (int i = 0; i < passiveItemTemplates.Count; i++)
+            var catalogStyle = new GUIStyle(GUI.skin.button)
             {
-                bool isSelected = (selectedPassiveItemIndex == i);
+                alignment = TextAnchor.MiddleLeft,
+                padding = new RectOffset(5, 5, 5, 5),
+                margin = new RectOffset(5, 5, -2, -2),
+                border = new RectOffset(0, 0, 0, 0),
+                fixedWidth = GUI.skin.box.fixedWidth,
+                fixedHeight = 40
+            };
 
-                var text = "  " + passiveItemTemplates[i].Item1.displayName;
-                text = text.Substring(0, Mathf.Min(text.Length, 13));
-                GUIContent content = new GUIContent(text, passiveItemTemplates[i].Item2);
+            for (int i = 0; i < templates.Count; i++)
+            {
+                bool isSelected = (selectedIndex == i);
 
-                if (GUILayout.Toggle(isSelected, content, skillCatalog))
+                if (!resizedTextures.ContainsKey(assetPrefix)) LoadTexture(templates, assetPrefix);
+
+                bool isNullTexture = resizedTextures[assetPrefix][i] == null;
+                var displayName = templates[i].displayName;
+                int maxLength = isNullTexture ? 18 : 13;
+                string text = "  " + displayName.Substring(0, Mathf.Min(displayName.Length, maxLength));
+
+                GUIContent content = isNullTexture ? new GUIContent(text) : new GUIContent(text, resizedTextures[assetPrefix][i]);
+
+                if (GUILayout.Toggle(isSelected, content, catalogStyle))
                 {
-                    if (selectedPassiveItemIndex != i)
+                    if (selectedIndex != i)
                     {
-                        selectedPassiveItemIndex = i;
-
+                        selectedIndex = i;
                         GUI.FocusControl(null);
                     }
                 }
@@ -1506,17 +558,17 @@ namespace Temporary.Editor
 
             GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
 
-            if (passiveItemTemplates.Count > 0 && selectedPassiveItemIndex < passiveItemTemplates.Count)
+            if (templates.Count > 0 && selectedIndex < templates.Count)
             {
-                PassiveItemTemplate selectedItem = passiveItemTemplates[selectedPassiveItemIndex].Item1;
+                T selectedTemplate = templates[selectedIndex];
 
-                if (passiveItemEditor == null || passiveItemEditor.target != selectedItem)
+                if (editor == null || editor.target != selectedTemplate)
                 {
-                    passiveItemEditor = UnityEditor.Editor.CreateEditor(selectedItem);
+                    editor = UnityEditor.Editor.CreateEditor(selectedTemplate);
                 }
 
                 contentScrollPosition = GUILayout.BeginScrollView(contentScrollPosition, false, false);
-                passiveItemEditor.OnInspectorGUI();
+                editor.OnInspectorGUI();
                 GUILayout.EndScrollView();
             }
 
@@ -1524,72 +576,69 @@ namespace Temporary.Editor
             GUILayout.EndHorizontal();
         }
 
-        private void AddPassiveItemTemplate()
+        private void AddTemplate<T>(string defaultPath, string assetPrefix, ref List<T> templates) where T : ScriptableObject, IDataWindowEntry
         {
-            // 아이템 템플릿 생성
-            PassiveItemTemplate newItem = CreateInstance<PassiveItemTemplate>();
+            T newTemplate = CreateInstance<T>();
 
-            // 에셋 저장
-            string defaultPath = "Assets/Temporary/GameData/Item/PassiveItem";
-            string path = EditorUtility.SaveFilePanelInProject("패시브 아이템 추가", "PassiveItem_", "asset", "", defaultPath);
+            string path = EditorUtility.SaveFilePanelInProject($"{assetPrefix} 추가", $"{assetPrefix}_", "asset", "", defaultPath);
             if (!string.IsNullOrEmpty(path))
             {
-                newItem.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace("PassiveItem_", ""));
+                newTemplate.SetDisplayName(Path.GetFileNameWithoutExtension(path).Replace($"{assetPrefix}_", ""));
 
-                AssetDatabase.CreateAsset(newItem, path);
+                AssetDatabase.CreateAsset(newTemplate, path);
                 AssetDatabase.SaveAssets();
-                LoadPassiveItemTemplates();
+                LoadTemplates<T>(ref templates, assetPrefix);
             }
         }
 
-        private void DeleteSelectedPassiveItemTemplate()
+        private void DeleteTemplate<T>(ref List<T> templates, ref int selectedIndex) where T : ScriptableObject
         {
-            if (passiveItemTemplates.Count > 0)
+            if (!EditorUtility.DisplayDialog("경고!", "이 템플릿을 삭제하시겠습니까?", "네", "아니요")) return;
+
+            if (templates.Count > 0)
             {
-                PassiveItemTemplate selectedItem = passiveItemTemplates[selectedPassiveItemIndex].Item1;
-                string assetPath = AssetDatabase.GetAssetPath(selectedItem);
-                passiveItemTemplates.RemoveAt(selectedPassiveItemIndex);
+                T selectedTemplate = templates[selectedIndex];
+                string assetPath = AssetDatabase.GetAssetPath(selectedTemplate);
+                templates.RemoveAt(selectedIndex);
                 AssetDatabase.DeleteAsset(assetPath);
                 AssetDatabase.SaveAssets();
+                selectedIndex = Mathf.Clamp(selectedIndex - 1, 0, templates.Count - 1);
             }
         }
 
-        private void LoadPassiveItemTemplates()
+        private void LoadTemplates<T>(ref List<T> templates, string assetPrefix) where T : ScriptableObject, IDataWindowEntry
         {
-            if (emptyTexture2D == null) emptyTexture2D = CreateTexture(Color.gray);
-
-            passiveItemTemplates.Clear();
-            string[] guids = AssetDatabase.FindAssets("t:PassiveItemTemplate");
+            templates.Clear();
+            string[] guids = AssetDatabase.FindAssets($"t:{typeof(T).Name}");
             foreach (var guid in guids)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
-                PassiveItemTemplate item = AssetDatabase.LoadAssetAtPath<PassiveItemTemplate>(path);
+                T template = AssetDatabase.LoadAssetAtPath<T>(path);
+                templates.Add(template);
+            }
+            templates = templates.OrderBy(t => ((IDataWindowEntry)t).id).ToList();
 
-                var texture = (item.sprite == null) ? emptyTexture2D : item.sprite.texture;
-                texture = texture.ResizeTexture(30, 30);
+            LoadTexture(templates, assetPrefix);
+        }
 
-                passiveItemTemplates.Add(new Tuple<PassiveItemTemplate, Texture2D>(item, texture));
+        private void LoadTexture<T>(List<T> templates, string assetPrefix) where T : ScriptableObject, IDataWindowEntry
+        {
+            List<Texture2D> textures = new List<Texture2D>(templates.Count);
+            for (int i = 0; i < templates.Count; i++)
+            {
+                var sprite = templates[i].sprite;
+                textures.Add(sprite != null ? sprite.texture.ResizeTexture(30, 30) : null);
             }
 
-            passiveItemTemplates = passiveItemTemplates.OrderBy(tuple => tuple.Item1.id).ToList();
+            resizedTextures[assetPrefix] = textures;
         }
-        #endregion
 
-        #region 유틸리티
         private void DrawLine()
         {
             GUILayout.Space(5);
             Rect rect = GUILayoutUtility.GetRect(0, 1);
             EditorGUI.DrawRect(rect, Color.gray);
             GUILayout.Space(5);
-        }
-
-        Texture2D CreateTexture(Color color)
-        {
-            Texture2D texture = new Texture2D(64, 64);
-            texture.SetPixel(0, 0, color);
-            texture.Apply();
-            return texture;
         }
         #endregion
     }

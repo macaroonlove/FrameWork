@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Temporary.Core
 {
     [CreateAssetMenu(menuName = "Templates/Status/AbnormalStatus", fileName = "AbnormalStatus", order = 1)]
-    public class AbnormalStatusTemplate : ScriptableObject
+    public class AbnormalStatusTemplate : ScriptableObject, IDataWindowEntry
     {
         [HideInInspector, SerializeField] private Sprite _sprite;
 
@@ -25,6 +25,7 @@ namespace Temporary.Core
 
         #region 프로퍼티
         public Sprite sprite => _sprite;
+        public int id => 0;
         public string displayName => _displayName;
         public string description => _description;
 

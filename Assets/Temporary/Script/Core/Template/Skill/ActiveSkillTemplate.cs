@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Temporary.Core
 {
     [CreateAssetMenu(menuName = "Templates/Skill/Active Skill", fileName = "ActiveSkill", order = 0)]
-    public class ActiveSkillTemplate : ScriptableObject
+    public class ActiveSkillTemplate : ScriptableObject, IDataWindowEntry
     {
         [HideInInspector, SerializeField] private Sprite _sprite;
 

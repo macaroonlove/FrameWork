@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Temporary.Core
 {
     [CreateAssetMenu(menuName = "Templates/Skill/Passive Skill", fileName = "PassiveSkill", order = 1)]
-    public class PassiveSkillTemplate : ScriptableObject
+    public class PassiveSkillTemplate : ScriptableObject, IDataWindowEntry
     {
         [HideInInspector, SerializeField] private Sprite _sprite;
 

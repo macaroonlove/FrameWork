@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Temporary.Core
 {
     [CreateAssetMenu(menuName = "Templates/Item/Passive Item", fileName = "PassiveItem", order = 1)]
-    public class PassiveItemTemplate : ScriptableObject
+    public class PassiveItemTemplate : ScriptableObject, IDataWindowEntry
     {
         [HideInInspector, SerializeField] private Sprite _sprite;
 

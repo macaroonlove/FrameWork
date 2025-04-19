@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Temporary.Core
 {
     [CreateAssetMenu(menuName = "Templates/Unit/Enemy", fileName = "Enemy_", order = 1)]
-    public class EnemyTemplate : ScriptableObject
+    public class EnemyTemplate : ScriptableObject, IDataWindowEntry
     {
         [HideInInspector, SerializeField] private int _id;
         [HideInInspector, SerializeField] private RarityTemplate _rarity;
@@ -99,7 +99,7 @@ namespace Temporary.Core
         internal void SetId(int id) => _id = id;
         internal void SetRarity(RarityTemplate rarity) => _rarity = rarity;
         internal void SetJob(JobTemplate job) => _job = job;
-        internal void SetDisplayName(string name) => _displayName = name;
+        public void SetDisplayName(string name) => _displayName = name;
 
         internal void SetMoveType(EMoveType moveType) => _moveType = moveType;
         internal void SetMoveSpeed(float speed) => _moveSpeed = speed;

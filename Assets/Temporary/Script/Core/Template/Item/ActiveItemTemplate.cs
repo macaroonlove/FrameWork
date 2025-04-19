@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Temporary.Core
 {
     [CreateAssetMenu(menuName = "Templates/Item/Active Item", fileName = "ActiveItem", order = 0)]
-    public class ActiveItemTemplate : ScriptableObject
+    public class ActiveItemTemplate : ScriptableObject, IDataWindowEntry
     {
         [HideInInspector, SerializeField] private Sprite _sprite;
 

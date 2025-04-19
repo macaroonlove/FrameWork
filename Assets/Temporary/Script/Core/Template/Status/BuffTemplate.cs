@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Temporary.Core
 {
     [CreateAssetMenu(menuName = "Templates/Status/Buff", fileName = "Buff", order = 0)]
-    public class BuffTemplate : ScriptableObject
+    public class BuffTemplate : ScriptableObject, IDataWindowEntry
     {
         [HideInInspector, SerializeField] private string _displayName;
         [HideInInspector, SerializeField] private string _description;
@@ -21,6 +21,8 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private FX _removeFX;
 
         #region 프로퍼티
+        public int id => 0;
+        public Sprite sprite => null;
         public string displayName => _displayName;
         public string description => _description;
 
