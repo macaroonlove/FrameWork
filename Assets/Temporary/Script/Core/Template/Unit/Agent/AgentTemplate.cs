@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Temporary.Core
@@ -9,9 +10,6 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private RarityTemplate _rarity;
         [HideInInspector, SerializeField] private JobTemplate _job;
         [HideInInspector, SerializeField] private string _displayName;
-
-        [HideInInspector, SerializeField] private Sprite _sprite;
-        [HideInInspector, SerializeField] private GameObject _prefab;
 
         [HideInInspector, SerializeField] private EMoveType _moveType;
         [HideInInspector, SerializeField] private float _moveSpeed;
@@ -49,14 +47,17 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private FX _casterFX;
         [HideInInspector, SerializeField] private FX _targetFX;
 
+        [HideInInspector]
+        public List<SkinTemplate> skins = new List<SkinTemplate>();
+
         #region 프로퍼티
         public int id => _id;
         public RarityTemplate rarity => _rarity;
         public JobTemplate job => _job;
         public string displayName => _displayName;
 
-        public Sprite sprite => _sprite;
-        public GameObject prefab => _prefab;
+        public Sprite sprite => (skins.Count == 0) ? null : skins[0]?.sprite_face;
+        public GameObject prefab => null;// skins[0].prefab;
 
         public EMoveType MoveType => _moveType;
         public float MoveSpeed => _moveSpeed;
@@ -134,19 +135,23 @@ namespace Temporary.Core
 #if UNITY_EDITOR
 namespace Temporary.Editor
 {
+    using System.IO;
     using Temporary.Core;
     using UnityEditor;
+    using UnityEditor.AddressableAssets;
+    using UnityEditor.AddressableAssets.Settings;
+    using UnityEditorInternal;
+    using UnityEngine.AddressableAssets;
 
     [CustomEditor(typeof(AgentTemplate)), CanEditMultipleObjects]
     public class AgentTemplateEditor : Editor
     {
+        private AgentTemplate _target;
+
         private SerializedProperty _id;
         private SerializedProperty _rarity;
         private SerializedProperty _job;
         private SerializedProperty _displayName;
-
-        private SerializedProperty _sprite;
-        private SerializedProperty _prefab;
 
         private SerializedProperty _moveType;
         private SerializedProperty _moveSpeed;
@@ -184,14 +189,18 @@ namespace Temporary.Editor
         private SerializedProperty _casterFX;
         private SerializedProperty _targetFX;
 
+        private ReorderableList _skinList;
+        private SkinTemplate _currentSkin;
+        private bool _showSkinList = true;
+
         private void OnEnable()
         {
+            _target = target as AgentTemplate;
+
             _id = serializedObject.FindProperty("_id");
             _rarity = serializedObject.FindProperty("_rarity");
             _job = serializedObject.FindProperty("_job");
             _displayName = serializedObject.FindProperty("_displayName");
-            _sprite = serializedObject.FindProperty("_sprite");
-            _prefab = serializedObject.FindProperty("_prefab");
 
             _moveType = serializedObject.FindProperty("_moveType");
             _moveSpeed = serializedObject.FindProperty("_moveSpeed");
@@ -228,6 +237,8 @@ namespace Temporary.Editor
 
             _casterFX = serializedObject.FindProperty("_casterFX");
             _targetFX = serializedObject.FindProperty("_targetFX");
+
+            CreateSkinList();
         }
 
         public override void OnInspectorGUI()
@@ -235,59 +246,62 @@ namespace Temporary.Editor
             serializedObject.Update();
 
             GUILayout.BeginHorizontal();
-
-            _sprite.objectReferenceValue = EditorGUILayout.ObjectField(_sprite.objectReferenceValue, typeof(Sprite), false, GUILayout.Width(108), GUILayout.Height(108));
-
-            EditorGUILayout.BeginVertical();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("식별번호", GUILayout.Width(80));
+            GUILayout.Label("식별번호", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_id, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("등급", GUILayout.Width(80));
+            GUILayout.Label("등급", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_rarity, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("직군", GUILayout.Width(80));
+            GUILayout.Label("직군", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_job, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("유닛 이름", GUILayout.Width(80));
+            GUILayout.Label("유닛 이름", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_displayName, GUIContent.none);
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("프리팹", GUILayout.Width(80));
-            EditorGUILayout.PropertyField(_prefab, GUIContent.none);
-            GUILayout.EndHorizontal();
-
-            GUILayout.EndVertical();
-
             GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("이동 방식", GUILayout.Width(192));
+            GUILayout.Label("스킨", GUILayout.Width(140));
+            _showSkinList = EditorGUILayout.Foldout(_showSkinList, "Skins", true);
+            GUILayout.EndHorizontal();
+
+
+            if (_showSkinList)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("", GUILayout.Width(140));
+                EditorGUI.indentLevel++;
+                _skinList?.DoLayoutList();
+                EditorGUI.indentLevel--;
+                GUILayout.EndHorizontal();
+            }
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("이동 방식", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_moveType, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("이동 속도", GUILayout.Width(192));
+            GUILayout.Label("이동 속도", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_moveSpeed, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("추적 거리", GUILayout.Width(192));
+            GUILayout.Label("추적 거리", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_chaseRange, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("추적 실패 거리", GUILayout.Width(192));
+            GUILayout.Label("추적 실패 거리", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_chaseFailRange, GUIContent.none);
             GUILayout.EndHorizontal();
 
@@ -296,46 +310,46 @@ namespace Temporary.Editor
             GUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("공격 방식", GUILayout.Width(192));
+            GUILayout.Label("공격 방식", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_attackType, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("데미지 타입", GUILayout.Width(192));
+            GUILayout.Label("데미지 타입", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_damageType, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("공격력", GUILayout.Width(192));
+            GUILayout.Label("공격력", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_atk, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("공격 간격", GUILayout.Width(192));
+            GUILayout.Label("공격 간격", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_attackTerm, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("공격 사거리", GUILayout.Width(192));
+            GUILayout.Label("공격 사거리", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_attackRange, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("투사체 사용 여부", GUILayout.Width(192));
+            GUILayout.Label("투사체 사용 여부", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_isProjectileAttack, GUIContent.none);
             GUILayout.EndHorizontal();
 
             if (_isProjectileAttack.boolValue)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("투사체 프리팹", GUILayout.Width(192));
+                GUILayout.Label("투사체 프리팹", GUILayout.Width(140));
                 EditorGUILayout.PropertyField(_projectilePrefab, GUIContent.none);
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("스폰 위치", GUILayout.Width(192));
+                GUILayout.Label("스폰 위치", GUILayout.Width(140));
                 EditorGUILayout.PropertyField(_spawnPoint, GUIContent.none);
                 GUILayout.EndHorizontal();
             }
@@ -343,77 +357,77 @@ namespace Temporary.Editor
             GUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("물리 관통력", GUILayout.Width(192));
+            GUILayout.Label("물리 관통력", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_physicalPenetration, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("마법 관통력", GUILayout.Width(192));
+            GUILayout.Label("마법 관통력", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_magicPenetration, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("치명타 확률", GUILayout.Width(192));
+            GUILayout.Label("치명타 확률", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_criticalHitChance, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("치명타 데미지", GUILayout.Width(192));
+            GUILayout.Label("치명타 데미지", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_criticalHitDamage, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("최대 체력", GUILayout.Width(192));
+            GUILayout.Label("최대 체력", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_maxHP, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("방어력", GUILayout.Width(192));
+            GUILayout.Label("방어력", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_physicalResistance, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("마법저항력", GUILayout.Width(192));
+            GUILayout.Label("마법저항력", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_magicResistance, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("초당 체력 회복량", GUILayout.Width(192));
+            GUILayout.Label("초당 체력 회복량", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_hpRecoveryPerSec, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("마나 회복 방식", GUILayout.Width(192));
+            GUILayout.Label("마나 회복 방식", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_manaRecoveryType, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("최대 마나", GUILayout.Width(192));
+            GUILayout.Label("최대 마나", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_maxMana, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("시작 마나", GUILayout.Width(192));
+            GUILayout.Label("시작 마나", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_startMana, GUIContent.none);
             GUILayout.EndHorizontal();
 
             if (_manaRecoveryType.enumValueIndex != (int)EManaRecoveryType.None)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("초당 마나 회복량", GUILayout.Width(192));
+                GUILayout.Label("초당 마나 회복량", GUILayout.Width(140));
                 EditorGUILayout.PropertyField(_manaRecoveryPerSec, GUIContent.none);
                 GUILayout.EndHorizontal();
             }
             else if (_manaRecoveryType.enumValueIndex == (int)EManaRecoveryType.Attack || _manaRecoveryType.enumValueIndex == (int)EManaRecoveryType.Hit)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("마나 회복량", GUILayout.Width(192));
+                GUILayout.Label("마나 회복량", GUILayout.Width(140));
                 EditorGUILayout.PropertyField(_manaRecoveryPerSec, GUIContent.none);
                 GUILayout.EndHorizontal();
             }
@@ -421,24 +435,171 @@ namespace Temporary.Editor
             GUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("스킬 트리", GUILayout.Width(192));
+            GUILayout.Label("스킬 트리", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_skillTreeGraph, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("공격 시, 시전자 FX", GUILayout.Width(192));
+            GUILayout.Label("공격 시, 시전자 FX", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_casterFX, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("공격 시, 대상자 FX", GUILayout.Width(192));
+            GUILayout.Label("공격 시, 대상자 FX", GUILayout.Width(140));
             EditorGUILayout.PropertyField(_targetFX, GUIContent.none);
             GUILayout.EndHorizontal();
 
             serializedObject.ApplyModifiedProperties();
         }
+
+        #region SkinList
+        private void CreateSkinList()
+        {
+            _skinList = new ReorderableList(_target.skins, typeof(SkinTemplate), true, true, true, true)
+            {
+                headerHeight = 0,
+                drawElementCallback = (rect, index, isActive, isFocused) =>
+                {
+                    var element = _target.skins[index];
+
+                    rect.y += 5;
+                    rect.width -= 10;
+                    rect.height = EditorGUIUtility.singleLineHeight;
+                    _target.skins[index] = (SkinTemplate)EditorGUI.ObjectField(rect, _target.skins[index], typeof(SkinTemplate), false);
+
+                    if (element != null)
+                    {
+                        rect.y += 20;
+                        element.Draw(rect);
+
+                        if (GUI.changed)
+                        {
+                            EditorUtility.SetDirty(element);
+                        }
+                    }
+                },
+                onSelectCallback = (list) =>
+                {
+                    if (list.index >= 0 && list.index < _target.skins.Count)
+                    {
+                        _currentSkin = _target.skins[list.index];
+                    }
+                },
+                onAddDropdownCallback = (buttonRect, list) =>
+                {
+                    CreateSkin();
+                },
+                onRemoveCallback = (list) =>
+                {
+                    if (!EditorUtility.DisplayDialog("경고!", "이 스킨을 삭제하시겠습니까?", "네", "아니요")) return;
+
+                    if (list.index >= 0 && list.index < _target.skins.Count)
+                    {
+                        var skin = _target.skins[list.index];
+                        DeleteSkin(skin);
+                        _currentSkin = null;
+                        ReorderableList.defaultBehaviours.DoRemoveButton(list);
+                    }
+                },
+                elementHeightCallback = (index) =>
+                {
+                    var element = _target.skins[index];
+                    if (element == null) return 30;
+
+                    return 190;
+                }
+            };
+        }
+
+        private void CreateSkin()
+        {
+            SkinTemplate skin = CreateInstance<SkinTemplate>();
+            SkinLobbyTemplate skinLobby = CreateInstance<SkinLobbyTemplate>();
+            SkinBattleTemplate skinBattle = CreateInstance<SkinBattleTemplate>();
+
+            var displayName = _displayName.stringValue;
+            var defaultPath = $"Assets/Temporary/GameData/Unit/Agent/Skin/{displayName}";
+            var defaultFileName = $"Skin_{displayName}_";
+
+            if (!AssetDatabase.IsValidFolder(defaultPath))
+            {
+                Directory.CreateDirectory(defaultPath);
+                AssetDatabase.Refresh();
+            }
+
+            string path = EditorUtility.SaveFilePanelInProject($"스킨 추가", defaultFileName, "asset", "", defaultPath);
+
+            if (!string.IsNullOrEmpty(path))
+            {
+                var fileName = Path.GetFileNameWithoutExtension(path);
+                skin.displayName = fileName.Replace(defaultFileName, "");
+                _target.skins.Add(skin);
+
+                AssetDatabase.CreateAsset(skin, path);
+                AssetDatabase.CreateAsset(skinLobby, Path.Combine(defaultPath, $"{fileName}_Lobby.asset"));
+                AssetDatabase.CreateAsset(skinBattle, Path.Combine(defaultPath, $"{fileName}_Battle.asset"));
+
+                #region 어드레서블 등록
+                var settings = AddressableAssetSettingsDefaultObject.Settings;
+                var group = settings.FindGroup("Default Local Group");
+
+                void SetAddressable(Object asset, string address, out AssetReference reference)
+                {
+                    string path = AssetDatabase.GetAssetPath(asset);
+                    string guid = AssetDatabase.AssetPathToGUID(path);
+                    var entry = settings.CreateOrMoveEntry(guid, group);
+                    entry.address = address;
+                    reference = new AssetReference(guid);
+                };
+
+                SetAddressable(skinLobby, $"{fileName}_Lobby", out skin.lobbyResource);
+                SetAddressable(skinBattle, $"{fileName}_Battle", out skin.battleResource);
+                EditorUtility.SetDirty(settings);
+                EditorUtility.SetDirty(skin);
+                #endregion
+
+                EditorUtility.SetDirty(_target);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
+        }
+
+        private void DeleteSkin(SkinTemplate skin)
+        {
+            if (skin == null) return;
+
+            #region 어드레서블
+            void DeleteAsset(AssetReference reference)
+            {
+                if (reference == null || string.IsNullOrEmpty(reference.AssetGUID)) return;
+
+                string assetPath = AssetDatabase.GUIDToAssetPath(reference.AssetGUID);
+                if (!string.IsNullOrEmpty(assetPath))
+                {
+                    AssetDatabase.DeleteAsset(assetPath);
+                }
+            }
+
+
+            DeleteAsset(skin.lobbyResource);
+            DeleteAsset(skin.battleResource);
+            #endregion
+
+            string skinPath = AssetDatabase.GetAssetPath(skin);
+            if (!string.IsNullOrEmpty(skinPath))
+            {
+                AssetDatabase.DeleteAsset(skinPath);
+            }
+
+            DestroyImmediate(skin, true);
+            EditorUtility.SetDirty(_target);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        #endregion
     }
 }
 #endif

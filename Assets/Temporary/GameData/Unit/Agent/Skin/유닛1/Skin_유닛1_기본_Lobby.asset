@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a48cd38ff0e4584e96c26a2bd393c39, type: 3}
+  m_Name: "Skin_\uC720\uB2DB1_\uAE30\uBCF8_Lobby"
+  m_EditorClassIdentifier: 
+  sprite_FullBody: {fileID: 0}
+  voice_OnInfo: {fileID: 0}
+  voice_OnGet: {fileID: 0}
+  voice_OnTalk1: {fileID: 0}
+  voice_OnTalk2: {fileID: 0}
+  voice_OnTalk3: {fileID: 0}
