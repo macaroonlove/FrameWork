@@ -9,7 +9,7 @@ namespace Temporary.Core
         [SerializeField] private AgentTemplate _agentTemplate2;
         [SerializeField] private EnemyTemplate _enemyTemplate;
 
-        private void Start()
+        private async void Start()
         {
             var damage = GetComponentInChildren<DamageTestCanvas>();
             var health = GetComponentInChildren<HealthTestCanvas>();
@@ -17,6 +17,12 @@ namespace Temporary.Core
             var abnormalStatus = GetComponentInChildren<AbnormalStatusTestCanvas>();
             var activeSkill = GetComponentInChildren<ActiveSkillTestCanvas>();
             var skillTreeTestCanvas = GetComponentInChildren<SkillTreeTestCanvas>();
+
+            await _agentTemplate.LoadSkinBattleTemplate();
+            await _agentTemplate2.LoadSkinBattleTemplate();
+
+            //Debug.Log(_agentTemplate.skins[0].lobbyTemplate);
+            //Debug.Log(_agentTemplate.skins[0].battleTemplate);
 
             BattleManager.Instance.InitializeBattle();
             BattleManager.Instance.GetSubSystem<AgentCreateSystem>().CreateUnit(_agentTemplate, Vector3.zero);
@@ -34,6 +40,12 @@ namespace Temporary.Core
                 activeSkill?.Initialize(unit);
                 skillTreeTestCanvas?.Initialize(unit);
             };
+        }
+
+        private void OnDestroy()
+        {
+            _agentTemplate.ReleaseSkinBattleTemplate();
+            _agentTemplate2.ReleaseSkinBattleTemplate();
         }
     }
 }

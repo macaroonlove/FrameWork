@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cef68eb525becc8458ebedd6bdf47435, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 0
-  displayName: 
-  description: 
-  sprite_face: {fileID: 0}
+  _id: 0
+  _displayName: 
+  _description: 
+  _faceSprite: {fileID: 0}
   lobbyResource:
     m_AssetGUID: 
     m_SubObjectName: 
@@ -38,10 +38,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cef68eb525becc8458ebedd6bdf47435, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 0
-  displayName: 
-  description: 
-  sprite_face: {fileID: 0}
+  _id: 0
+  _displayName: 
+  _description: 
+  _faceSprite: {fileID: 0}
   lobbyResource:
     m_AssetGUID: 
     m_SubObjectName: 
@@ -64,10 +64,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cef68eb525becc8458ebedd6bdf47435, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 0
-  displayName: 
-  description: 
-  sprite_face: {fileID: 0}
+  _id: 0
+  _displayName: 
+  _description: 
+  _faceSprite: {fileID: 0}
   lobbyResource:
     m_AssetGUID: 
     m_SubObjectName: 
@@ -119,8 +119,6 @@ MonoBehaviour:
   _startMana: 0
   _manaRecoveryPerSec: 25
   _skillTreeGraph: {fileID: 11400000, guid: 3f5919f2736bcec4f994e58d719c0215, type: 2}
-  _casterFX: {fileID: 0}
-  _targetFX: {fileID: 0}
   skins:
   - {fileID: 11400000, guid: 0f96f44164e378b4dad959d48423701a, type: 2}
-  - {fileID: 11400000, guid: c5e11b0c822313e409689cb7398d2cba, type: 2}
+  - {fileID: 11400000, guid: a422476c9427cd940ae7edff8ccfe650, type: 2}

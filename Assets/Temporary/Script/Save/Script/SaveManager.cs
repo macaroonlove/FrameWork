@@ -1,10 +1,10 @@
+using Cysharp.Threading.Tasks;
 using FrameWork;
 using FrameWork.GameSettings;
 using FrameWork.PlayFabExtensions;
 using PlayFab;
 using PlayFab.ClientModels;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Temporary.Save
@@ -25,33 +25,18 @@ namespace Temporary.Save
         }
 
         #region Profile Data
-        public async Task<bool> Load_ProfileData()
+        public async UniTask<bool> Load_ProfileData()
         {
-            bool isSuccess = false;
+            bool isSuccess;
 
-            var tcs = new TaskCompletionSource<bool>();
-
-            PlayFabClientAPI.GetUserData(new GetUserDataRequest
+            if (PlayFabAuthService.IsLoginState)
             {
-                PlayFabId = PlayFabAuthService.PlayFabId,
-                Keys = new List<string> { "ProfileData" }
-            }, result =>
+                isSuccess = await LoadPlayFab(profileData, "ProfileData");
+            }
+            else
             {
-                if (result.Data != null && result.Data.ContainsKey("ProfileData"))
-                {
-                    isSuccess = profileData.Load(result.Data["ProfileData"].Value);
-                }
-                else
-                {
-                    isSuccess = true;
-                }
-                tcs.SetResult(isSuccess);
-            }, error =>
-            {
-                tcs.SetResult(false);
-            });
-
-            isSuccess = await tcs.Task;
+                isSuccess = LoadPlayerPrefs(profileData, "ProfileData");
+            }
 
             if (isSuccess == false)
             {
@@ -62,44 +47,132 @@ namespace Temporary.Save
             return true;
         }
 
-        public async Task<bool> Save_ProfileData()
+        public async UniTask<bool> Save_ProfileData()
         {
-            var tcs = new TaskCompletionSource<bool>();
-
-            string jsonData = profileData.ToJson();
-
-            PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest
+            if (PlayFabAuthService.IsLoginState)
             {
-                Data = new Dictionary<string, string> { { "ProfileData", jsonData } }
+                return await SavePlayFab(profileData, "ProfileData");
+            }
+            else
+            {
+                return SavePlayerPrefs(profileData, "ProfileData");
+            }
+        }
+
+        public async UniTask<bool> Clear_ProfileData()
+        {
+            if (PlayFabAuthService.IsLoginState)
+            {
+                return await ClearPlayFab("ProfileData");
+            }
+            else
+            {
+                return ClearPlayerPrefs("ProfileData");
+            }
+                
+        }
+        #endregion
+
+        #region Load
+        private async UniTask<bool> LoadPlayFab(SaveDataTemplate data, string key)
+        {
+            var tcs = new UniTaskCompletionSource<bool>();
+
+            PlayFabClientAPI.GetUserData(new GetUserDataRequest
+            {
+                PlayFabId = PlayFabAuthService.PlayFabId,
+                Keys = new List<string> { key }
             }, result =>
             {
-                tcs.SetResult(true);
+                bool isSuccess = false;
+
+                if (result.Data != null && result.Data.ContainsKey(key))
+                {
+                    isSuccess = data.Load(result.Data[key].Value);
+                }
+                else
+                {
+                    isSuccess = true;
+                }
+                tcs.TrySetResult(isSuccess);
             }, error =>
             {
-                tcs.SetResult(false);
+                tcs.TrySetResult(false);
             });
 
             return await tcs.Task;
         }
 
-        public async Task<bool> Clear_ProfileData()
+        private bool LoadPlayerPrefs(SaveDataTemplate data, string key)
         {
-            var tcs = new TaskCompletionSource<bool>();
+            if (PlayerPrefs.HasKey(key))
+            {
+                string json = PlayerPrefs.GetString(key);
+                return data.Load(json);
+            }
+
+            return false;
+        }
+        #endregion
+
+        #region Save
+        private async UniTask<bool> SavePlayFab(SaveDataTemplate data, string key)
+        {
+            var tcs = new UniTaskCompletionSource<bool>();
+
+            string jsonData = data.ToJson();
 
             PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest
             {
-                KeysToRemove = new List<string> { "ProfileData" }
+                Data = new Dictionary<string, string> { { key, jsonData } }
             }, result =>
             {
-                tcs.SetResult(true);
+                tcs.TrySetResult(true);
             }, error =>
             {
-                tcs.SetResult(false);
+                tcs.TrySetResult(false);
             });
 
             return await tcs.Task;
         }
 
+        private bool SavePlayerPrefs(SaveDataTemplate data, string key)
+        {
+            string jsonData = data.ToJson();
+
+            PlayerPrefs.SetString(key, jsonData);
+            PlayerPrefs.Save();
+
+            return true;
+        }
+        #endregion
+
+        #region Clear
+        private async UniTask<bool> ClearPlayFab(string key)
+        {
+            var tcs = new UniTaskCompletionSource<bool>();
+
+            PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest
+            {
+                KeysToRemove = new List<string> { key }
+            }, result =>
+            {
+                tcs.TrySetResult(true);
+            }, error =>
+            {
+                tcs.TrySetResult(false);
+            });
+
+            return await tcs.Task;
+        }
+
+        private bool ClearPlayerPrefs(string key)
+        {
+            PlayerPrefs.DeleteKey(key);
+            PlayerPrefs.Save();
+
+            return true;
+        }
         #endregion
     }
 }

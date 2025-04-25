@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: ProfileSaveData
   m_EditorClassIdentifier: 
   _data:
-    displayName: "\uB9C8\uCE74\uB871"
-    isClearTutorial: 1
+    displayName: 
+    isClearTutorial: 0
     gold:
-      currentCryptoKey: 1363902501
-      hiddenValue: 1363902529
+      currentCryptoKey: 1904783902
+      hiddenValue: 1904783994
       fakeValue: 100
       fakeValueActive: 1
       inited: 1
@@ -25,9 +25,13 @@ MonoBehaviour:
     - id: 0
       unitCount: 1
       level: 1
+      selectedSkinId: 0
+      ownedSkinIds: 00000000
     - id: 1
       unitCount: 1
       level: 1
+      selectedSkinId: 0
+      ownedSkinIds: 00000000
     ownedPassiveItemIds: 
     ownedActiveItemIds: 
   _goldVariable: {fileID: 11400000, guid: 54d4ab083b789544bbf5096f9f1d06f2, type: 2}

@@ -16,17 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: e6ef1df716a9bf3469fac4f46872ecb9
-  m_SerializeEntries:
-  - m_GUID: 3c7e3ee7996b6864db28c2950eb470a4
-    m_Address: "Skin_\uC720\uB2DB1_\uAE30\uBCF8_Battle"
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8ab33255eadf5b849a63ecdade2ccb5e
-    m_Address: "Skin_\uC720\uB2DB1_\uAE30\uBCF8_Lobby"
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 2d6d18f8c9c2f084b96c6d7caf5e0dc6, type: 2}
   m_SchemaSet:

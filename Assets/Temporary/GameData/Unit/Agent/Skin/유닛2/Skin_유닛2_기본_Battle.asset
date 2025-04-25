@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 29102e1da39c9224093d839c85df4021, type: 3}
-  m_Name: "Skin_\uC720\uB2DB1_\uAE30\uBCF8_Battle"
+  m_Name: "Skin_\uC720\uB2DB2_\uAE30\uBCF8_Battle"
   m_EditorClassIdentifier: 
-  _prefab: {fileID: 7137419757110548002, guid: 7d233aa6d5a7eda4586f7c721927a1a8, type: 3}
+  _prefab: {fileID: 8424214445108489197, guid: b0e4d36cfada8564cbddb4b918788da4, type: 3}
   _spawnVoice: {fileID: 0}
   _deathVoice: {fileID: 0}
   _casterFX: {fileID: 0}

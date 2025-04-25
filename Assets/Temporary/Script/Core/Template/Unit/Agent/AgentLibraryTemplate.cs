@@ -13,9 +13,9 @@ namespace Temporary.Core
 
         [Header("필터")]
         [Label("모든 유닛"), SerializeField] private bool _isAll;
-        [HideIf("_isAll")]
-        [Label("소유 여부"), SerializeField] private bool _isOwned;
-        [EndIf]
+        //[HideIf("_isAll")]
+        //[Label("조건 추가"), SerializeField] private bool _isCondition;
+        //[EndIf]
 
         [ContextMenu("필터로 AgentTemplate 찾기")]
         public void FindAllRefresh()
@@ -28,7 +28,7 @@ namespace Temporary.Core
                 var template = AssetDatabase.LoadAssetAtPath(path, typeof(AgentTemplate)) as AgentTemplate;
 
                 bool isInclude = _isAll;
-                //isInclude |= _isOwned && template.isOwned;
+                //isInclude |= _isCondition;
 
                 if (template != null && isInclude)
                 {

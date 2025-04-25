@@ -1,24 +1,27 @@
 using FrameWork;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Temporary.Save;
 using UnityEngine;
 
 namespace Temporary.Core
 {
     public class GameDataManager : PersistentSingleton<GameDataManager>
     {
-        [SerializeField] private AgentLibraryTemplate _allAgentLibrary;
-        [SerializeField] private AgentLibraryTemplate _ownedAgentLibrary;
+        [Header("SaveData")]
+        [SerializeField] private ProfileSaveDataTemplate _profileSaveData;
+
+        [Header("Library")]
+        [SerializeField] private AgentLibraryTemplate _agentLibrary;
         [SerializeField] private WaveLibraryTemplate _waveLibrary;
 
-        internal List<AgentTemplate> ownedAgentTemplate => _ownedAgentLibrary.templates;
-
+        internal ProfileSaveDataTemplate profileSaveData => _profileSaveData;
+        internal List<AgentTemplate> agentTemplate => _agentLibrary.templates;
         internal WaveLibraryTemplate waveLibrary => _waveLibrary;
 
-        internal AgentTemplate GetAllAgentTemplateById(int id)
+        internal AgentTemplate GetAgentTemplateById(int id)
         {
-            return _allAgentLibrary.templates.Where(x => x.id == id).FirstOrDefault();
+            return _agentLibrary.templates.Where(x => x.id == id).FirstOrDefault();
         }
     }
 }

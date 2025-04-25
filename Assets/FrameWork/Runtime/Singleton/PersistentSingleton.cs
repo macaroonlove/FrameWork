@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -27,23 +27,25 @@ namespace FrameWork
         }
 
         #region 자동 로딩
-        private static async void AutoLoadAsync()
+        public static UniTask AutoLoadTask => AutoLoad();
+
+        private static void AutoLoadAsync()
         {
-            await AutoLoad();
+            AutoLoad().Forget();
         }
 
-        private static async Task AutoLoad()
+        private static async UniTask AutoLoad()
         {
             string key = typeof(T).Name;
 
             // 어드레서블에 키가 존재한다면
-            var locations = await Addressables.LoadResourceLocationsAsync(key).Task;
+            var locations = await Addressables.LoadResourceLocationsAsync(key).ToUniTask();
 
             if (locations.Count > 0)
             {
                 AsyncOperationHandle<GameObject> handle = Addressables.LoadAssetAsync<GameObject>(key);
 
-                await handle.Task;
+                await handle.ToUniTask();
 
                 if (handle.Status == AsyncOperationStatus.Succeeded)
                 {
@@ -52,18 +54,22 @@ namespace FrameWork
                 }
                 else
                 {
-                    GameObject newInstance = new GameObject(typeof(T).Name);
-                    instance = newInstance.AddComponent<T>();
+                    CraeteNewInstance();
                 }
             }
             else
             {
-                GameObject newInstance = new GameObject(typeof(T).Name);
-                instance = newInstance.AddComponent<T>();
+                CraeteNewInstance();
             }
 
             instance.Initialize();
             instance.SetupDontDestroy();
+        }
+
+        private static void CraeteNewInstance()
+        {
+            GameObject newInstance = new GameObject(typeof(T).Name);
+            instance = newInstance.AddComponent<T>();
         }
         #endregion
 

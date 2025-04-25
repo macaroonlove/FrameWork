@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cef68eb525becc8458ebedd6bdf47435, type: 3}
-  m_Name: "Skin_\uC720\uB2DB1_\uAE30\uBCF8"
+  m_Name: "Skin_\uC720\uB2DB1_\uAC01\uC131"
   m_EditorClassIdentifier: 
-  _id: 0
-  _displayName: "\uAE30\uBCF8"
+  _id: 1
+  _displayName: "\uAC01\uC131"
   _description: 
-  _faceSprite: {fileID: 21300000, guid: e36b79d98daaaf247b097d172c363419, type: 3}
+  _faceSprite: {fileID: 0}
   lobbyResource:
-    m_AssetGUID: 8ab33255eadf5b849a63ecdade2ccb5e
+    m_AssetGUID: 4f5fde18a283565419ad2f23f4fcdd40
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   battleResource:
-    m_AssetGUID: 3c7e3ee7996b6864db28c2950eb470a4
+    m_AssetGUID: 5a31415f9b9e01945841048f22ed5f70
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

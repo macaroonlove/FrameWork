@@ -112,6 +112,8 @@ namespace FrameWork
         #endregion
 
         #region ScriptableObject
+        
+        #region ¹®ÀÚ¿­
         public void GetScriptableObject<T>(string key, UnityAction<T> onComplete) where T : ScriptableObject
         {
             if (string.IsNullOrEmpty(key))
@@ -149,6 +151,49 @@ namespace FrameWork
                 _scriptableObjects.Remove(key);
             }
         }
+
+        #endregion
+
+        #region AssetReference
+        public void GetScriptableObject<T>(AssetReference assetReference, UnityAction<T> onComplete) where T : ScriptableObject
+        {
+            if (assetReference == null || string.IsNullOrEmpty(assetReference.AssetGUID))
+            {
+                onComplete?.Invoke(null);
+                return;
+            }
+
+            string key = assetReference.AssetGUID;
+
+            if (_scriptableObjects.TryGetValue(key, out var cachedHandle))
+            {
+                onComplete?.Invoke(cachedHandle.Result as T);
+                return;
+            }
+
+            assetReference.LoadAssetAsync<T>().Completed += (AsyncOperationHandle<T> handle) =>
+            {
+                if (handle.Status == AsyncOperationStatus.Succeeded)
+                {
+                    _scriptableObjects.TryAdd(key, handle);
+                    onComplete?.Invoke(handle.Result);
+                }
+                else
+                {
+                    onComplete?.Invoke(null);
+                    Addressables.Release(handle);
+                }
+            };
+        }
+
+        public void ReleaseScriptableObject(AssetReference assetReference)
+        {
+            if (assetReference == null || string.IsNullOrEmpty(assetReference.AssetGUID))
+                return;
+
+            ReleaseScriptableObject(assetReference.AssetGUID);
+        }
+        #endregion
 
         public void ReleaseAllScriptableObjects()
         {

@@ -1,6 +1,6 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Temporary.Core;
 using UnityEditor;
 using UnityEngine;
@@ -100,16 +100,13 @@ namespace Temporary.Editor
             return csvDict;
         }
 
-        private async Task<string> LoadCSVFromGoogleSheets()
+        private async UniTask<string> LoadCSVFromGoogleSheets()
         {
             using (UnityWebRequest request = UnityWebRequest.Get($"https://docs.google.com/spreadsheets/d/{_sheetID}/export?format=csv&gid={_gid}&range=A1:AA{_endId + 2}"))
             {
-                var operation = request.SendWebRequest();
+                var operation = request.SendWebRequest().ToUniTask();
 
-                while (!operation.isDone)
-                {
-                    await Task.Yield();
-                }
+                await operation;
 
                 if (request.result == UnityWebRequest.Result.Success)
                 {

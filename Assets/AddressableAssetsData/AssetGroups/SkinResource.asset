@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: SkinResource
+  m_EditorClassIdentifier: 
+  m_GroupName: SkinResource
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 1dc53f070e23d99479204ec1b88bfe28
+  m_SerializeEntries:
+  - m_GUID: 3c7e3ee7996b6864db28c2950eb470a4
+    m_Address: "Skin_\uC720\uB2DB1_\uAE30\uBCF8_Battle"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8ab33255eadf5b849a63ecdade2ccb5e
+    m_Address: "Skin_\uC720\uB2DB1_\uAE30\uBCF8_Lobby"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bd7f4f461b2e00847855d5323561e9ff
+    m_Address: "Skin_\uC720\uB2DB2_\uAE30\uBCF8_Lobby"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8642b8406db253641bede0075b6f43ad
+    m_Address: "Skin_\uC720\uB2DB2_\uAE30\uBCF8_Battle"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f5fde18a283565419ad2f23f4fcdd40
+    m_Address: "Skin_\uC720\uB2DB1_\uAC01\uC131_Lobby"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5a31415f9b9e01945841048f22ed5f70
+    m_Address: "Skin_\uC720\uB2DB1_\uAC01\uC131_Battle"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 2d6d18f8c9c2f084b96c6d7caf5e0dc6, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 9347f304858b55646979e0725a0a8d89, type: 2}
+    - {fileID: 11400000, guid: 701669509b3152444a59f142d33f45fa, type: 2}

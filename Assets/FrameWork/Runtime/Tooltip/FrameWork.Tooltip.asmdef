@@ -2,9 +2,9 @@
     "name": "FrameWork.Tooltip",
     "rootNamespace": "FrameWork.Tooltip",
     "references": [
+        "Unity.TextMeshPro",
         "FrameWork",
-        "FrameWork.UIBinding",
-        "Unity.TextMeshPro"
+        "FrameWork.UIBinding"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

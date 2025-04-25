@@ -1,4 +1,6 @@
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Temporary.Core
@@ -44,11 +46,11 @@ namespace Temporary.Core
 
         [HideInInspector, SerializeField] private SkillTreeGraph _skillTreeGraph;
 
-        [HideInInspector, SerializeField] private FX _casterFX;
-        [HideInInspector, SerializeField] private FX _targetFX;
-
         [HideInInspector]
         public List<SkinTemplate> skins = new List<SkinTemplate>();
+
+        private List<SkinTemplate> _loadedSkins = new List<SkinTemplate>();
+        private int _selectedSkinId => GameDataManager.Instance.profileSaveData.GetSelectedAgentSkinId(id);
 
         #region 프로퍼티
         public int id => _id;
@@ -56,8 +58,8 @@ namespace Temporary.Core
         public JobTemplate job => _job;
         public string displayName => _displayName;
 
-        public Sprite sprite => (skins.Count == 0) ? null : skins[0]?.sprite_face;
-        public GameObject prefab => null;// skins[0].prefab;
+        public Sprite sprite => (skins.Count == 0) ? null : skins[0]?.faceSprite;
+        public GameObject prefab => skins[_selectedSkinId]?.battleTemplate.prefab;
 
         public EMoveType MoveType => _moveType;
         public float MoveSpeed => _moveSpeed;
@@ -92,8 +94,8 @@ namespace Temporary.Core
 
         public SkillTreeGraph skillTreeGraph => _skillTreeGraph;
 
-        public FX casterFX => _casterFX;
-        public FX targetFX => _targetFX;
+        public FX casterFX => skins[_selectedSkinId]?.battleTemplate.casterFX;
+        public FX targetFX => skins[_selectedSkinId]?.battleTemplate.targetFX;
         #endregion
 
         #region 값 변경 메서드
@@ -129,6 +131,94 @@ namespace Temporary.Core
         internal void SetStartMana(int mana) => _startMana = mana;
         internal void SetManaRecoveryPerSec(int recovery) => _manaRecoveryPerSec = recovery;
         #endregion
+
+        #region Load
+        public async UniTask LoadAllSkinLobbyTemplate()
+        {
+            var skinIds = GameDataManager.Instance.profileSaveData.GetAllAgentSkinId(id);
+
+            var tasks = new UniTask[skinIds.Count];
+
+            for (int i = 0; i < skinIds.Count; i++)
+            {
+                tasks[i] = LoadSkinLobbyTemplate(skinIds[i]);
+            }
+
+            await UniTask.WhenAll(tasks);
+        }
+
+        public async UniTask LoadSelectedSkinLobbyTemplate()
+        {
+            int skinId = _selectedSkinId;
+
+            await LoadSkinLobbyTemplate(skinId);
+        }
+
+        private async UniTask LoadSkinLobbyTemplate(int skinId)
+        {
+            var skin = FindSkin(skins, skinId);
+
+            if (skin != null)
+            {
+                await skin.LoadSkinLobbyTemplate();
+
+                if (!_loadedSkins.Contains(skin))
+                {
+                    _loadedSkins.Add(skin);
+                }
+            }
+        }
+
+        public async UniTask LoadSkinBattleTemplate()
+        {
+            int skinId = _selectedSkinId;
+
+            var skin = FindSkin(skins, skinId);
+
+            if (skin != null)
+            {
+                await skin.LoadSkinBattleTemplate();
+
+                if (!_loadedSkins.Contains(skin))
+                {
+                    _loadedSkins.Add(skin);
+                }
+            }
+        }
+        #endregion
+
+        #region Release
+        public void ReleaseSkinLobbyTemplate()
+        {
+            foreach (var skin in _loadedSkins)
+            {
+                skin.ReleaseSkinLobbyTemplate();
+            }
+        }
+
+        public void ReleaseSkinBattleTemplate()
+        {
+            foreach (var skin in _loadedSkins)
+            {
+                skin.ReleaseSkinBattleTemplate();
+            }
+        }
+        #endregion
+
+        #region 유틸리티
+        private SkinTemplate FindSkin(List<SkinTemplate> skins, int skinId)
+        {
+            for (int i = 0; i < skins.Count; i++)
+            {
+                if (skins[i].id == skinId)
+                {
+                    return skins[i];
+                }
+            }
+
+            return null;
+        }
+        #endregion
     }
 }
 
@@ -139,7 +229,6 @@ namespace Temporary.Editor
     using Temporary.Core;
     using UnityEditor;
     using UnityEditor.AddressableAssets;
-    using UnityEditor.AddressableAssets.Settings;
     using UnityEditorInternal;
     using UnityEngine.AddressableAssets;
 
@@ -186,9 +275,6 @@ namespace Temporary.Editor
 
         private SerializedProperty _skillTreeGraph;
 
-        private SerializedProperty _casterFX;
-        private SerializedProperty _targetFX;
-
         private ReorderableList _skinList;
         private SkinTemplate _currentSkin;
         private bool _showSkinList = true;
@@ -234,9 +320,6 @@ namespace Temporary.Editor
             _manaRecoveryPerSec = serializedObject.FindProperty("_manaRecoveryPerSec");
 
             _skillTreeGraph = serializedObject.FindProperty("_skillTreeGraph");
-
-            _casterFX = serializedObject.FindProperty("_casterFX");
-            _targetFX = serializedObject.FindProperty("_targetFX");
 
             CreateSkinList();
         }
@@ -439,18 +522,6 @@ namespace Temporary.Editor
             EditorGUILayout.PropertyField(_skillTreeGraph, GUIContent.none);
             GUILayout.EndHorizontal();
 
-            GUILayout.Space(10);
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("공격 시, 시전자 FX", GUILayout.Width(140));
-            EditorGUILayout.PropertyField(_casterFX, GUIContent.none);
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("공격 시, 대상자 FX", GUILayout.Width(140));
-            EditorGUILayout.PropertyField(_targetFX, GUIContent.none);
-            GUILayout.EndHorizontal();
-
             serializedObject.ApplyModifiedProperties();
         }
 
@@ -534,7 +605,7 @@ namespace Temporary.Editor
             if (!string.IsNullOrEmpty(path))
             {
                 var fileName = Path.GetFileNameWithoutExtension(path);
-                skin.displayName = fileName.Replace(defaultFileName, "");
+                skin.SetDisplayName(fileName.Replace(defaultFileName, ""));
                 _target.skins.Add(skin);
 
                 AssetDatabase.CreateAsset(skin, path);
@@ -543,7 +614,7 @@ namespace Temporary.Editor
 
                 #region 어드레서블 등록
                 var settings = AddressableAssetSettingsDefaultObject.Settings;
-                var group = settings.FindGroup("Default Local Group");
+                var group = settings.FindGroup("SkinResource");
 
                 void SetAddressable(Object asset, string address, out AssetReference reference)
                 {
@@ -587,6 +658,8 @@ namespace Temporary.Editor
             DeleteAsset(skin.battleResource);
             #endregion
 
+            _target.skins.Remove(skin);
+
             string skinPath = AssetDatabase.GetAssetPath(skin);
             if (!string.IsNullOrEmpty(skinPath))
             {
@@ -595,6 +668,7 @@ namespace Temporary.Editor
 
             DestroyImmediate(skin, true);
             EditorUtility.SetDirty(_target);
+            EditorUtility.SetDirty(this);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
