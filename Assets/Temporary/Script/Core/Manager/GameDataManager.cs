@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using FrameWork;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace Temporary.Core
     {
         [Header("SaveData")]
         [SerializeField] private ProfileSaveDataTemplate _profileSaveData;
+        [SerializeField] private FormationSaveDataTemplate _formationSaveData;
 
         [Header("Library")]
         [SerializeField] private AgentLibraryTemplate _agentLibrary;
@@ -23,5 +25,15 @@ namespace Temporary.Core
         {
             return _agentLibrary.templates.Where(x => x.id == id).FirstOrDefault();
         }
+
+        internal async UniTask<FormationSaveDataTemplate> GetFormationSaveData()
+        {
+            if (_formationSaveData.isLoaded == false)
+            {
+                await SaveManager.Instance.Load_FormationData();
+            }
+            return _formationSaveData;
+        }
+
     }
 }

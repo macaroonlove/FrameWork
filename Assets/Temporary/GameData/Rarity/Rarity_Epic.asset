@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1292cbb9f7e1bce4daa010b6108f06ad, type: 3}
   m_Name: Rarity_Epic
   m_EditorClassIdentifier: 
+  _order: 1
   _displayName: "\uC601\uC6C5"
   _rarity: 1
   _sprite: {fileID: 0}

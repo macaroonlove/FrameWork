@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1292cbb9f7e1bce4daa010b6108f06ad, type: 3}
   m_Name: Rarity_Legend
   m_EditorClassIdentifier: 
+  _order: 0
   _displayName: "\uC804\uC124"
   _rarity: 0
   _sprite: {fileID: 0}

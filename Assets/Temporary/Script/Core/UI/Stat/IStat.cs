@@ -10,6 +10,6 @@ namespace Temporary.Core
     {
         void Initialize(AgentTemplate template);
         void Initialize(EnemyTemplate template);
-        void Deinitialize();
+        void Clear();
     }
 }

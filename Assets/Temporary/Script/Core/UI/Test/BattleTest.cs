@@ -5,11 +5,14 @@ namespace Temporary.Core
 {
     public class BattleTest : UIBase
     {
-        [SerializeField] private AgentTemplate _agentTemplate;
-        [SerializeField] private AgentTemplate _agentTemplate2;
         [SerializeField] private EnemyTemplate _enemyTemplate;
 
-        private async void Start()
+        private void Start()
+        {
+            BattleManager.Instance.onBattleInitialize += BattleInitialize;
+        }
+
+        private void BattleInitialize()
         {
             var damage = GetComponentInChildren<DamageTestCanvas>();
             var health = GetComponentInChildren<HealthTestCanvas>();
@@ -18,15 +21,6 @@ namespace Temporary.Core
             var activeSkill = GetComponentInChildren<ActiveSkillTestCanvas>();
             var skillTreeTestCanvas = GetComponentInChildren<SkillTreeTestCanvas>();
 
-            await _agentTemplate.LoadSkinBattleTemplate();
-            await _agentTemplate2.LoadSkinBattleTemplate();
-
-            //Debug.Log(_agentTemplate.skins[0].lobbyTemplate);
-            //Debug.Log(_agentTemplate.skins[0].battleTemplate);
-
-            BattleManager.Instance.InitializeBattle();
-            BattleManager.Instance.GetSubSystem<AgentCreateSystem>().CreateUnit(_agentTemplate, Vector3.zero);
-            BattleManager.Instance.GetSubSystem<AgentCreateSystem>().CreateUnit(_agentTemplate2, new Vector3(-3, 0, 0));
             BattleManager.Instance.GetSubSystem<EnemySpawnSystem>().SpawnUnit(_enemyTemplate, new Vector3(3, 0, 0));
             BattleManager.Instance.GetSubSystem<EnemySpawnSystem>().SpawnUnit(_enemyTemplate, new Vector3(3, 0, 1));
             BattleManager.Instance.GetSubSystem<EnemySpawnSystem>().SpawnUnit(_enemyTemplate, new Vector3(3, 0, -1));
@@ -40,12 +34,6 @@ namespace Temporary.Core
                 activeSkill?.Initialize(unit);
                 skillTreeTestCanvas?.Initialize(unit);
             };
-        }
-
-        private void OnDestroy()
-        {
-            _agentTemplate.ReleaseSkinBattleTemplate();
-            _agentTemplate2.ReleaseSkinBattleTemplate();
         }
     }
 }

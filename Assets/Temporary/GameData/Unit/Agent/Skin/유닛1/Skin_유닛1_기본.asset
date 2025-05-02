@@ -15,7 +15,7 @@ MonoBehaviour:
   _id: 0
   _displayName: "\uAE30\uBCF8"
   _description: 
-  _faceSprite: {fileID: 21300000, guid: e36b79d98daaaf247b097d172c363419, type: 3}
+  _faceSprite: {fileID: 21300000, guid: cba2049e1c0b8db4686752415eb17146, type: 3}
   lobbyResource:
     m_AssetGUID: 8ab33255eadf5b849a63ecdade2ccb5e
     m_SubObjectName: 
