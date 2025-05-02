@@ -68,13 +68,5 @@ namespace Temporary.Save
         {
             _data.formation = formation;
         }
-
-        public void RemoveAt(int index)
-        {
-            if (_data.formation.Count > index)
-            {
-                _data.formation.RemoveAt(index);
-            }
-        }
     }
 }

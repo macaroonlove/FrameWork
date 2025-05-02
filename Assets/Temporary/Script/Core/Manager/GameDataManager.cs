@@ -35,5 +35,11 @@ namespace Temporary.Core
             return _formationSaveData;
         }
 
+        internal async void SetFormationSaveData(List<FormationSlot> formation)
+        {
+            _formationSaveData.UpdateFormation(formation);
+
+            await SaveManager.Instance.Save_FormationData();
+        }
     }
 }

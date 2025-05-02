@@ -134,6 +134,7 @@ namespace Temporary.Core
         {
             _startButton.interactable = false;
 
+            // 전투에 사용될 유닛 어드레서블 로드
             List<UniTask> tasks = new List<UniTask>();
 
             foreach (var slot in _uiFormationSlots) 
@@ -147,7 +148,9 @@ namespace Temporary.Core
 
             await UniTask.WhenAll(tasks);
 
+            // 전투 시작
             BattleManager.Instance.InitializeBattle();
+            BattleManager.Instance.onBattleDeinitialize += OnBattleDeinitialize;
 
             // TODO: 임시로 유닛 생성하는것, 추후 삭제
             int x = -1;
@@ -160,7 +163,35 @@ namespace Temporary.Core
                 x++;
             }
 
+            // 배치 저장
+            List<FormationSlot> formation = new List<FormationSlot>();
+
+            foreach (var slot in _uiFormationSlots)
+            {
+                if (slot.template != null)
+                {
+                    var newFormationSlot = new FormationSlot();
+                    newFormationSlot.id = slot.template.id;
+                    
+                    formation.Add(newFormationSlot);
+                }
+            }
+
+            GameDataManager.Instance.SetFormationSaveData(formation);
+
             Hide();
+        }
+
+        private void OnBattleDeinitialize()
+        {
+            // 전투 종료시, 어드레서블 해제
+            foreach (var slot in _uiFormationSlots)
+            {
+                if (slot.template != null)
+                {
+                    slot.template.ReleaseSkinBattleTemplate();
+                }
+            }
         }
 
         private void Hide()
