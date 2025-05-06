@@ -10,6 +10,10 @@ namespace FrameWork.UI
     public class UIIntVariableTextEffect : UIBase
     {
         #region ¹ÙÀÎµù
+        enum Images
+        {
+            Icon,
+        }
         enum Texts
         {
             Value,
@@ -25,8 +29,12 @@ namespace FrameWork.UI
         protected override void Initialize()
         {
             BindText(typeof(Texts));
+            BindImage(typeof(Images));
 
             _valueText = GetText((int)Texts.Value);
+            
+            if (_variable != null)
+                GetImage((int)Images.Icon).sprite = _variable.Icon;
 
             _logEffect = GetComponentInChildren<UIIntVariableLogEffect>();
         }

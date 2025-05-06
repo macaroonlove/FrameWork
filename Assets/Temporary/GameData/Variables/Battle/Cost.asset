@@ -36,3 +36,5 @@ MonoBehaviour:
   _event:
     m_PersistentCalls:
       m_Calls: []
+  _displayName: "\uCF54\uC2A4\uD2B8"
+  _icon: {fileID: -3380439360112706912, guid: 84899d6171a0e4c06bede6ab7d2f3f38, type: 3}

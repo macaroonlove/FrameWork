@@ -17,8 +17,8 @@ namespace Temporary.Core
         [SerializeField] private AgentLibraryTemplate _agentLibrary;
         [SerializeField] private WaveLibraryTemplate _waveLibrary;
 
-        internal ProfileSaveDataTemplate profileSaveData => _profileSaveData;
-        internal List<AgentTemplate> agentTemplate => _agentLibrary.templates;
+        public ProfileSaveDataTemplate profileSaveData => _profileSaveData;
+        public IReadOnlyList<AgentTemplate> agentTemplates => _agentLibrary.templates;
         internal WaveLibraryTemplate waveLibrary => _waveLibrary;
 
         internal AgentTemplate GetAgentTemplateById(int id)
