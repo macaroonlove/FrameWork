@@ -16,10 +16,17 @@ namespace Temporary.Lobby
         }
         #endregion
 
-        [SerializeField] private GameObject _prefab;
-        [SerializeField] private Transform _parent;
+        [Header("탭")]
+        [SerializeField] private GameObject _tabPrefab;
+        [SerializeField] private Transform _tabParent;
 
-        private UIGachaTab[] _gachaTabs;
+        [Header("버튼")]
+        [SerializeField] private GameObject _buttonPrefab;
+        [SerializeField] private Transform _buttonParent;
+
+        [Header("가챠 데이터")]
+        [SerializeField] private GachaDataTemplate _gachaDataTemplate;
+
         private List<UIGachaButton> _gachaButtons = new List<UIGachaButton>();
         private Image _background;
         private UIGachaResultCanvas _gachaResultCanvas;
@@ -32,28 +39,44 @@ namespace Temporary.Lobby
 
             _background = GetImage((int)Images.Background);
 
-            _gachaTabs = GetComponentsInChildren<UIGachaTab>();
             _gachaResultCanvas = GetComponentInChildren<UIGachaResultCanvas>();
 
-            foreach (var tab in _gachaTabs)
-            {
-                tab.Initialize(_gachaResultCanvas, Select);
-            }
+            SetTab();
+        }
 
-            Select(_gachaTabs[0]);
+        private void SetTab()
+        {
+            if (_gachaDataTemplate == null) return;
+
+            var datas = _gachaDataTemplate.gachaDatas;
+
+            bool isSelected = false;
+            foreach (var data in datas)
+            {
+                var instance = Instantiate(_tabPrefab, _tabParent);
+                var gachaTab = instance.GetComponent<UIGachaTab>();
+                data.Initialize(_gachaResultCanvas);
+                gachaTab.Initialize(data, Select);
+
+                if (isSelected == false)
+                {
+                    Select(gachaTab);
+                    isSelected = true;
+                }
+            }
         }
 
         private void SetButtons(UIGachaTab tab)
         {
-            var infos = tab.gachaButtonInfos;
+            var infos = tab.gachaData.gachaButtons;
             int count = infos.Count;
 
             // 필요한 수만큼 생성
             while (_gachaButtons.Count < count)
             {
-                var instance = Instantiate(_prefab, _parent);
-                var toggle = instance.GetComponent<UIGachaButton>();
-                _gachaButtons.Add(toggle);
+                var instance = Instantiate(_buttonPrefab, _buttonParent);
+                var gachaButton = instance.GetComponent<UIGachaButton>();
+                _gachaButtons.Add(gachaButton);
             }
 
             // 초기화
@@ -77,7 +100,7 @@ namespace Temporary.Lobby
             _currentTab = tab;
             _currentTab?.Select();
             
-            _background.sprite = tab.background;
+            _background.sprite = tab.gachaData.background;
             SetButtons(tab);
         }
 
@@ -90,7 +113,7 @@ namespace Temporary.Lobby
                     // 해당 종류의 변수(Variable)의 개수가 충분하다면
                     if (variable.Value >= needCount)
                     {
-                        _currentTab.PickUp(gachaCount);
+                        _currentTab.gachaData.PickUp(gachaCount);
 
                         variable.AddValue(-needCount);
                     }

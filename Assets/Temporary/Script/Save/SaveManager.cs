@@ -62,6 +62,7 @@ namespace Temporary.Save
             }
         }
 
+        [ContextMenu("프로필 초기화")]
         public async UniTask<bool> Clear_ProfileData()
         {
             if (PlayFabAuthService.IsLoginState)

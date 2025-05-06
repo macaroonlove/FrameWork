@@ -1,20 +1,19 @@
 using Cysharp.Threading.Tasks;
 using FrameWork;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Temporary.Core;
 using Temporary.Save;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Temporary.Lobby
 {
-    /// <summary>
-    /// Agent À¯´ÖÀ» »ÌÀ» ¼ö ÀÖ´Â ÅÇ
-    /// </summary>
-    public class UIGachaTab_Agent : UIGachaTab
+    [Serializable]
+    public class AgentGachaData : GachaData
     {
-        [Header("µî±Þº° È®·üÁ¤º¸")]
+        [Header("¾Æ±º À¯´Ö µî±Þº° È®·üÁ¤º¸")]
         [SerializeField, Range(0, 100.0f)] private int _legendRarity;
         [SerializeField, Range(0, 100.0f)] private int _epicRarity;
         [SerializeField, Range(0, 100.0f)] private int _rareRarity;
@@ -28,11 +27,11 @@ namespace Temporary.Lobby
 
         private List<AgentTemplate> _gachaList = new List<AgentTemplate>();
 
-        protected override async void Initialize()
+        internal override async void Initialize(UIGachaResultCanvas gachaResultCanvas)
         {
-            base.Initialize();
-
             await UniTask.WaitUntil(() => PersistentLoad.isLoaded);
+
+            base.Initialize(gachaResultCanvas);
 
             _rarityProbabilities = new float[4];
             _rarityProbabilities[0] = _legendRarity;
@@ -51,7 +50,7 @@ namespace Temporary.Lobby
         internal override void PickUp(int gachaCount)
         {
             _gachaList.Clear();
-            
+
             for (int i = 0; i < gachaCount; i++)
             {
                 var agent = GetRandomAgent();
@@ -59,9 +58,9 @@ namespace Temporary.Lobby
                 GameDataManager.Instance.profileSaveData.AddAgent(agent.id);
             }
 
-            _gachaResultCanvas.Show(_gachaList);
+            _ = SaveManager.Instance.Save_ProfileData();
 
-            SaveManager.Instance.Save_ProfileData();
+            _gachaResultCanvas.Show(_gachaList);
         }
 
         private AgentTemplate GetRandomAgent()
