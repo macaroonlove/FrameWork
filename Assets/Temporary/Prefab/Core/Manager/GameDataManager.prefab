@@ -47,4 +47,5 @@ MonoBehaviour:
   _profileSaveData: {fileID: 11400000, guid: 778655154cf61e7479cef77ac17d8de0, type: 2}
   _formationSaveData: {fileID: 11400000, guid: 6a0a8762cf3dd484bab3c8397df21e11, type: 2}
   _agentLibrary: {fileID: 11400000, guid: a2d62277f65baab47aadbc5ffeea41b5, type: 2}
+  _agentSkinLibrary: {fileID: 11400000, guid: 6ee7cf71a5a805244afe866242e149ec, type: 2}
   _waveLibrary: {fileID: 11400000, guid: 1518715b4424af94d8659f9cc3d1bfd6, type: 2}

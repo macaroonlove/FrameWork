@@ -44,6 +44,26 @@ namespace Temporary.Lobby
             base.Show(true);
         }
 
+        internal void Show(List<SkinTemplate> skins)
+        {
+            int count = skins.Count;
+
+            // √ ±‚»≠
+            for (int i = 0; i < _uiGachaResultItems.Length; i++)
+            {
+                if (i < count)
+                {
+                    _uiGachaResultItems[i].Show(skins[i]);
+                }
+                else
+                {
+                    _uiGachaResultItems[i].Hide();
+                }
+            }
+
+            base.Show(true);
+        }
+
         internal void Hide()
         {
             base.Hide(true);

@@ -84,7 +84,8 @@ namespace Temporary.Editor
         {
             var menu = new GenericMenu();
 
-            menu.AddItem(new GUIContent("À¯´Ö ÅÇ"), false, () => CreateDataCallback(typeof(AgentGachaData)));
+            menu.AddItem(new GUIContent("¾Æ±º À¯´Ö ÅÇ"), false, () => CreateDataCallback(typeof(AgentGachaData)));
+            menu.AddItem(new GUIContent("¾Æ±º ½ºÅ² ÅÇ"), false, () => CreateDataCallback(typeof(AgentSkinGachaData)));
 
             menu.ShowAsContext();
         }

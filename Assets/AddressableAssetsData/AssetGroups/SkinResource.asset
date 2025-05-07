@@ -17,23 +17,23 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 1dc53f070e23d99479204ec1b88bfe28
   m_SerializeEntries:
-  - m_GUID: 3c7e3ee7996b6864db28c2950eb470a4
-    m_Address: "Skin_\uC720\uB2DB1_\uAE30\uBCF8_Battle"
+  - m_GUID: f385141f447d6674b8df7fb36de1214c
+    m_Address: "Skin_\uC804\uC0AC_\uAE30\uBCF8_Lobby"
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8ab33255eadf5b849a63ecdade2ccb5e
-    m_Address: "Skin_\uC720\uB2DB1_\uAE30\uBCF8_Lobby"
+  - m_GUID: c8bfa0dcc7c6bbd49ab72b392bd87202
+    m_Address: "Skin_\uC804\uC0AC_\uAE30\uBCF8_Battle"
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: bd7f4f461b2e00847855d5323561e9ff
-    m_Address: "Skin_\uC720\uB2DB2_\uAE30\uBCF8_Lobby"
+  - m_GUID: 6b3907537b037a0459373c0565a5176d
+    m_Address: "Skin_\uBAA8\uD5D8\uAC00_\uAE30\uBCF8_Battle"
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8642b8406db253641bede0075b6f43ad
-    m_Address: "Skin_\uC720\uB2DB2_\uAE30\uBCF8_Battle"
+  - m_GUID: 8103e3efe007569458c613f5b9d5f439
+    m_Address: "Skin_\uBAA8\uD5D8\uAC00_\uAE30\uBCF8_Lobby"
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

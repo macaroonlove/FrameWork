@@ -95,16 +95,39 @@ namespace Temporary.Core
         Enemy_MAXHP,
     }
 
+    #region 등급
     /// <summary>
-    /// 등급
+    /// 아군 유닛 등급
     /// </summary>
-    public enum ERarity
+    public enum EAgentRarity
     {
         Legend,
         Epic,
         Rare,
         Common,
     }
+
+    /// <summary>
+    /// 적군 유닛 등급
+    /// </summary>
+    public enum EEnemyRarity
+    {
+        Boss,
+        Elite,
+        Normal
+    }
+
+    /// <summary>
+    /// 스킨 등급
+    /// </summary>
+    public enum ESkinRarity
+    {
+        Legend,
+        Epic,
+        Rare,
+        Common,
+    }
+    #endregion
 
     /// <summary>
     /// 범위 타입

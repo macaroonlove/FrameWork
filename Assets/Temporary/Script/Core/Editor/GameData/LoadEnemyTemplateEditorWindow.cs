@@ -452,15 +452,15 @@ namespace Temporary.Editor
         #endregion
 
         #region 등급 템플릿 가져오기
-        private Dictionary<string, RarityTemplate> _rarityDic = new Dictionary<string, RarityTemplate>();
+        private Dictionary<string, EnemyRarityTemplate> _rarityDic = new Dictionary<string, EnemyRarityTemplate>();
 
         private void InitializeRarityTemplates()
         {
-            var guids = AssetDatabase.FindAssets("t:RarityTemplate");
+            var guids = AssetDatabase.FindAssets("t:EnemyRarityTemplate");
             foreach (var guid in guids)
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);
-                var rarity = AssetDatabase.LoadAssetAtPath<RarityTemplate>(path);
+                var rarity = AssetDatabase.LoadAssetAtPath<EnemyRarityTemplate>(path);
                 _rarityDic[rarity.rarity.ToString()] = rarity;
             }
         }

@@ -11,31 +11,31 @@ using Random = UnityEngine.Random;
 namespace Temporary.Lobby
 {
     [Serializable]
-    public class AgentGachaData : GachaData
+    public class AgentSkinGachaData : GachaData
     {
         [Serializable]
         public class PickUpData
         {
-            public AgentTemplate template;
+            public SkinTemplate template;
             public float rarity;
         }
 
-        [Header("아군 유닛 등급별 확률정보")]
+        [Header("아군 스킨 등급별 확률정보")]
         [SerializeField, Range(0, 100.0f)] private int _legendRarity;
         [SerializeField, Range(0, 100.0f)] private int _epicRarity;
         [SerializeField, Range(0, 100.0f)] private int _rareRarity;
         [SerializeField, Range(0, 100.0f)] private int _commonRarity;
 
-        [Header("픽업 유닛"), Tooltip("픽업 유닛은 등급별 확률에서 제외됩니다.")]
+        [Header("픽업 스킨"), Tooltip("픽업 스킨은 등급별 확률에서 제외됩니다.")]
         [SerializeField] private List<PickUpData> _pickupList = new List<PickUpData>();
 
         private float[] _rarityProbabilities;
-        private List<AgentTemplate> _legendAgents;
-        private List<AgentTemplate> _epicAgents;
-        private List<AgentTemplate> _rareAgents;
-        private List<AgentTemplate> _commonAgents;
+        private List<SkinTemplate> _legendSkins;
+        private List<SkinTemplate> _epicSkins;
+        private List<SkinTemplate> _rareSkins;
+        private List<SkinTemplate> _commonSkins;
 
-        private List<AgentTemplate> _gachaList = new List<AgentTemplate>();
+        private List<SkinTemplate> _gachaList = new List<SkinTemplate>();
         private List<PickUpData> _legentPickUpList = new List<PickUpData>();
 
         internal override async void Initialize(UIGachaResultCanvas gachaResultCanvas)
@@ -50,14 +50,16 @@ namespace Temporary.Lobby
             _rarityProbabilities[2] = _rareRarity;
             _rarityProbabilities[3] = _commonRarity;
 
-            // 픽업 유닛을 제외한 아군 유닛 리스트
-            var agentList = GameDataManager.Instance.agentTemplates.Where(x => !_pickupList.Any(y => y.template == x));
+            if (GameDataManager.Instance.agentSkinTemplates.Count == 0) return;
 
-            _legentPickUpList = _pickupList.Where(p => p.template.rarity.rarity == EAgentRarity.Legend).ToList();
-            _legendAgents = agentList.Where(template => template.rarity.rarity == EAgentRarity.Legend).ToList();
-            _epicAgents = agentList.Where(template => template.rarity.rarity == EAgentRarity.Epic).ToList();
-            _rareAgents = agentList.Where(template => template.rarity.rarity == EAgentRarity.Rare).ToList();
-            _commonAgents = agentList.Where(template => template.rarity.rarity == EAgentRarity.Common).ToList();
+            // 픽업 스킨을 제외한 스킨 리스트
+            var skinList = GameDataManager.Instance.agentSkinTemplates.Where(x => !_pickupList.Any(y => y.template == x.Key)).Select(x => x.Key);
+
+            _legentPickUpList = _pickupList.Where(p => p.template.rarity.rarity == ESkinRarity.Legend).ToList();
+            _legendSkins = skinList.Where(template => template.rarity.rarity == ESkinRarity.Legend).ToList();
+            _epicSkins = skinList.Where(template => template.rarity.rarity == ESkinRarity.Epic).ToList();
+            _rareSkins = skinList.Where(template => template.rarity.rarity == ESkinRarity.Rare).ToList();
+            _commonSkins = skinList.Where(template => template.rarity.rarity == ESkinRarity.Common).ToList();
         }
 
         internal override void PickUp(int gachaCount)
@@ -66,9 +68,10 @@ namespace Temporary.Lobby
 
             for (int i = 0; i < gachaCount; i++)
             {
-                var agent = GetRandomAgent();
-                _gachaList.Add(agent);
-                GameDataManager.Instance.profileSaveData.AddAgent(agent.id);
+                var skin = GetRandomSkin();
+                _gachaList.Add(skin);
+                var agentTemplate = GameDataManager.Instance.agentSkinTemplates[skin];
+                GameDataManager.Instance.profileSaveData.AddAgentSkin(agentTemplate.id, skin.id);
             }
 
             _ = SaveManager.Instance.Save_ProfileData();
@@ -76,7 +79,7 @@ namespace Temporary.Lobby
             _gachaResultCanvas.Show(_gachaList);
         }
 
-        private AgentTemplate GetRandomAgent()
+        private SkinTemplate GetRandomSkin()
         {
             int rarityIndex;
 
@@ -84,9 +87,9 @@ namespace Temporary.Lobby
             {
                 _confirmedPickUpVariable.AddValue(-1);
 
-                var agentTemplate = GetPickUp(_pickupList, 100);
+                var skinTemplate = GetPickUp(_pickupList, 100);
 
-                if (agentTemplate != null) return agentTemplate;
+                if (skinTemplate != null) return skinTemplate;
 
                 rarityIndex = GetRandomRarityIndex();
             }
@@ -94,28 +97,28 @@ namespace Temporary.Lobby
             {
                 _confirmedPickUpVariable.Value = 50;
 
-                var agentTemplate = GetPickUp(_legentPickUpList, 100);
+                var skinTemplate = GetPickUp(_legentPickUpList, 100);
 
-                if (agentTemplate != null) return agentTemplate;
+                if (skinTemplate != null) return skinTemplate;
 
                 rarityIndex = 0;
             }
 
             // 일반 유닛 뽑기
-            List<AgentTemplate> agents;
+            List<SkinTemplate> skins;
             switch (rarityIndex)
             {
-                case 0: agents = _legendAgents; break;
-                case 1: agents = _epicAgents; break;
-                case 2: agents = _rareAgents; break;
-                default: agents = _commonAgents; break;
+                case 0: skins = _legendSkins; break;
+                case 1: skins = _epicSkins; break;
+                case 2: skins = _rareSkins; break;
+                default: skins = _commonSkins; break;
             }
 
-            var index = Random.Range(0, agents.Count);
-            return agents[index];
+            var index = Random.Range(0, skins.Count);
+            return skins[index];
         }
 
-        private AgentTemplate GetPickUp(List<PickUpData> pickUpList, float maxProbability)
+        private SkinTemplate GetPickUp(List<PickUpData> pickUpList, float maxProbability)
         {
             // 픽업 유닛 뽑기
             float rand = Random.Range(0, maxProbability);

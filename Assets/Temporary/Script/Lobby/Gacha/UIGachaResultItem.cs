@@ -40,5 +40,13 @@ namespace Temporary.Lobby
             _icon.sprite = template.sprite;
             _displayName.text = template.displayName;
         }
+
+        internal void Show(SkinTemplate template)
+        {
+            // TODO: 등급마다 배경이 달라야한다면 주석 해제
+            //_background.sprite = template.rarity.sprite;
+            _icon.sprite = template.faceSprite;
+            _displayName.text = template.displayName;
+        }
     }
 }

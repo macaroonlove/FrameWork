@@ -6,10 +6,12 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Temporary.Core
 {
+    [System.Serializable]
     [CreateAssetMenu(menuName = "Templates/Unit/Skin", fileName = "Skin_", order = 0)]
     public class SkinTemplate : ScriptableObject
     {
         [HideInInspector, SerializeField] private int _id;
+        [HideInInspector, SerializeField] private SkinRarityTemplate _rarity;
         [HideInInspector, SerializeField] private string _displayName;
         [HideInInspector, SerializeField] private string _description;
         [HideInInspector, SerializeField] private Sprite _faceSprite;
@@ -25,6 +27,7 @@ namespace Temporary.Core
 
         #region 프로퍼티
         public int id => _id;
+        public SkinRarityTemplate rarity => _rarity;
         public string displayName => _displayName;
         public string description => _description;
         public Sprite faceSprite => _faceSprite;

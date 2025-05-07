@@ -5,11 +5,12 @@ using UnityEngine;
 
 namespace Temporary.Core
 {
+    [System.Serializable]
     [CreateAssetMenu(menuName = "Templates/Unit/Agent", fileName = "Agent_", order = 0)]
     public class AgentTemplate : ScriptableObject, IDataWindowEntry
     {
         [HideInInspector, SerializeField] private int _id;
-        [HideInInspector, SerializeField] private RarityTemplate _rarity;
+        [HideInInspector, SerializeField] private AgentRarityTemplate _rarity;
         [HideInInspector, SerializeField] private JobTemplate _job;
         [HideInInspector, SerializeField] private string _displayName;
 
@@ -54,7 +55,7 @@ namespace Temporary.Core
 
         #region 프로퍼티
         public int id => _id;
-        public RarityTemplate rarity => _rarity;
+        public AgentRarityTemplate rarity => _rarity;
         public JobTemplate job => _job;
         public string displayName => _displayName;
 
@@ -100,7 +101,7 @@ namespace Temporary.Core
 
         #region 값 변경 메서드
         internal void SetId(int id) => _id = id;
-        internal void SetRarity(RarityTemplate rarity) => _rarity = rarity;
+        internal void SetRarity(AgentRarityTemplate rarity) => _rarity = rarity;
         internal void SetJob(JobTemplate job) => _job = job;
         public void SetDisplayName(string name) => _displayName = name;
 

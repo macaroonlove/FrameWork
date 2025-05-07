@@ -15,10 +15,12 @@ namespace Temporary.Core
 
         [Header("Library")]
         [SerializeField] private AgentLibraryTemplate _agentLibrary;
+        [SerializeField] private SkinLibraryTemplate _agentSkinLibrary;
         [SerializeField] private WaveLibraryTemplate _waveLibrary;
 
         public ProfileSaveDataTemplate profileSaveData => _profileSaveData;
         public IReadOnlyList<AgentTemplate> agentTemplates => _agentLibrary.templates;
+        public IReadOnlyDictionary<SkinTemplate, AgentTemplate> agentSkinTemplates => _agentSkinLibrary.templates;
         internal WaveLibraryTemplate waveLibrary => _waveLibrary;
 
         internal AgentTemplate GetAgentTemplateById(int id)

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _id: 0
+  _rarity: {fileID: 0}
   _displayName: 
   _description: 
   _faceSprite: {fileID: 0}
@@ -39,6 +40,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _id: 0
+  _rarity: {fileID: 0}
   _displayName: 
   _description: 
   _faceSprite: {fileID: 0}
@@ -65,6 +67,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _id: 0
+  _rarity: {fileID: 0}
   _displayName: 
   _description: 
   _faceSprite: {fileID: 0}
@@ -91,7 +94,7 @@ MonoBehaviour:
   m_Name: "Agent_\uBAA8\uD5D8\uAC00"
   m_EditorClassIdentifier: 
   _id: 0
-  _rarity: {fileID: 11400000, guid: fdffd9bf88ebfee489c82a6af675e02e, type: 2}
+  _rarity: {fileID: 11400000, guid: e2abef2d73980a943aa1a2f6a18c9ed1, type: 2}
   _job: {fileID: 0}
   _displayName: "\uBAA8\uD5D8\uAC00"
   _moveType: 0
@@ -120,4 +123,4 @@ MonoBehaviour:
   _manaRecoveryPerSec: 25
   _skillTreeGraph: {fileID: 11400000, guid: 3f5919f2736bcec4f994e58d719c0215, type: 2}
   skins:
-  - {fileID: 11400000, guid: 0f96f44164e378b4dad959d48423701a, type: 2}
+  - {fileID: 11400000, guid: f2a25a39ddaa8e6439443560eb7f0bea, type: 2}
