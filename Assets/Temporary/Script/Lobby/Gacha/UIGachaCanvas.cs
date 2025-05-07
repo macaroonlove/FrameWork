@@ -99,15 +99,15 @@ namespace Temporary.Lobby
             _currentTab?.UnSelect();
             _currentTab = tab;
             _currentTab?.Select();
-            
+
             _background.sprite = tab.gachaData.background;
             SetButtons(tab);
         }
 
         private void PickUp(int gachaCount, int needCount, ObscuredIntVariable variable)
         {
-            UIPopupManager.Instance.ShowConfirmCancelPopup($"{variable.DisplayName} {needCount}개를 사용하여 유닛을 획득하시겠습니까?", (result) => 
-            { 
+            UIPopupManager.Instance.ShowConfirmCancelPopup($"{variable.DisplayName} {needCount}개를 사용하여 유닛을 획득하시겠습니까?", (result) =>
+            {
                 if (result == true)
                 {
                     // 해당 종류의 변수(Variable)의 개수가 충분하다면
