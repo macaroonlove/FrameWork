@@ -225,8 +225,8 @@ namespace Temporary.Core
         {
             List<AllyUnit> allies = new List<AllyUnit>();
 
-            range *= range;
-            float widthThreshold = ((width * width) / 4f) * targetDir.sqrMagnitude;
+            targetDir = targetDir.normalized;
+            float widthThreshold = (width * 0.5f) * (width * 0.5f);
 
             void GetAllAlliesInStraight(IEnumerable<AllyUnit> units)
             {
@@ -236,16 +236,13 @@ namespace Temporary.Core
                     {
                         Vector3 dirVector = unit.transform.position - unitPos;
 
-                        var distance = dirVector.sqrMagnitude;
+                        // 유닛을 기준으로한 정면 거리
+                        float forwardDist = Vector3.Dot(targetDir, dirVector);
+                        if (forwardDist < 0 || forwardDist > range) continue;
 
-                        // 범위 밖이라면
-                        if (distance > range) continue;
-
-                        // 뒤쪽에 존재한다면
-                        if (Vector3.Dot(targetDir, dirVector) <= 0) continue;
-
-                        // 직선의 폭 내에 존재한다면
-                        if (Vector3.Cross(targetDir, dirVector).sqrMagnitude <= widthThreshold)
+                        // 유닛을 기준으로한 측면 거리
+                        float sideDist = Vector3.Cross(targetDir, dirVector).sqrMagnitude;
+                        if (sideDist <= widthThreshold)
                         {
                             allies.Add(unit);
                         }
@@ -263,8 +260,8 @@ namespace Temporary.Core
         {
             PriorityQueue<AllyUnit> priorityQueue = new PriorityQueue<AllyUnit>();
 
-            range *= range;
-            float widthThreshold = ((width * width) / 4f) * targetDir.sqrMagnitude;
+            targetDir = targetDir.normalized;
+            float widthThreshold = (width * 0.5f) * (width * 0.5f);
 
             void GetSortedAlliesInStraight(IEnumerable<AllyUnit> units)
             {
@@ -273,18 +270,16 @@ namespace Temporary.Core
                     if (unit != null && unit.isActiveAndEnabled)
                     {
                         Vector3 dirVector = unit.transform.position - unitPos;
-                        float distance = dirVector.sqrMagnitude;
 
-                        // 범위 밖이라면
-                        if (distance > range) continue;
+                        // 유닛을 기준으로한 정면 거리
+                        float forwardDist = Vector3.Dot(targetDir, dirVector);
+                        if (forwardDist < 0 || forwardDist > range) continue;
 
-                        // 뒤쪽에 존재한다면
-                        if (Vector3.Dot(targetDir, dirVector) <= 0) continue;
-
-                        // 직선의 폭 내에 존재한다면
-                        if (Vector3.Cross(targetDir, dirVector).sqrMagnitude <= widthThreshold)
+                        // 유닛을 기준으로한 측면 거리
+                        float sideDist = Vector3.Cross(targetDir, dirVector).sqrMagnitude;
+                        if (sideDist <= widthThreshold)
                         {
-                            priorityQueue.Enqueue(unit, distance);
+                            priorityQueue.Enqueue(unit, forwardDist + sideDist);
                         }
                     }
                 }
@@ -317,18 +312,16 @@ namespace Temporary.Core
                     if (unit != null && unit.isActiveAndEnabled)
                     {
                         Vector3 dirVector = unit.transform.position - unitPos;
-                        float distance = dirVector.sqrMagnitude;
 
-                        // 범위 밖이라면
-                        if (distance > range) continue;
+                        // 유닛을 기준으로한 정면 거리
+                        float forwardDist = Vector3.Dot(targetDir, dirVector);
+                        if (forwardDist < 0 || forwardDist > range) continue;
 
-                        // 뒤쪽에 존재한다면
-                        if (Vector3.Dot(targetDir, dirVector) <= 0) continue;
-
-                        // 직선의 폭 내에 존재한다면
-                        if (Vector3.Cross(targetDir, dirVector).sqrMagnitude <= widthThreshold)
+                        // 유닛을 기준으로한 측면 거리
+                        float sideDist = Vector3.Cross(targetDir, dirVector).sqrMagnitude;
+                        if (sideDist <= widthThreshold)
                         {
-                            priorityQueue.Enqueue(unit, distance);
+                            priorityQueue.Enqueue(unit, forwardDist + sideDist);
 
                             if (priorityQueue.Count > maxCount)
                             {

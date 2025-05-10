@@ -173,8 +173,8 @@ namespace Temporary.Core
         {
             List<EnemyUnit> enemies = new List<EnemyUnit>();
 
-            range *= range;
-            float widthThreshold = ((width * width) / 4f) * targetDir.sqrMagnitude;
+            targetDir = targetDir.normalized;
+            float widthThreshold = (width * 0.5f) * (width * 0.5f);
 
             foreach (EnemyUnit enemy in _enemies)
             {
@@ -182,16 +182,13 @@ namespace Temporary.Core
                 {
                     Vector3 dirVector = enemy.transform.position - unitPos;
 
-                    var distance = dirVector.sqrMagnitude;
+                    // 유닛을 기준으로한 정면 거리
+                    float forwardDist = Vector3.Dot(targetDir, dirVector);
+                    if (forwardDist < 0 || forwardDist > range) continue;
 
-                    // 범위 밖이라면
-                    if (distance > range) continue;
-
-                    // 뒤쪽에 존재한다면
-                    if (Vector3.Dot(targetDir, dirVector) <= 0) continue;
-
-                    // 직선의 폭 내에 존재한다면
-                    if (Vector3.Cross(targetDir, dirVector).sqrMagnitude <= widthThreshold)
+                    // 유닛을 기준으로한 측면 거리
+                    float sideDist = Vector3.Cross(targetDir, dirVector).sqrMagnitude;
+                    if (sideDist <= widthThreshold)
                     {
                         enemies.Add(enemy);
                     }
@@ -205,26 +202,24 @@ namespace Temporary.Core
         {
             PriorityQueue<EnemyUnit> priorityQueue = new PriorityQueue<EnemyUnit>();
 
-            range *= range;
-            float widthThreshold = ((width * width) / 4f) * targetDir.sqrMagnitude;
+            targetDir = targetDir.normalized;
+            float widthThreshold = (width * 0.5f) * (width * 0.5f);
 
             foreach (EnemyUnit enemy in _enemies)
             {
                 if (enemy != null && enemy.isActiveAndEnabled)
                 {
                     Vector3 dirVector = enemy.transform.position - unitPos;
-                    float distance = dirVector.sqrMagnitude;
 
-                    // 범위 밖이라면
-                    if (distance > range) continue;
+                    // 유닛을 기준으로한 정면 거리
+                    float forwardDist = Vector3.Dot(targetDir, dirVector);
+                    if (forwardDist < 0 || forwardDist > range) continue;
 
-                    // 뒤쪽에 존재한다면
-                    if (Vector3.Dot(targetDir, dirVector) <= 0) continue;
-
-                    // 직선의 폭 내에 존재한다면
-                    if (Vector3.Cross(targetDir, dirVector).sqrMagnitude <= widthThreshold)
+                    // 유닛을 기준으로한 측면 거리
+                    float sideDist = Vector3.Cross(targetDir, dirVector).sqrMagnitude;
+                    if (sideDist <= widthThreshold)
                     {
-                        priorityQueue.Enqueue(enemy, distance);
+                        priorityQueue.Enqueue(enemy, forwardDist + sideDist);
                     }
                 }
             }
@@ -243,26 +238,24 @@ namespace Temporary.Core
         {
             PriorityQueue<EnemyUnit> priorityQueue = new PriorityQueue<EnemyUnit>();
 
-            range *= range;
-            float widthThreshold = ((width * width) / 4f) * targetDir.sqrMagnitude;
+            targetDir = targetDir.normalized;
+            float widthThreshold = (width * 0.5f) * (width * 0.5f);
 
             foreach (EnemyUnit enemy in _enemies)
             {
                 if (enemy != null && enemy.isActiveAndEnabled)
                 {
                     Vector3 dirVector = enemy.transform.position - unitPos;
-                    float distance = dirVector.sqrMagnitude;
 
-                    // 범위 밖이라면
-                    if (distance > range) continue;
+                    // 유닛을 기준으로한 정면 거리
+                    float forwardDist = Vector3.Dot(targetDir, dirVector);
+                    if (forwardDist < 0 || forwardDist > range) continue;
 
-                    // 뒤쪽에 존재한다면
-                    if (Vector3.Dot(targetDir, dirVector) <= 0) continue;
-
-                    // 직선의 폭 내에 존재한다면
-                    if (Vector3.Cross(targetDir, dirVector).sqrMagnitude <= widthThreshold)
+                    // 유닛을 기준으로한 측면 거리
+                    float sideDist = Vector3.Cross(targetDir, dirVector).sqrMagnitude;
+                    if (sideDist <= widthThreshold)
                     {
-                        priorityQueue.Enqueue(enemy, distance);
+                        priorityQueue.Enqueue(enemy, forwardDist + sideDist);
 
                         if (priorityQueue.Count > maxCount)
                         {
