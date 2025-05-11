@@ -17,6 +17,8 @@ MonoBehaviour:
   _spawnPoint: 0
   _isInfinity: 1
   _duration: 0
-  _posOffset: {x: 0, y: 0, z: 0}
+  _isRepeat: 0
+  _cycle: 0
+  _posOffset: {x: 0, y: -0.2, z: 0}
   _rotOffset: {x: 0, y: 0, z: 0}
   _isFollowTarget: 0

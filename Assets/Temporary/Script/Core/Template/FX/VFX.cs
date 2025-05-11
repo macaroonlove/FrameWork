@@ -63,9 +63,11 @@ namespace Temporary.Core
 
         private void DoPlay(Unit target, FXAbility fxAbility)
         {
-            Vector3 pos = GetSpawnPoint(target);
+            Transform point = GetSpawnPoint(target);
 
-            Quaternion baseRot = target.transform.rotation;
+            Vector3 pos = point.TransformPoint(_posOffset);
+
+            Quaternion baseRot = point.rotation;
             Quaternion rot = baseRot * Quaternion.Euler(_rotOffset);
 
             var obj = Play(pos, rot);
@@ -77,7 +79,7 @@ namespace Temporary.Core
                 {
                     follow = obj.gameObject.AddComponent<Follow>();
                 }
-                follow.SetTarget(target.transform, _posOffset);
+                follow.SetTarget(point, _posOffset);
             }
 
             fxAbility.AddFX(obj);
@@ -120,46 +122,46 @@ namespace Temporary.Core
             return obj;
         }
 
-        private Vector3 GetSpawnPoint(Unit target)
+        private Transform GetSpawnPoint(Unit target)
         {
-            Vector3 point = target.transform.position;
+            var point = target.transform;
 
             switch (_spawnPoint)
             {
                 case ESpawnPoint.Head:
                     if (target.headPoint != null)
                     {
-                        point = target.headPoint.position;
+                        point = target.headPoint;
                     }
                     break;
                 case ESpawnPoint.Body:
                     if (target.bodyPoint != null)
                     {
-                        point = target.bodyPoint.position;
+                        point = target.bodyPoint;
                     }
                     break;
                 case ESpawnPoint.LeftHand:
                     if (target.leftHandPoint != null)
                     {
-                        point = target.leftHandPoint.position;
+                        point = target.leftHandPoint;
                     }
                     break;
                 case ESpawnPoint.RightHand:
                     if (target.rightHandPoint != null)
                     {
-                        point = target.rightHandPoint.position;
+                        point = target.rightHandPoint;
                     }
                     break;
                 case ESpawnPoint.Foot:
                     if (target.footPoint != null)
                     {
-                        point = target.footPoint.position;
+                        point = target.footPoint;
                     }
                     break;
                 case ESpawnPoint.ProjectileHit:
                     if (target.projectileHitPoint != null)
                     {
-                        point = target.projectileHitPoint.position;
+                        point = target.projectileHitPoint;
                     }
                     break;
             }

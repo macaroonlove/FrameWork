@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: VFX_Bind
   m_EditorClassIdentifier: 
   _isParticle: 1
-  _vfxObj: {fileID: 6155018981425521982, guid: 9a18edf017f5d694c9fbf8eab985b508, type: 3}
-  _spawnPoint: 0
+  _vfxObj: {fileID: 5618313314820945176, guid: ebc4ce214563ddc4280bfda38fa1102b, type: 3}
+  _spawnPoint: 1
   _isInfinity: 1
   _duration: 0
-  _posOffset: {x: 0, y: 0, z: 0}
+  _isRepeat: 0
+  _cycle: 0
+  _posOffset: {x: 0, y: 0, z: 0.1}
   _rotOffset: {x: 0, y: 0, z: 0}
   _isFollowTarget: 0

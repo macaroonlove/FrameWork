@@ -19,6 +19,6 @@ MonoBehaviour:
   _duration: 0
   _isRepeat: 0
   _cycle: 0
-  _posOffset: {x: 0, y: 0, z: 0}
-  _rotOffset: {x: 0, y: 0, z: 0}
+  _posOffset: {x: 0, y: 0, z: 0.22}
+  _rotOffset: {x: 30, y: 0, z: 0}
   _isFollowTarget: 1

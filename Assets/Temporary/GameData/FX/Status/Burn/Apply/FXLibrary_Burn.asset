@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fxList:
   - {fileID: 11400000, guid: 64830098f07cf06488371a2c690fd1c8, type: 2}
+  - {fileID: 11400000, guid: 41166c7c7fa581b4a8bae4bfde5df862, type: 2}
   - {fileID: 11400000, guid: 4ab4ca2ba50187f4ab1f74bf0bbc6642, type: 2}

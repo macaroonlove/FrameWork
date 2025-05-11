@@ -17,7 +17,7 @@ namespace Temporary.Core
         {
             if (_target == null) return;
 
-            transform.position = _target.position + _offset;
+            transform.position = _target.TransformPoint(_offset);
         }
     }
 }
