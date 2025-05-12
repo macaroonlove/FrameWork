@@ -55,9 +55,18 @@ namespace Temporary.Core
         #endregion
 
         #region 값 변경 메서드
-        public void SetDisplayName(string name)
+        internal void SetId(int id) => _id = id;
+        public void SetDisplayName(string name) => _displayName = name;
+        internal void SetDescription(string desc) => _description = desc;
+        internal void SetActiveSkillTriggerType(EActiveSkillTriggerType triggerType) => _skillTriggerType = triggerType;
+        internal void SetActiveSkillTargetingType(EActiveSkillTargetingType targetingType) => _skillTargetingType = targetingType;
+        internal void SetActiveSkillPayType(EActiveSkillPayType payType) => _skillPayType = payType;
+        internal void SetPayAmount(int payAmount) => _payAmount = payAmount;
+        internal void SetCooldownTime(float cooldownTime) => _cooldownTime = cooldownTime;
+        internal void SetParameterHash(string parameterName)
         {
-            _displayName = name;
+            _parameterName = parameterName;
+            _parameterHash = Animator.StringToHash(parameterName);
         }
         #endregion
     }

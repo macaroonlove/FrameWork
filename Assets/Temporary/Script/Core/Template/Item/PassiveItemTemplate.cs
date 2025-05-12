@@ -11,7 +11,7 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private int _id;
         [HideInInspector, SerializeField] private string _displayName;
         [HideInInspector, SerializeField] private string _description;
-        [HideInInspector, SerializeField] private RarityTemplate _rarity;
+        [HideInInspector, SerializeField] private PassiveItemRarityTemplate _rarity;
         [HideInInspector, SerializeField] private int _price;
 
         [HideInInspector, SerializeField] private FX _casterFX;
@@ -25,17 +25,18 @@ namespace Temporary.Core
         public int id => _id;
         public string displayName => _displayName;
         public string description => _description;
-        public RarityTemplate rarity => _rarity;
+        public PassiveItemRarityTemplate rarity => _rarity;
         public int price => _price;
 
         public FX casterFX => _casterFX;
         #endregion
 
         #region 값 변경 메서드
-        public void SetDisplayName(string name)
-        {
-            _displayName = name;
-        }
+        internal void SetId(int id) => _id = id;
+        public void SetDisplayName(string name) => _displayName = name;
+        internal void SetDescription(string desc) => _description = desc;
+        internal void SetRarity(PassiveItemRarityTemplate rarity) => _rarity = rarity;
+        internal void SetPrice(int price) => _price = price;
         #endregion
     }
 }

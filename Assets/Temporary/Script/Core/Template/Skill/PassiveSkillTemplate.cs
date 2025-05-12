@@ -24,10 +24,9 @@ namespace Temporary.Core
         #endregion
 
         #region 값 변경 메서드
-        public void SetDisplayName(string name)
-        {
-            _displayName = name;
-        }
+        internal void SetId(int id) => _id = id;
+        public void SetDisplayName(string name) => _displayName = name;
+        internal void SetDescription(string desc) => _description = desc;
         #endregion
     }
 }

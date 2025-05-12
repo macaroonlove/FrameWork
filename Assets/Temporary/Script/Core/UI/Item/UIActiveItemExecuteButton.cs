@@ -187,7 +187,7 @@ namespace Temporary.Core
 
             switch (_template.rangeType)
             {
-                case ERangeType.All:
+                case EActiveItemRangeType.All:
                     switch (_actionType)
                     {
                         case EActionType.Item_1:
@@ -201,7 +201,7 @@ namespace Temporary.Core
                             break;
                     }
                     break;
-                case ERangeType.Circle:
+                case EActiveItemRangeType.Circle:
                     switch (_actionType)
                     {
                         case EActionType.Item_1:
@@ -240,7 +240,7 @@ namespace Temporary.Core
 
             switch (_template.rangeType)
             {
-                case ERangeType.All:
+                case EActiveItemRangeType.All:
                     switch (_actionType)
                     {
                         case EActionType.Item_1:
@@ -254,7 +254,7 @@ namespace Temporary.Core
                             break;
                     }
                     break;
-                case ERangeType.Circle:
+                case EActiveItemRangeType.Circle:
                     switch (_actionType)
                     {
                         case EActionType.Item_1:
@@ -380,7 +380,7 @@ namespace Temporary.Core
             if (IsInteractable == false) return;
             if (_isPointerDown == false) return;
             if (_isActiveRangeRenderer == true) return;
-            if (_template.rangeType == ERangeType.All) return;
+            if (_template.rangeType == EActiveItemRangeType.All) return;
 
             float distSquare = (_cachedPointerDownPosition - eventData.position).sqrMagnitude;
 
@@ -388,7 +388,7 @@ namespace Temporary.Core
             {
                 switch(_template.rangeType)
                 {
-                    case ERangeType.Circle:
+                    case EActiveItemRangeType.Circle:
                         InitializeCircleRenderer();
                         break;
                 }
@@ -427,10 +427,10 @@ namespace Temporary.Core
             {
                 switch (_template.rangeType)
                 {
-                    case ERangeType.All:
+                    case EActiveItemRangeType.All:
                         InitializeAllRenderer();
                         break;
-                    case ERangeType.Circle:
+                    case EActiveItemRangeType.Circle:
                         InitializeCircleRenderer();
                         return;
                 }

@@ -127,6 +127,17 @@ namespace Temporary.Core
         Rare,
         Common,
     }
+
+    /// <summary>
+    /// 패시브 아이템 등급
+    /// </summary>
+    public enum EPassiveItemRarity
+    {
+        Legend,
+        Epic,
+        Rare,
+        Common,
+    }
     #endregion
 
     /// <summary>
@@ -192,6 +203,13 @@ namespace Temporary.Core
         Mana,
     }
     #endregion
+
+    public enum EActiveItemRangeType
+    {
+        All,
+        Circle,
+        //Grid,
+    }
 
     public enum EGetTargetFilter
     {

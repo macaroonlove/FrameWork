@@ -18,7 +18,7 @@ namespace Temporary.Core
         [HideInInspector, SerializeField] private float _cooldownTime;
         [HideInInspector, SerializeField] private float _delay;
         
-        [HideInInspector, SerializeField] private ERangeType _rangeType;
+        [HideInInspector, SerializeField] private EActiveItemRangeType _rangeType;
         [HideInInspector, SerializeField] private float _range;
         [HideInInspector, SerializeField] private EUnitType _unitType;
         // 조건 추가
@@ -40,7 +40,7 @@ namespace Temporary.Core
         public float cooldownTime => _cooldownTime;
         public float delay => _delay;
         
-        public ERangeType rangeType => _rangeType;
+        public EActiveItemRangeType rangeType => _rangeType;
         public float range => _range;
         public EUnitType unitType => _unitType;
 
@@ -49,10 +49,15 @@ namespace Temporary.Core
         #endregion
 
         #region 값 변경 메서드
-        public void SetDisplayName(string name)
-        {
-            _displayName = name;
-        }
+        internal void SetId(int id) => _id = id;
+        public void SetDisplayName(string name) => _displayName = name;
+        internal void SetDescription(string desc) => _description = desc;
+        internal void SetNeedCost(int needCost) => _needCost = needCost;
+        internal void SetCooldownTime(float cooldownTime) => _cooldownTime = cooldownTime;
+        internal void SetDelay(float delay) => _delay = delay;
+        internal void SetUnitType(EUnitType unitType) => _unitType = unitType;
+        internal void SetRangeType(EActiveItemRangeType rangeType) => _rangeType = rangeType;
+        internal void SetRange(float range) => _range = range;
         #endregion
     }
 }
@@ -122,12 +127,12 @@ namespace Temporary.Editor
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("스킬 이름", GUILayout.Width(80));
+            GUILayout.Label("아이템 이름", GUILayout.Width(80));
             EditorGUILayout.PropertyField(_displayName, GUIContent.none);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("스킬 설명", GUILayout.Width(80));
+            GUILayout.Label("아이템 설명", GUILayout.Width(80));
             _description.stringValue = EditorGUILayout.TextArea(_description.stringValue, GUILayout.Height(50));
             GUILayout.EndHorizontal();
 

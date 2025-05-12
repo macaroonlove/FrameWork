@@ -345,7 +345,14 @@ namespace Temporary.Editor
                 ref activeSkillEditor,
                 "액티브 스킬",
                 "Assets/Temporary/GameData/Skill/ActiveSkill",
-                "ActiveSkill"
+                "ActiveSkill",
+                () =>
+                {
+                    var window = GetWindow<LoadActiveSkillTemplateEditorWindow>();
+                    window.titleContent = new GUIContent("액티브 스킬 불러오기");
+                    window.minSize = new Vector2(300, 100);
+                    window.maxSize = new Vector2(300, 100);
+                }
             );
         }
 
@@ -358,7 +365,14 @@ namespace Temporary.Editor
                 ref passiveSkillEditor,
                 "패시브 스킬",
                 "Assets/Temporary/GameData/Skill/PassiveSkill",
-                "PassiveSkill"
+                "PassiveSkill",
+                () =>
+                {
+                    var window = GetWindow<LoadPassiveSkillTemplateEditorWindow>();
+                    window.titleContent = new GUIContent("패시브 스킬 불러오기");
+                    window.minSize = new Vector2(300, 100);
+                    window.maxSize = new Vector2(300, 100);
+                }
             );
         }
 
@@ -474,9 +488,16 @@ namespace Temporary.Editor
                 ref selectedActiveItemIndex,
                 ref activeItemScrollPosition,
                 ref activeItemEditor,
-                "아이템",
+                "액티브 아이템",
                 "Assets/Temporary/GameData/Item/ActiveItem",
-                "ActiveItem"
+                "ActiveItem",
+                () =>
+                {
+                    var window = GetWindow<LoadActiveItemTemplateEditorWindow>();
+                    window.titleContent = new GUIContent("액티브 아이템 불러오기");
+                    window.minSize = new Vector2(300, 100);
+                    window.maxSize = new Vector2(300, 100);
+                }
             );
         }
 
@@ -487,9 +508,16 @@ namespace Temporary.Editor
                 ref selectedPassiveItemIndex,
                 ref passiveItemScrollPosition,
                 ref passiveItemEditor,
-                "아이템",
+                "패시브 아이템",
                 "Assets/Temporary/GameData/Item/PassiveItem",
-                "PassiveItem"
+                "PassiveItem",
+                () =>
+                {
+                    var window = GetWindow<LoadPassiveItemTemplateEditorWindow>();
+                    window.titleContent = new GUIContent("패시브 아이템 불러오기");
+                    window.minSize = new Vector2(300, 100);
+                    window.maxSize = new Vector2(300, 100);
+                }
             );
         }
         #endregion
