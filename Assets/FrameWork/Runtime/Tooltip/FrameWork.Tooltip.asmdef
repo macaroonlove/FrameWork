@@ -3,8 +3,10 @@
     "rootNamespace": "FrameWork.Tooltip",
     "references": [
         "Unity.TextMeshPro",
+        "UniTask",
         "FrameWork",
-        "FrameWork.UIBinding"
+        "FrameWork.UIBinding",
+        "VInspector"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

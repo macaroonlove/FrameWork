@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
@@ -23,10 +24,11 @@ namespace FrameWork.Tooltip
             return data;
         }
 
-        internal override void ApplyData(TooltipData data)
+        internal override async void ApplyData(TooltipData data)
         {
             _descriptionText.text = data.GetString("Description");
-            _descriptionText.ForceMeshUpdate();
+
+            await UniTask.Yield();
 
             var newHeight = _descriptionText.textInfo.lineCount * 50;
             Vector2 sizeDelta = _descriptionText.rectTransform.sizeDelta;

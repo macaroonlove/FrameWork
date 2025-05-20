@@ -782,6 +782,17 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8219610469179864114, guid: 90f04db49c9bf364fb9fe2664c753025,
+        type: 3}
+      propertyPath: m_text
+      value: "<link=\"\uC2A4\uD0AC\"><u>\uC2A4\uD0AC</u></link> <link=\"\uD2B8\uB9AC\"><u>\uD2B8\uB9AC</u></link>
+        \uBCF4\uAE30"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8219610469179864114, guid: 90f04db49c9bf364fb9fe2664c753025,
+        type: 3}
+      propertyPath: m_isRightToLeft
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8520521439430191278, guid: 90f04db49c9bf364fb9fe2664c753025,
         type: 3}
       propertyPath: m_Pivot.x
@@ -890,7 +901,15 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 249054667232145140, guid: 90f04db49c9bf364fb9fe2664c753025,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 919357228}
+    - targetCorrespondingSourceObject: {fileID: 249054667232145140, guid: 90f04db49c9bf364fb9fe2664c753025,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 919357227}
   m_SourcePrefab: {fileID: 100100000, guid: 90f04db49c9bf364fb9fe2664c753025, type: 3}
 --- !u!224 &919357225 stripped
 RectTransform:
@@ -898,6 +917,47 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 919357224}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &919357226 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 249054667232145140, guid: 90f04db49c9bf364fb9fe2664c753025,
+    type: 3}
+  m_PrefabInstance: {fileID: 919357224}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &919357227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919357226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40898a25ead2814479ba9b404a78f06e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _template: {fileID: 11400000, guid: 1fd9a878157265346902dcc155231ab1, type: 2}
+  _isChangeColor: 1
+  _hoverColor: {r: 1, g: 0.042452812, b: 0.042452812, a: 1}
+--- !u!114 &919357228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919357226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b47eb08c5e798734285f019b5cf6e202, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _tooltipStyle: {fileID: 0}
+  _tooltipPosition: 0
+  _tooltipOffset: {x: 0, y: 0}
+  tooltipData:
+    _stringKeys: []
+    _spriteKeys: []
+    _stringValues: []
+    _spriteValues: []
 --- !u!1001 &1373443923
 PrefabInstance:
   m_ObjectHideFlags: 0

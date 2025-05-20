@@ -12,50 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bbe472fd79391d4bb2a97d1c606dda1, type: 3}
   m_Name: "SkillTree_\uBAA8\uD5D8\uAC00"
   m_EditorClassIdentifier: 
-  nodes:
-  - {fileID: 8738280761881479071}
+  nodes: []
   displayName: "\uBAA8\uD5D8\uAC00"
-  nodeLevelCount: 0
-  nodeIndexCount: 0
---- !u!114 &8738280761881479071
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af1c027665b01d149aa00c7403bc3767, type: 3}
-  m_Name: Active Skill
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: 104, y: 72}
-  ports:
-    keys:
-    - level
-    - prevSkill
-    values:
-    - _fieldName: level
-      _node: {fileID: 8738280761881479071}
-      _typeQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
-        PublicKeyToken=b77a5c561934e089
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: prevSkill
-      _node: {fileID: 8738280761881479071}
-      _typeQualifiedName: System.Collections.Generic.List`1[[System.Int32, mscorlib,
-        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib,
-        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
-      connections: []
-      _direction: 0
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-  level: 0
-  index: 0
-  prevSkill: 
-  skillTemplate: {fileID: 11400000, guid: a7884087eb043e046b49e15dbd004e0c, type: 2}
+  nodeLevelCount: 1
+  nodeIndexCount: 1

@@ -50,7 +50,10 @@ namespace FrameWork.Tooltip
 
             if (_tooltip.TryGetValue(tooltipPrefab, out style))
             {
-                style.Hide(true);
+                if (style != null)
+                {
+                    style.Hide(true);
+                }
             }
         }
 

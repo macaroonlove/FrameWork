@@ -10,8 +10,9 @@ namespace FrameWork.Tooltip
         [SerializeField] private Vector2 _tooltipOffset;
 
         [HideInInspector] public TooltipData tooltipData;
+        internal bool isHover = true;
 
-        internal TooltipStyle tooltipStyle => _tooltipStyle;
+        internal TooltipStyle tooltipStyle { get => _tooltipStyle; set => _tooltipStyle = value; }
         internal TipPosition tooltipPosition => _tooltipPosition;
         internal Vector2 tooltipOffset => _tooltipOffset;
 
@@ -22,20 +23,22 @@ namespace FrameWork.Tooltip
 
         public void OnPointerEnter(PointerEventData eventData)
         {
+            if (isHover == false) return;
             StartHover();
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
+            if (isHover == false) return;
             StopHover();
         }
 
-        private void StartHover()
+        internal void StartHover()
         {
             TooltipManager.Instance.Show(this);
         }
 
-        private void StopHover()
+        internal void StopHover()
         {
             TooltipManager.Instance.Hide(this);
         }

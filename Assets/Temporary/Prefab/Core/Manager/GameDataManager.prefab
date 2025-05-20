@@ -49,3 +49,4 @@ MonoBehaviour:
   _agentLibrary: {fileID: 11400000, guid: a2d62277f65baab47aadbc5ffeea41b5, type: 2}
   _agentSkinLibrary: {fileID: 11400000, guid: 6ee7cf71a5a805244afe866242e149ec, type: 2}
   _waveLibrary: {fileID: 11400000, guid: 1518715b4424af94d8659f9cc3d1bfd6, type: 2}
+  _tooltipData: {fileID: 11400000, guid: 1fd9a878157265346902dcc155231ab1, type: 2}
