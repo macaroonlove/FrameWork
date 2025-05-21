@@ -45,15 +45,14 @@ namespace FrameWork.Tooltip
         {
             _showTrigger = null;
 
+            if (trigger.tooltipStyle == null) return;
+
             var tooltipPrefab = trigger.tooltipStyle.gameObject;
             TooltipStyle style;
 
             if (_tooltip.TryGetValue(tooltipPrefab, out style))
             {
-                if (style != null)
-                {
-                    style.Hide(true);
-                }
+                style.Hide(true);
             }
         }
 

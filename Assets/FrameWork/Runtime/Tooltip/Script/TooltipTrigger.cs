@@ -16,6 +16,10 @@ namespace FrameWork.Tooltip
         internal TipPosition tooltipPosition => _tooltipPosition;
         internal Vector2 tooltipOffset => _tooltipOffset;
 
+#if UNITY_EDITOR
+        [HideInInspector] public string prevTooltipStyle;
+#endif
+
         private void Awake()
         {
             tooltipData.InitializeData();
@@ -69,31 +73,43 @@ namespace FrameWork.Tooltip.Editor
     [CustomEditor(typeof(TooltipTrigger))]
     public class TooltipTriggerEditor : Editor
     {
+        private TooltipTrigger _trigger;
+
+        public void OnEnable()
+        {
+            _trigger = (TooltipTrigger)target;
+        }
+
         public override void OnInspectorGUI()
         {
-            TooltipTrigger trigger = (TooltipTrigger)target;
-
             base.OnInspectorGUI();
 
             EditorGUILayout.Space(10);
 
-            if (trigger.tooltipStyle != null)
+            if (_trigger.tooltipStyle != null)
             {
-                if (trigger.tooltipData.IsInitialize() == false)
+                if (_trigger.prevTooltipStyle != _trigger.tooltipStyle.name)
                 {
-                    trigger.tooltipData = trigger.tooltipStyle.CreateField();
+                    _trigger.tooltipData = _trigger.tooltipStyle.CreateField();
+
+                    _trigger.prevTooltipStyle = _trigger.tooltipStyle.name;
                 }
 
-                if (trigger.tooltipData.IsInitializeData() == false)
+                if (_trigger.tooltipData.IsInitialize() == false)
                 {
-                    trigger.tooltipData.InitializeData();
+                    _trigger.tooltipData = _trigger.tooltipStyle.CreateField();
+                }
+
+                if (_trigger.tooltipData.IsInitializeData() == false)
+                {
+                    _trigger.tooltipData.InitializeData();
                 }
 
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
                 EditorGUILayout.LabelField("툴팁 데이터 설정", EditorStyles.boldLabel);
 
                 // 문자열 데이터 처리
-                var stringData = trigger.tooltipData.getAllString;
+                var stringData = _trigger.tooltipData.getAllString;
                 foreach (var key in stringData.Keys.ToList())
                 {
                     EditorGUILayout.LabelField(key);
@@ -104,19 +120,19 @@ namespace FrameWork.Tooltip.Editor
                     );
                     if (newValue != stringData[key])
                     {
-                        trigger.tooltipData.SetString(key, newValue);
+                        _trigger.tooltipData.SetString(key, newValue);
                         GUI.changed = true;
                     }
                 }
 
                 // 스프라이트 데이터 처리
-                var spriteData = trigger.tooltipData.getAllSprite;
+                var spriteData = _trigger.tooltipData.getAllSprite;
                 foreach (var key in spriteData.Keys.ToList())
                 {
                     Sprite newValue = (Sprite)EditorGUILayout.ObjectField(key, spriteData[key], typeof(Sprite), false);
                     if (newValue != spriteData[key])
                     {
-                        trigger.tooltipData.SetSprite(key, newValue);
+                        _trigger.tooltipData.SetSprite(key, newValue);
                         GUI.changed = true;
                     }
                 }
@@ -125,8 +141,8 @@ namespace FrameWork.Tooltip.Editor
 
                 if (GUI.changed)
                 {
-                    trigger.tooltipData.InitializeData();
-                    EditorUtility.SetDirty(trigger);
+                    _trigger.tooltipData.InitializeData();
+                    EditorUtility.SetDirty(_trigger);
                 }
             }
             else
