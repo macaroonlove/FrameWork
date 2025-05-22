@@ -126,7 +126,7 @@ namespace FrameWork.Tooltip.Editor
                     );
                     if (newValue != stringData[key])
                     {
-                        _currentLinkTooltip.data.SetString(key, newValue);
+                        _currentLinkTooltip.data.SetStringEditor(key, newValue);
                         GUI.changed = true;
                     }
                 }
@@ -138,7 +138,7 @@ namespace FrameWork.Tooltip.Editor
                     Sprite newValue = (Sprite)EditorGUILayout.ObjectField(key, spriteData[key], typeof(Sprite), false);
                     if (newValue != spriteData[key])
                     {
-                        _currentLinkTooltip.data.SetSprite(key, newValue);
+                        _currentLinkTooltip.data.SetSpriteEditor(key, newValue);
                         GUI.changed = true;
                     }
                 }

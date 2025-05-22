@@ -27,14 +27,26 @@ namespace FrameWork.Tooltip
                               .ToDictionary(x => x.key, x => x.value);
         }
 
-        #region 데이터 추가
+        #region 데이터 수정
+        internal void SetString(string key, string value)
+        {
+            _stringData[key] = value;
+        }
+
+        internal void SetSprite(string key, Sprite value)
+        {
+            _spriteData[key] = value;
+        }
+        #endregion
+
+#if UNITY_EDITOR
+        #region 데이터 추가(Editor)
         internal void AddString(string key, string value)
         {
             if (_stringData.ContainsKey(key)) return;
 
             _stringKeys.Add(key);
             _stringValues.Add(value);
-            _stringData[key] = value;
         }
 
         internal void AddSprite(string key, Sprite value)
@@ -43,37 +55,43 @@ namespace FrameWork.Tooltip
 
             _spriteKeys.Add(key);
             _spriteValues.Add(value);
-            _spriteData[key] = value;
         }
         #endregion
 
-        #region 데이터 수정
-        internal void SetString(string key, string value)
+        #region 데이터 수정(Editor)
+        internal void SetStringEditor(string key, string value)
         {
-            if (_stringData.ContainsKey(key))
+            int index = _stringKeys.IndexOf(key);
+
+            if (index == -1)
             {
-                _stringData[key] = value;
-                _stringValues = _stringKeys.Select(key => _stringData.ContainsKey(key) ? _stringData[key] : "").ToList();
+                _stringKeys.Add(key);
+                _stringValues.Add(value);
             }
             else
             {
-                AddString(key, value);
+                _stringKeys[index] = key;
+                _stringValues[index] = value;
             }
         }
 
-        internal void SetSprite(string key, Sprite value)
+        internal void SetSpriteEditor(string key, Sprite value)
         {
-            if (_spriteData.ContainsKey(key))
+            int index = _spriteKeys.IndexOf(key);
+
+            if (index == -1)
             {
-                _spriteData[key] = value;
-                _spriteValues = _spriteKeys.Select(key => _spriteData.ContainsKey(key) ? _spriteData[key] : null).ToList();
+                _spriteKeys.Add(key);
+                _spriteValues.Add(value);
             }
             else
             {
-                AddSprite(key, value);
+                _spriteKeys[index] = key;
+                _spriteValues[index] = value;
             }
         }
         #endregion
+#endif
 
         internal string GetString(string key) => _stringData.ContainsKey(key) ? _stringData[key] : string.Empty;
         internal Sprite GetSprite(string key) => _spriteData.ContainsKey(key) ? _spriteData[key] : null;

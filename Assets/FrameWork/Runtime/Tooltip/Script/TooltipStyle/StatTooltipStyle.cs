@@ -17,6 +17,7 @@ namespace FrameWork.Tooltip
         private TextMeshProUGUI _baseStatText;
         private TextMeshProUGUI _detailStatText;
 
+#if UNITY_EDITOR
         internal override TooltipData CreateField()
         {
             var data = new TooltipData();
@@ -26,6 +27,7 @@ namespace FrameWork.Tooltip
 
             return data;
         }
+#endif
 
         internal override async void ApplyData(TooltipData data)
         {
