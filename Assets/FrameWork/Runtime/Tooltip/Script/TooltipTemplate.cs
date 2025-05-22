@@ -18,6 +18,7 @@ namespace FrameWork.Tooltip
         public string linkName;
         public TooltipStyle style;
         public TooltipData data;
+        public string prevStyleName;
     }
 }
 
@@ -99,6 +100,13 @@ namespace FrameWork.Tooltip.Editor
 
             if (_currentLinkTooltip != null && _currentLinkTooltip.style != null)
             {
+                if (_currentLinkTooltip.prevStyleName != _currentLinkTooltip.style.name)
+                {
+                    _currentLinkTooltip.data = _currentLinkTooltip.style.CreateField();
+
+                    _currentLinkTooltip.prevStyleName = _currentLinkTooltip.style.name;
+                }
+
                 // 툴팁 필드 생성
                 if (_currentLinkTooltip.data.IsInitialize() == false)
                 {
@@ -150,6 +158,7 @@ namespace FrameWork.Tooltip.Editor
 
             if (GUI.changed)
             {
+                if (_currentLinkTooltip?.data != null) _currentLinkTooltip.data.InitializeData();
                 EditorUtility.SetDirty(_template);
             }
         }

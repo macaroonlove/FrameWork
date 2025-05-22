@@ -22,6 +22,7 @@ MonoBehaviour:
       _stringValues:
       - "\uC2A4\uD0AC\uC784"
       _spriteValues: []
+    prevStyleName: DescriptionTooltipStyle
   - linkName: "\uD2B8\uB9AC"
     style: {fileID: 5791082997531837647, guid: 93c78f5546082cc478c361ba605bff1e, type: 3}
     data:
@@ -31,3 +32,4 @@ MonoBehaviour:
       _stringValues:
       - "\uD2B8\uB9AC\uC784"
       _spriteValues: []
+    prevStyleName: DescriptionTooltipStyle
