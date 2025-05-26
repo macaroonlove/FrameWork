@@ -45,9 +45,9 @@ namespace Temporary.Core
 
             foreach (var node in skillTree.nodes)
             {
-                if (node is PassiveSkillNode skill)
+                if (node is SkillNode skillNode && skillNode.skillTemplate is PassiveSkillTemplate skill)
                 {
-                    foreach (var trigger in skill.skillTemplate.triggers)
+                    foreach (var trigger in skill.triggers)
                     {
                         // 상시 적용될 효과
                         if (trigger is AlwaysUnitTrigger alwaysUnitTrigger)

@@ -4,14 +4,8 @@ using UnityEngine;
 namespace Temporary.Core
 {
     [CreateAssetMenu(menuName = "Templates/Skill/Active Skill", fileName = "ActiveSkill", order = 0)]
-    public class ActiveSkillTemplate : ScriptableObject, IDataWindowEntry
+    public class ActiveSkillTemplate : SkillTemplate
     {
-        [HideInInspector, SerializeField] private Sprite _sprite;
-
-        [HideInInspector, SerializeField] private int _id;
-        [HideInInspector, SerializeField] private string _displayName;
-        [HideInInspector, SerializeField] private string _description;
-
         [HideInInspector, SerializeField] private EActiveSkillTriggerType _skillTriggerType;
 
         [HideInInspector, SerializeField] private EActiveSkillTargetingType _skillTargetingType;
@@ -32,12 +26,6 @@ namespace Temporary.Core
         public List<Effect> effects = new List<Effect>();
 
         #region 프로퍼티
-        public Sprite sprite => _sprite;
-
-        public int id => _id;
-        public string displayName => _displayName;
-        public string description => _description;
-
         public EActiveSkillTriggerType skillTriggerType => _skillTriggerType;
 
         public EActiveSkillTargetingType skillTargetingType => _skillTargetingType;
@@ -55,9 +43,6 @@ namespace Temporary.Core
         #endregion
 
         #region 값 변경 메서드
-        internal void SetId(int id) => _id = id;
-        public void SetDisplayName(string name) => _displayName = name;
-        internal void SetDescription(string desc) => _description = desc;
         internal void SetActiveSkillTriggerType(EActiveSkillTriggerType triggerType) => _skillTriggerType = triggerType;
         internal void SetActiveSkillTargetingType(EActiveSkillTargetingType targetingType) => _skillTargetingType = targetingType;
         internal void SetActiveSkillPayType(EActiveSkillPayType payType) => _skillPayType = payType;

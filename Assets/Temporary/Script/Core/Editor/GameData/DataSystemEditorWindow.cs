@@ -425,7 +425,7 @@ namespace Temporary.Editor
 
             if (GUILayout.Button("에디터 열기"))
             {
-                NodeEditorWindow.Open(skillTreeTemplates[selectedSkillTreeIndex]);
+                SkillTreeWindow.Open(skillTreeTemplates[selectedSkillTreeIndex]);
             }
 
             GUILayout.EndVertical();

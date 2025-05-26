@@ -4,30 +4,10 @@ using UnityEngine;
 namespace Temporary.Core
 {
     [CreateAssetMenu(menuName = "Templates/Skill/Passive Skill", fileName = "PassiveSkill", order = 1)]
-    public class PassiveSkillTemplate : ScriptableObject, IDataWindowEntry
+    public class PassiveSkillTemplate : SkillTemplate
     {
-        [HideInInspector, SerializeField] private Sprite _sprite;
-
-        [HideInInspector, SerializeField] private int _id;
-        [HideInInspector, SerializeField] private string _displayName;
-        [HideInInspector, SerializeField] private string _description;
-
         [HideInInspector]
         public List<UnitTrigger> triggers = new List<UnitTrigger>();
-
-        #region 프로퍼티
-        public Sprite sprite => _sprite;
-
-        public int id => _id;
-        public string displayName => _displayName;
-        public string description => _description;
-        #endregion
-
-        #region 값 변경 메서드
-        internal void SetId(int id) => _id = id;
-        public void SetDisplayName(string name) => _displayName = name;
-        internal void SetDescription(string desc) => _description = desc;
-        #endregion
     }
 }
 

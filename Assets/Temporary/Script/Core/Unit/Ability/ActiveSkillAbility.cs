@@ -63,9 +63,9 @@ namespace Temporary.Core
         {
             foreach (var node in skillTree.nodes)
             {
-                if (node is ActiveSkillNode skill)
+                if (node is SkillNode skillNode && skillNode.skillTemplate is ActiveSkillTemplate skill)
                 {
-                    _skills[skill.skillTemplate.id] = (new ActiveSkillInstance(skill.skillTemplate, this, _manaAbility));
+                    _skills[skill.id] = (new ActiveSkillInstance(skill, this, _manaAbility));
                 }
             }
         }

@@ -60,9 +60,9 @@ namespace Temporary.Core
 
             foreach (var node in skillTree.nodes)
             {
-                if (node is ActiveSkillNode skill)
+                if (node is SkillNode skillNode && skillNode.skillTemplate is ActiveSkillTemplate skill)
                 {
-                    results.Add(skill.skillTemplate);
+                    results.Add(skill);
                 }
             }
 

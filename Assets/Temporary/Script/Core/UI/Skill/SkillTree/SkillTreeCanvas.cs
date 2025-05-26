@@ -60,7 +60,7 @@ namespace Temporary.Core
 
         private void InitializeContentHeight(SkillTreeGraph skillTree)
         {
-            int levelCount = skillTree.nodeLevelCount;
+            int levelCount = skillTree.gridSize.y;
 
             _contentHeight = _nodeHeightOffset * levelCount + 150 * (levelCount - 1);
             _content.sizeDelta = new Vector2(_content.sizeDelta.x, _contentHeight);
@@ -75,34 +75,17 @@ namespace Temporary.Core
             {
                 if (node is SkillNode skill)
                 {
-                    if (skill is ActiveSkillNode activeSkill)
-                    {
-                        if (activeSkill.skillTemplate == null) continue;
+                    if (skill.skillTemplate == null) continue;
 
-                        Vector2 position = GetSkillNodePosition(skill.level, skill.index, skillTree.nodeLevelCount, skillTree.nodeIndexCount);
-                        Transform trans = _poolSystem.Spawn(_nodePrefab, _content).transform;
-                        (trans as RectTransform).anchoredPosition = position;
+                    Vector2 position = GetSkillNodePosition(skill.index, skillTree.gridSize.y, skillTree.gridSize.x);
+                    Transform trans = _poolSystem.Spawn(_nodePrefab, _content).transform;
+                    (trans as RectTransform).anchoredPosition = position;
 
-                        var nodeController = trans.GetComponent<UISkillNodeController>();
-                        nodeController.Initialize(activeSkill.skillTemplate);
+                    var nodeController = trans.GetComponent<UISkillNodeController>();
+                    nodeController.Initialize(skill.skillTemplate);
 
-                        nodeControllerMap[skill] = nodeController;
-                        _nodes.Add(nodeController);
-                    }
-                    else if (skill is PassiveSkillNode passiveSkill)
-                    {
-                        if (passiveSkill.skillTemplate == null) continue;
-
-                        Vector2 position = GetSkillNodePosition(skill.level, skill.index, skillTree.nodeLevelCount, skillTree.nodeIndexCount);
-                        Transform trans = _poolSystem.Spawn(_nodePrefab, _content).transform;
-                        (trans as RectTransform).anchoredPosition = position;
-
-                        var nodeController = trans.GetComponent<UISkillNodeController>();
-                        nodeController.Initialize(passiveSkill.skillTemplate);
-
-                        nodeControllerMap[skill] = nodeController;
-                        _nodes.Add(nodeController);
-                    }
+                    nodeControllerMap[skill] = nodeController;
+                    _nodes.Add(nodeController);
                 }
             }
 
@@ -112,7 +95,7 @@ namespace Temporary.Core
                 if (node is SkillNode from)
                 {
                     var nodeController = nodeControllerMap[from];
-                    var connections = from.GetPort("level").GetConnections();
+                    var connections = from.GetPort("output").GetConnections();
 
                     foreach (var connection in connections)
                     {
@@ -143,23 +126,26 @@ namespace Temporary.Core
             }
         }
 
-        private Vector2 GetSkillNodePosition(int level, int index, int levelCount, int indexCount)
+        private Vector2 GetSkillNodePosition(int index, int yCount, int xCount)
         {
             float x;
 
-            if (indexCount % 2 == 0)
+            int xIndex = index % xCount;
+            int yIndex = index / yCount;
+
+            if (xCount % 2 == 0)
             {
-                float halfCount = indexCount * 0.5f;
-                float offset = _nodeWidthOffset * 0.5f;
-                x = (halfCount - index) * _nodeWidthOffset - offset;
+                float halfCount = xCount * 0.5f;
+                float offset = -_nodeWidthOffset * 0.5f;
+                x = (halfCount - xIndex) * -_nodeWidthOffset - offset;
             }
             else
             {
-                float halfCount = (indexCount - 1) * 0.5f;
-                x = (halfCount - index) * _nodeWidthOffset;
+                float halfCount = (xCount - 1) * 0.5f;
+                x = (halfCount - xIndex) * -_nodeWidthOffset;
             }
 
-            float y = (levelCount - level - 2) * _nodeHeightOffset;
+            float y = (yCount - 2 + yIndex) * -_nodeHeightOffset;
 
             return new Vector2(x, y);
         }

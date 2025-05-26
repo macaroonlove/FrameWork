@@ -9,10 +9,10 @@ namespace XNodeEditor {
     /// <summary> Contains GUI methods </summary>
     public partial class NodeEditorWindow {
         public NodeGraphEditor graphEditor;
-        private List<UnityEngine.Object> selectionCache;
+        protected List<UnityEngine.Object> selectionCache;
         private List<XNode.Node> culledNodes;
         /// <summary> 19 if docked, 22 if not </summary>
-        private int topPadding { get { return isDocked() ? 19 : 22; } }
+        protected int topPadding { get { return isDocked() ? 19 : 22; } }
         /// <summary> Executed after all other window GUI. Useful if Zoom is ruining your day. Automatically resets after being run.</summary>
         public event Action onLateGUI;
         private static readonly Vector3[] polyLineTempArray = new Vector3[2];
@@ -378,7 +378,7 @@ namespace XNodeEditor {
             if (Event.current.type != EventType.Layout && currentActivity == NodeActivity.DragGrid) selectedReroutes = selection;
         }
 
-        private void DrawNodes() {
+        protected void DrawNodes() {
             Event e = Event.current;
             if (e.type == EventType.Layout) {
                 selectionCache = new List<UnityEngine.Object>(Selection.objects);

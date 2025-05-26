@@ -9,30 +9,30 @@ namespace XNodeEditor {
     public partial class NodeEditorWindow {
         public enum NodeActivity { Idle, HoldNode, DragNode, HoldGrid, DragGrid }
         public static NodeActivity currentActivity = NodeActivity.Idle;
-        public static bool isPanning { get; private set; }
+        public static bool isPanning { get; protected set; }
         public static Vector2[] dragOffset;
 
         public static XNode.Node[] copyBuffer = null;
 
-        private bool IsDraggingPort { get { return draggedOutput != null; } }
-        private bool IsHoveringPort { get { return hoveredPort != null; } }
-        private bool IsHoveringNode { get { return hoveredNode != null; } }
+        protected bool IsDraggingPort { get { return draggedOutput != null; } }
+        protected bool IsHoveringPort { get { return hoveredPort != null; } }
+        protected bool IsHoveringNode { get { return hoveredNode != null; } }
         private bool IsHoveringReroute { get { return hoveredReroute.port != null; } }
-        private XNode.Node hoveredNode = null;
+        protected XNode.Node hoveredNode = null;
         [NonSerialized] public XNode.NodePort hoveredPort = null;
-        [NonSerialized] private XNode.NodePort draggedOutput = null;
-        [NonSerialized] private XNode.NodePort draggedOutputTarget = null;
-        [NonSerialized] private XNode.NodePort autoConnectOutput = null;
-        [NonSerialized] private List<Vector2> draggedOutputReroutes = new List<Vector2>();
+        [NonSerialized] protected XNode.NodePort draggedOutput = null;
+        [NonSerialized] protected XNode.NodePort draggedOutputTarget = null;
+        [NonSerialized] protected XNode.NodePort autoConnectOutput = null;
+        [NonSerialized] protected List<Vector2> draggedOutputReroutes = new List<Vector2>();
         private RerouteReference hoveredReroute = new RerouteReference();
         public List<RerouteReference> selectedReroutes = new List<RerouteReference>();
         private Vector2 dragBoxStart;
-        private UnityEngine.Object[] preBoxSelection;
+        protected UnityEngine.Object[] preBoxSelection;
         private RerouteReference[] preBoxSelectionReroute;
         private Rect selectionBox;
         private bool isDoubleClick = false;
         private Vector2 lastMousePosition;
-        private float dragThreshold = 1f;
+        protected float dragThreshold = 1f;
 
         public void Controls() {
             wantsMouseMove = true;
@@ -346,7 +346,7 @@ namespace XNodeEditor {
             }
         }
 
-        private void RecalculateDragOffsets(Event current) {
+        protected void RecalculateDragOffsets(Event current) {
             dragOffset = new Vector2[Selection.objects.Length + selectedReroutes.Count];
             // Selected nodes
             for (int i = 0; i < Selection.objects.Length; i++) {
@@ -519,7 +519,7 @@ namespace XNodeEditor {
             }
         }
 
-        bool IsHoveringTitle(XNode.Node node) {
+        protected bool IsHoveringTitle(XNode.Node node) {
             Vector2 mousePos = Event.current.mousePosition;
             //Get node position
             Vector2 nodePos = GridToWindowPosition(node.position);
