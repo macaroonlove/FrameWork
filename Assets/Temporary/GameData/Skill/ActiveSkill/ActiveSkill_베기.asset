@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5093661109052b9438d278789d9e23d4, type: 3}
-  m_Name: "ActiveSkill_\uC2A4\uD0AC3"
+  m_Name: "ActiveSkill_\uBCA0\uAE30"
   m_EditorClassIdentifier: 
-  _sprite: {fileID: 21300000, guid: 6960c6bd5088317429f7e0e033bee813, type: 3}
+  _sprite: {fileID: 21300000, guid: 2a5c892bdd014164da633b8c6fd0f246, type: 3}
   _id: 0
-  _displayName: "\uACE0\uC18D \uC774\uB3D9"
+  _displayName: "\uBCA0\uAE30"
   _description: 
   _skillTriggerType: 0
   _skillTargetingType: 0

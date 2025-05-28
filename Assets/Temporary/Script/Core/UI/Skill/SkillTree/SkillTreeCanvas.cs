@@ -1,5 +1,4 @@
 using FrameWork.UIBinding;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,7 +14,7 @@ namespace Temporary.Core
         [SerializeField] private int _nodeHeightOffset = 300;
 
         private PoolSystem _poolSystem;
-        private int _contentHeight;
+        private SkillTreeGraph _skillTree;
 
         private List<UISkillNodeController> _nodes = new List<UISkillNodeController>();
         private List<GameObject> _paths = new List<GameObject>();
@@ -31,6 +30,18 @@ namespace Temporary.Core
         {
             base.Show();
 
+            // 새로운 스킬트리가 들어왔다면
+            if (_skillTree != skillTree)
+            {
+                Clear();
+            }
+            else
+            {
+                return;
+            }
+
+            _skillTree = skillTree;
+
             // 배경 크기 설정
             InitializeContentHeight(skillTree);
 
@@ -41,10 +52,8 @@ namespace Temporary.Core
             GeneratePath(skillTree);
         }
 
-        public override void Hide(bool isForce = false)
+        private void Clear()
         {
-            base.Hide(isForce);
-
             foreach (var node in _nodes)
             {
                 _poolSystem.DeSpawn(node.gameObject);
@@ -58,34 +67,44 @@ namespace Temporary.Core
             _paths.Clear();
         }
 
+        #region Generate
         private void InitializeContentHeight(SkillTreeGraph skillTree)
         {
-            int levelCount = skillTree.gridSize.y;
-
-            _contentHeight = _nodeHeightOffset * levelCount + 150 * (levelCount - 1);
-            _content.sizeDelta = new Vector2(_content.sizeDelta.x, _contentHeight);
+            _content.sizeDelta = new Vector2(_content.sizeDelta.x, _nodeHeightOffset * skillTree.gridSize.y + 100);
         }
 
         private void GenerateNode(SkillTreeGraph skillTree)
         {
             var nodeControllerMap = new Dictionary<SkillNode, UISkillNodeController>();
 
+            Vector2 position = GetStartPosition(skillTree.gridSize.x);
+            float startX = position.x;
+            int index = 0;
             // 노드 생성
             foreach (var node in skillTree.nodes)
             {
                 if (node is SkillNode skill)
                 {
-                    if (skill.skillTemplate == null) continue;
+                    if (skill.skillTemplate != null)
+                    {
+                        Transform trans = _poolSystem.Spawn(_nodePrefab, _content).transform;
+                        (trans as RectTransform).anchoredPosition = position;
 
-                    Vector2 position = GetSkillNodePosition(skill.index, skillTree.gridSize.y, skillTree.gridSize.x);
-                    Transform trans = _poolSystem.Spawn(_nodePrefab, _content).transform;
-                    (trans as RectTransform).anchoredPosition = position;
+                        var nodeController = trans.GetComponent<UISkillNodeController>();
+                        nodeController.Initialize(skill);
 
-                    var nodeController = trans.GetComponent<UISkillNodeController>();
-                    nodeController.Initialize(skill.skillTemplate);
+                        nodeControllerMap[skill] = nodeController;
+                        _nodes.Add(nodeController);
+                    }
+                }
 
-                    nodeControllerMap[skill] = nodeController;
-                    _nodes.Add(nodeController);
+                index++;
+                position.x += _nodeWidthOffset;
+                if (index == skillTree.gridSize.x)
+                {
+                    index = 0;
+                    position.x = startX;
+                    position.y -= _nodeHeightOffset;
                 }
             }
 
@@ -94,6 +113,8 @@ namespace Temporary.Core
             {
                 if (node is SkillNode from)
                 {
+                    if (from.skillTemplate == null) continue;
+
                     var nodeController = nodeControllerMap[from];
                     var connections = from.GetPort("output").GetConnections();
 
@@ -107,10 +128,24 @@ namespace Temporary.Core
                             }
                         }
                     }
+
+                    var precedingSkills = from.GetPort("input").GetConnections();
+
+                    foreach (var precedingSkill in precedingSkills)
+                    {
+                        if (precedingSkill.node is SkillNode to)
+                        {
+                            if (nodeControllerMap.TryGetValue(to, out var targetController))
+                            {
+                                nodeController.precedingSkills.Add(targetController);
+                            }
+                        }
+                    }
                 }
             }
-        }
 
+            _nodes[0].UpdateSkillState();
+        }
 
         private void GeneratePath(SkillTreeGraph skillTree)
         {
@@ -121,33 +156,38 @@ namespace Temporary.Core
                     GameObject path = _poolSystem.Spawn(_pathPrefab, _content);
                     UISkillPathController pathController = path.GetComponent<UISkillPathController>();
                     pathController.Initialize(from.output, to.input, _nodeHeightOffset);
+                    from.connectionPaths.Add(pathController);
                     _paths.Add(path);
                 }
+
+                from.UpdatePaths();
             }
         }
 
-        private Vector2 GetSkillNodePosition(int index, int yCount, int xCount)
+        private Vector2 GetStartPosition(int xCount)
         {
-            float x;
-
-            int xIndex = index % xCount;
-            int yIndex = index / yCount;
+            float x = 0;
 
             if (xCount % 2 == 0)
             {
                 float halfCount = xCount * 0.5f;
-                float offset = -_nodeWidthOffset * 0.5f;
-                x = (halfCount - xIndex) * -_nodeWidthOffset - offset;
+                x = _nodeWidthOffset * halfCount - _nodeWidthOffset * 0.5f;
             }
             else
             {
                 float halfCount = (xCount - 1) * 0.5f;
-                x = (halfCount - xIndex) * -_nodeWidthOffset;
+                x = _nodeWidthOffset * halfCount;
             }
 
-            float y = (yCount - 2 + yIndex) * -_nodeHeightOffset;
-
-            return new Vector2(x, y);
+            return new Vector2(-x, -100);
         }
+        #endregion
+
+        #region Upgrade
+        public void UpgradeSkill()
+        {
+
+        }
+        #endregion
     }
 }

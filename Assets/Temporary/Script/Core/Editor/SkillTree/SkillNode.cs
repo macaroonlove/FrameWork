@@ -7,6 +7,9 @@ namespace Temporary.Core
     {
         public int index;
         public SkillTemplate skillTemplate;
+        public int startLevel;
+        public int minLevel;
+        public int maxLevel;
 
         [Output] public int output;
         [Input(backingValue = ShowBackingValue.Never, connectionType = ConnectionType.Multiple)] public int input;

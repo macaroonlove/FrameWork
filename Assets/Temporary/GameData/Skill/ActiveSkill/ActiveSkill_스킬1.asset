@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sprite: {fileID: 21300000, guid: 300abdf8cbdd5c742a05b6506767fd64, type: 3}
   _id: 0
-  _displayName: "\uC2A4\uD0AC1"
+  _displayName: "\uBA54\uD14C\uC624"
   _description: 
   _skillTriggerType: 0
   _skillTargetingType: 0

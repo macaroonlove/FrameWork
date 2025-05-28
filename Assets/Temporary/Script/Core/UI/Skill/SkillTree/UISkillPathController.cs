@@ -1,7 +1,6 @@
 using FrameWork.UIBinding;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Temporary.Core
 {
@@ -14,21 +13,29 @@ namespace Temporary.Core
             In,
         }
 
+        private Image _outImage;
+        private Image _centerImage;
+        private Image _inImage;
+
         internal void Initialize(RectTransform output, RectTransform input, int heightOffset)
         {
             BindImage(typeof(Images));
 
-            Show(output, input, heightOffset);
+            _outImage = GetImage((int)Images.Out);
+            _centerImage = GetImage((int)Images.Center);
+            _inImage = GetImage((int)Images.In);
+
+            SetPosition(output, input, heightOffset);
         }
 
-        internal void Show(RectTransform output, RectTransform input, int heightOffset)
+        private void SetPosition(RectTransform output, RectTransform input, int heightOffset)
         {
             Vector2 finalOutput = output.anchoredPosition + (output.parent as RectTransform).anchoredPosition;
             Vector2 finalInput = input.anchoredPosition + (input.parent as RectTransform).anchoredPosition;
 
-            var outRect = GetImage((int)Images.Out).rectTransform;
-            var centerRect = GetImage((int)Images.Center).rectTransform;
-            var inRect = GetImage((int)Images.In).rectTransform;
+            var outRect = _outImage.rectTransform;
+            var centerRect = _centerImage.rectTransform;
+            var inRect = _inImage.rectTransform;
 
             float outputHeight = heightOffset * 0.25f;
             float inputHeight = Mathf.Abs(finalOutput.y - finalInput.y) - outputHeight;
@@ -52,6 +59,27 @@ namespace Temporary.Core
             outRect.anchoredPosition = finalOutput;
             centerRect.anchoredPosition = finalCenter;
             inRect.anchoredPosition = finalInput;
+            (transform as RectTransform).anchoredPosition = new Vector2(0, -73);
+        }
+
+        internal void SetColor(bool isLock)
+        {
+            if (isLock)
+            {
+                _outImage.color = Color.gray;
+                _centerImage.color = Color.gray;
+                _inImage.color = Color.gray;
+
+                transform.SetAsFirstSibling();
+            }
+            else
+            {
+                _outImage.color = Color.white;
+                _centerImage.color = Color.white;
+                _inImage.color = Color.white;
+
+                transform.SetAsLastSibling();
+            }
         }
     }
 }

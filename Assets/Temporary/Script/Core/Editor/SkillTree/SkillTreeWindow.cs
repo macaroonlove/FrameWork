@@ -167,6 +167,7 @@ namespace Temporary.Core
                         {
                             if (!Selection.Contains(hoveredNode))
                             {
+                                EditorGUI.FocusTextInControl(null);
                                 selectedSkillNode = hoveredNode as SkillNode;
                                 SelectNode(hoveredNode, false);
                             }
@@ -179,7 +180,8 @@ namespace Temporary.Core
                         else if (!IsHoveringNode && !sidePanelRect.Contains(e.mousePosition))
                         {
                             currentActivity = NodeActivity.HoldGrid;
-
+                            
+                            EditorGUI.FocusTextInControl(null);
                             selectedSkillNode = null;
                             Selection.activeObject = null;
                         }
@@ -233,6 +235,7 @@ namespace Temporary.Core
                         #region 노드 선택
                         if (currentActivity == NodeActivity.HoldNode)
                         {
+                            EditorGUI.FocusTextInControl(null);
                             selectedSkillNode = hoveredNode as SkillNode;
                             SelectNode(hoveredNode, false);
                         }
@@ -314,25 +317,37 @@ namespace Temporary.Core
 
             if (selectedSkillNode != null)
             {
+                EditorGUI.BeginChangeCheck();
+
                 GUILayout.Space(10);
                 GUILayout.Label("선택한 노드 설정", EditorStyles.boldLabel);
                 GUILayout.Space(10);
 
-                // 변경사항 감지 시작
-                EditorGUI.BeginChangeCheck();
-
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("스킬 템플릿", GUILayout.Width(80));
                 selectedSkillNode.skillTemplate = (SkillTemplate)EditorGUILayout.ObjectField(selectedSkillNode.skillTemplate, typeof(SkillTemplate), false);
-                //selectedSkillNode.skillTemplate = null;
-
                 GUILayout.EndHorizontal();
 
-                // 변경 사항이 있다면
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("시작 레벨", GUILayout.Width(80));
+                selectedSkillNode.startLevel = EditorGUILayout.IntField(selectedSkillNode.startLevel);
+                selectedSkillNode.startLevel = Mathf.Clamp(selectedSkillNode.startLevel, selectedSkillNode.minLevel, selectedSkillNode.maxLevel);
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("최소 레벨", GUILayout.Width(80));
+                selectedSkillNode.minLevel = EditorGUILayout.IntField(selectedSkillNode.minLevel);
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("최대 레벨", GUILayout.Width(80));
+                selectedSkillNode.maxLevel = EditorGUILayout.IntField(selectedSkillNode.maxLevel);
+                GUILayout.EndHorizontal();
+
                 if (EditorGUI.EndChangeCheck())
                 {
+                    Undo.RecordObject(selectedSkillNode, "Node Modify");
                     EditorUtility.SetDirty(selectedSkillNode);
-                    AssetDatabase.SaveAssets();
                 }
             }
 
